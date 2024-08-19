@@ -3,6 +3,8 @@ import { useState, ChangeEvent, MouseEvent, useEffect } from "react";
 import {  useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { verify_otp } from "../api/user";
+import { resend_otp } from "../api/user";
 
 type LocationState = {
   email: string;
@@ -56,19 +58,16 @@ export default function OTPVerification() {
     }
     if (email && otp.length === 4) {
       try {
-        // Typing the Axios response
-        const response = await axios.post<string>("/user/verify-otp", {
-          email,
-          otp,
-        });
+
+        const response = await verify_otp(otp,email)
 
         // Check the status code in the response
-        if (response.status === 200) {
-          toast.success(response.data);
+        if (response) {
+          
+          toast.success(response.data.message);
           navigate("/login");
         }
       } catch (error) {
-        // Handle error response
         toast.error("Invalid OTP. Please try again.");
       }
     }
@@ -80,28 +79,13 @@ export default function OTPVerification() {
       toast.info("Resending OTP...");
       
       
-     
-      console.log('fetchind data');
-      
       // Make an API request to resend the OTP
-      const response = await axios.post<{ data: { status: boolean; message: string } }>("/user/resend-otp", { email });
-      console.log('ippo berum');
+      const response = await resend_otp(email)
+
+      if (response) {
+        toast.success(response.data.message);
+      }
       
-      console.log(response);
-      
-      if (response.status === 200 ) {
-        toast.success("OTP has been resent successfully.");
-      } 
-  
-    
-       // Reset the countdown and hide the link if you want to restrict resending for another 2 minutes
-       setCounter(120); // Reset counter to 120 seconds
-       setShowResendLink(false); // Hide the link again
-       if(resetCount == true){
-        setResetCount(true)
-       }else{
-        setResetCount(false)
-       }
       
        
   

@@ -3,9 +3,18 @@ import Logo from "../assets/img/white.png";
 import { Input } from "@nextui-org/react";
 import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate,NavigateFunction } from "react-router-dom";
-import { useState, ChangeEvent, FormEvent } from "react";
-import axios from 'axios';
+import { useState, ChangeEvent, FormEvent, useEffect } from "react";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
+import { useGoogleLogin } from '@react-oauth/google';
+import {sign_up} from "../api/user"
+import {Gsign_up} from "../api/user"
+import {  useDispatch } from 'react-redux';
+
+import { setCredentials } from '../redux/Slices/authSlice';
 import { toast } from 'react-toastify';
+import axios from "axios";
+import { RootState } from "../redux/store";
 
 type ErrorState = {
   name: string;
@@ -16,6 +25,17 @@ type ErrorState = {
 };
 
 export default function SignUp() {
+
+  const dispatch = useDispatch();
+  const {userInfo }= useSelector((state:RootState) => state.auth);
+  
+  useEffect(() => {
+    if (userInfo) {
+      // If user is already logged in, redirect them to the homepage
+      navigate('/');
+    }
+  }, []);
+
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -31,6 +51,8 @@ export default function SignUp() {
   });
 
   const navigate: NavigateFunction = useNavigate();
+
+
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -84,28 +106,48 @@ export default function SignUp() {
 
     if (valid) {
       try {
-        const response = await axios.post("/user/register", {
-          name,
-          email,
-          password,
-          number,
-        });
+
+       const response = await sign_up(name,email,password,number)
         
-        if(response.data.message){
-          toast.success(response.data.message);
-          navigate("/otp", {
-            state: {
-              email: email,
-              name: name,
-              phone: number,
-            },
-          });
-        }
+       if (response) {
+        toast.success(response.data.message);
+        navigate("/Otp", {
+          state: {
+            email: email,
+            name: name,
+            password: password,
+            number: number,
+          },
+        });
+      }
       } catch (error) {
         console.error("Error registering user:", error);
       }
     }
   };
+
+  const Glogin = useGoogleLogin({
+    onSuccess: async(response) =>{
+      try {
+        const res = await axios.get(
+          `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`
+        );
+        
+        const name = res.data.name
+        const email = res.data.email
+        const  password = "qwerty123"
+        const isGoogle = true
+
+        const response2 = await Gsign_up(name,email,password,isGoogle);
+        
+        if (response2) {
+          localStorage.setItem("token", response2.data.token);
+          dispatch(setCredentials(response2.data.user));
+          navigate("/");
+        }
+      } catch (error) {}
+    }
+  });
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-stone-200 p-4">
@@ -195,7 +237,7 @@ export default function SignUp() {
 
             <button
               className="flex items-center justify-center gap-3 w-full max-w-xs mx-auto md:mx-0 border border-gray-300 px-3 py-2 rounded-md text-xs md:text-sm"
-              onClick={() => { }}
+              onClick={() => Glogin()}
             >
               <FcGoogle className="w-4 h-4" /> Sign up with Google
             </button>

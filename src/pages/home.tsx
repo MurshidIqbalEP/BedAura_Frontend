@@ -48,7 +48,7 @@ export default function Home() {
 
     <p className="text-sm lg:text-base text-gray-600 max-w-md">
       Have an extra room or property? Share it with travelers worldwide! 
-      Turn your unused space into an opportunity. List your accommodation 
+      Turn your unused space into an opportunity. List your accommodation    
       easily and start earning by providing unique stays for guests.
     </p>
 
