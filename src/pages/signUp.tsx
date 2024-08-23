@@ -5,7 +5,6 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate,NavigateFunction } from "react-router-dom";
 import { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
 import { useGoogleLogin } from '@react-oauth/google';
 import {sign_up} from "../api/user"
 import {Gsign_up} from "../api/user"
@@ -132,6 +131,9 @@ export default function SignUp() {
         const res = await axios.get(
           `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`
         );
+
+      console.log(res);
+      
         
         const name = res.data.name
         const email = res.data.email
@@ -139,6 +141,7 @@ export default function SignUp() {
         const isGoogle = true
 
         const response2 = await Gsign_up(name,email,password,isGoogle);
+  
         
         if (response2) {
           localStorage.setItem("token", response2.data.token);

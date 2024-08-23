@@ -53,10 +53,12 @@ export default function Login() {
 
       const response = await login(email,password);
       if (response) {
+        console.log(response.data.isAdmin);
+        
         if (response.data.isAdmin) {
           localStorage.setItem('token', response.data.token);
           dispatch(setAdminCredentials(response.data.message));
-          // navigate('/admin/dashboard');
+          navigate('/admin/dashboard');
         } else {
           console.log(response);
           localStorage.setItem('token', response.data.token);
@@ -87,10 +89,17 @@ const Glogin = useGoogleLogin({
       console.log(response2);
       
       if (response2) {
-        localStorage.setItem("token", response2.data.token);
-        dispatch(setCredentials(response2.data.data));
-        toast.success("Login success")
-        navigate("/");
+
+        if (response2.data.data.isAdmin) {
+          localStorage.setItem("token", response2.data.token);
+          dispatch(setAdminCredentials(response2.data.data));
+          navigate('/admin/users');
+        } else {
+
+          localStorage.setItem("token", response2.data.token);
+          dispatch(setCredentials(response2.data.data));
+          navigate('/');
+        }
       }
     } catch (error) {}
   }
@@ -139,9 +148,13 @@ const Glogin = useGoogleLogin({
       Sign in with Google
     </button>
 
-    <p className="text-xs mt-2 text-gray-400">Don’t have an account? 
+    <Link to='/forget-pass'>
+      <p className="text-xs mt-2 text-gray-400 hover:text-custom-red"> forgot password </p>
+    </Link>
+
+    <p className="text-xs mt-2 text-gray-400 ">Don’t have an account? 
         <Link to='/register'>
-        <span className="text-custom-red">Sign up fo free!</span>
+        <span className="text-custom-red hover:text-gray-400">Sign up !</span>
         </Link>
         </p>
 

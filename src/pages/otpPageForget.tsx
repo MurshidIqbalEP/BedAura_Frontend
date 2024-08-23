@@ -2,7 +2,7 @@ import { Input } from "@nextui-org/react";
 import { useState, ChangeEvent, MouseEvent, useEffect } from "react";
 import {  useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { verify_otp } from "../api/user";
+import { verify_Forgetotp } from "../api/user";
 import { resend_otp } from "../api/user";
 
 type LocationState = {
@@ -58,13 +58,16 @@ export default function OTPVerification() {
     if (email && otp.length === 4) {
       try {
 
-        const response = await verify_otp(otp,email)
-
+        const response = await verify_Forgetotp(otp,email)
+       
         // Check the status code in the response
         if (response) {
           
-          toast.success(response.data.message);
-          navigate("/login");
+          toast.success(response.data);
+          setTimeout(() => {
+            navigate("/change-Pass",{state:{email}});
+          }, 1000);
+          
         }
       } catch (error) {
         toast.error("Invalid OTP. Please try again.");

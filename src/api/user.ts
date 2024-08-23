@@ -69,10 +69,66 @@ export const verify_otp = async (otp: string, email: string) => {
   }
 };
 
+export const verify_Forgetotp = async (otp:string,email:string)=>{
+  try {
+    let response = await Api.post(userRoutes.verify_Forgetotp, { email, otp });
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
 export const resend_otp = async (email: string) => {
   try {
     let response = await Api.post(userRoutes.resendOtp, { email });
     return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+};
+
+export const forgetPass = async(email:string)=>{
+   try {
+    let response = await Api.post(userRoutes.forgetPass, { email });
+    return response.data
+   } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+   }
+}
+
+export const changePass = async (email:string,password:string)=>{
+  try {
+    let response = await Api.post(userRoutes.changePass, { email,password });
+    return response.data
+   } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+   }
+}
+
+export const addRoom = async (formData: FormData) => {
+  try {
+    const response = await Api.post(userRoutes.addRoom, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+};
+
+export const fetchRooms = async (id:string) => {
+  try {
+    const response = await Api.get(userRoutes.fetchRoomsById, {
+      params: { id }
+    });
+    
+    return response.data;
   } catch (error) {
     const err: Error = error as Error;
     return errorHandle(err);
