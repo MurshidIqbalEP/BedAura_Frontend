@@ -10,7 +10,9 @@ const userRoutes={
     verify_Forgetotp:"/user/verifyForgetOtp",
     changePass:"/user/changePass",
     addRoom:"/user/addRoom",
-    fetchRoomsById:"/user/myRooms"
+    fetchRoomsById:"/user/myRooms",
+    fetchRoomById:"/user/Room",
+    editRoom:"/user/editRoom",
     
 }
 

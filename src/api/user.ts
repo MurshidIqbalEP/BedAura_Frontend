@@ -122,9 +122,39 @@ export const addRoom = async (formData: FormData) => {
   }
 };
 
+export const editRoomApi = async (formData: FormData) => {
+  try {
+    console.log(addRoom);
+    
+    const response = await Api.patch(userRoutes.editRoom, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return response.data;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+};
+
+
 export const fetchRooms = async (id:string) => {
   try {
     const response = await Api.get(userRoutes.fetchRoomsById, {
+      params: { id }
+    });
+
+    return response.data;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+};
+
+export const fetchRoom = async (id:string) => {
+  try {
+    const response = await Api.get(userRoutes.fetchRoomById, {
       params: { id }
     });
     

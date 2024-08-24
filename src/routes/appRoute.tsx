@@ -8,7 +8,6 @@ export default function appRoute() {
 
             <Route  path='/*' element={<UserRoute/>} />
             <Route  path='/admin/*' element={<AdminRoute/>} />
-            
 
         </Routes>
 

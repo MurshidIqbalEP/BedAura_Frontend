@@ -7,6 +7,8 @@ import { RootState } from "../redux/store";
 import defaultProfile from "../assets/img/Default_pfp.svg.png";
 import { Button } from "@nextui-org/react";
 
+
+
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);

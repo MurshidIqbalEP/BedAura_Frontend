@@ -212,6 +212,7 @@ function AddSpace() {
       formData.append("location", location);
       formData.append("description", description);
       formData.append('coordinates', JSON.stringify(selectedLocation ?? {})); 
+     
 
       // Append each image with the same field name 'images'
       image.forEach((img) => {
