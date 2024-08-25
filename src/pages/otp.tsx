@@ -1,6 +1,6 @@
 import { Input } from "@nextui-org/react";
 import { useState, ChangeEvent, MouseEvent, useEffect } from "react";
-import {  useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { verify_otp } from "../api/user";
 import { resend_otp } from "../api/user";
@@ -15,16 +15,16 @@ export default function OTPVerification() {
   const { email } = (location.state as LocationState) || {};
   const [showResendLink, setShowResendLink] = useState(false);
   const [counter, setCounter] = useState(120); // 2 minutes in seconds
-  const [resetCount, setResetCount] = useState(false)
+  const [resetCount, setResetCount] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCounter((prevCounter) => prevCounter - 1);
-    }, 1000); // Decrease counter every second
+    }, 1000);
 
     const linkTimer = setTimeout(() => {
       setShowResendLink(true);
-      clearInterval(timer); // Stop the countdown when the link is shown
+      clearInterval(timer);
     }, 2 * 60 * 1000); // 2 minutes
 
     // Cleanup the timers if the component is unmounted
@@ -34,11 +34,9 @@ export default function OTPVerification() {
     };
   }, [resetCount]);
 
-  // Initialize state for OTP inputs
   const [otpValues, setOtpValues] = useState<string[]>(["", "", "", ""]);
   const [errMsg, setErrMsg] = useState<string>("");
 
-  // Handle change in OTP input fields
   const handleOtpChange = (
     event: ChangeEvent<HTMLInputElement>,
     index: number
@@ -57,12 +55,10 @@ export default function OTPVerification() {
     }
     if (email && otp.length === 4) {
       try {
-
-        const response = await verify_otp(otp,email)
+        const response = await verify_otp(otp, email);
 
         // Check the status code in the response
         if (response) {
-          
           toast.success(response.data.message);
           navigate("/login");
         }
@@ -76,24 +72,20 @@ export default function OTPVerification() {
     try {
       // Show a loading message or indicator while the OTP is being resent
       toast.info("Resending OTP...");
-      
-      
+
       // Make an API request to resend the OTP
-      const response = await resend_otp(email)
+      const response = await resend_otp(email);
 
       if (response) {
         toast.success(response.data.message);
       }
-      
-      
-       
-  
     } catch (error) {
       console.error("Error resending OTP:", error);
-      toast.error("An error occurred while resending the OTP. Please try again.");
+      toast.error(
+        "An error occurred while resending the OTP. Please try again."
+      );
     }
   };
-  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-stone-200 p-4">

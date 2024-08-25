@@ -18,7 +18,7 @@ interface Room {
   maintenanceCharge: string;
   securityDeposit: string;
   gender: string;
-  userId:string;
+  userId: string;
   slots: string;
   roomType: string;
   noticePeriod: string;
@@ -80,7 +80,7 @@ function editRoom() {
   const SERVER_URL = "http://localhost:3000";
   const [location, setLocation] = useState("");
   const [image, setImage] = useState<File[]>([]);
-  const [imgCount,setImgCount] = useState(0)
+  const [imgCount, setImgCount] = useState(0);
 
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -142,19 +142,16 @@ function editRoom() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-  console.log('submiteddddddddddddddd');
-  
-    let valid = true;
+    console.log("submiteddddddddddddddd");
 
-    
+    let valid = true;
 
     // Name validation
     if (room?.name.trim() === "") {
-      toast.error('enter name')
-      return
+      toast.error("enter name");
+      return;
     }
 
-    
     // Mobile number validation
     if (room?.mobile && room.mobile.length < 10) {
       toast.error("10 digit number needed");
@@ -191,7 +188,7 @@ function editRoom() {
       valid = false;
     }
 
-    if ( !room?.slots || Number(room?.slots) <= 0) {
+    if (!room?.slots || Number(room?.slots) <= 0) {
       toast.error(" Enter Available Slots");
       valid = false;
     }
@@ -223,12 +220,10 @@ function editRoom() {
 
     // Image validation
     if (image.length !== imgCount) {
-      let msg = `${imgCount} expected`
+      let msg = `${imgCount} expected`;
       toast.error(msg);
       valid = false;
     }
-
-    // Set errors and check validity
 
     if (valid) {
       const formData = new FormData();
@@ -245,27 +240,20 @@ function editRoom() {
       formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
       formData.append("roomId", room?._id as string);
       formData.append("userId", room?.userId as string);
-     
+
       if (room?.images && Array.isArray(room.images)) {
         room.images.forEach((image) => {
           formData.append("ExistingImg", image);
         });
-      } 
+      }
 
       image.forEach((img) => {
-        formData.append("images", img); 
+        formData.append("images", img);
       });
 
-     
-      
-      
-
-      
       let response = await editRoomApi(formData);
 
       if (response) {
-       
-        
         toast.success(response.message);
         navigate("/yourRooms");
       }
@@ -278,7 +266,7 @@ function editRoom() {
     console.log(newImages);
 
     setRoom((prevRoom) => {
-      if (!prevRoom) return prevRoom; // Ensure prevRoom is handled when undefined
+      if (!prevRoom) return prevRoom;
 
       return {
         ...prevRoom,
@@ -286,8 +274,7 @@ function editRoom() {
       };
     });
 
-    setImgCount(3 - (room?.images?.length ?? 0)+1);
-
+    setImgCount(3 - (room?.images?.length ?? 0) + 1);
   };
 
   return (
@@ -302,16 +289,20 @@ function editRoom() {
             <Input
               name="name"
               value={room?.name}
-              onChange={(e) => setRoom({...room,name:e.target.value} as Room)}
+              onChange={(e) =>
+                setRoom({ ...room, name: e.target.value } as Room)
+              }
               required
               variant="bordered"
               size="sm"
             />
             <Input
               type="tel"
-              name={room?.mobile }
-              value={ room?.mobile }
-              onChange={(e) => setRoom({...room,mobile:e.target.value} as Room)}
+              name={room?.mobile}
+              value={room?.mobile}
+              onChange={(e) =>
+                setRoom({ ...room, mobile: e.target.value } as Room)
+              }
               variant="bordered"
               required
               size="sm"
@@ -319,8 +310,10 @@ function editRoom() {
             <Input
               type="number"
               name="maintenanceCharge"
-              value={ room?.maintenanceCharge}
-              onChange={(e) => setRoom({...room,maintenanceCharge:e.target.value} as Room)}
+              value={room?.maintenanceCharge}
+              onChange={(e) =>
+                setRoom({ ...room, maintenanceCharge: e.target.value } as Room)
+              }
               variant="bordered"
               required
               size="sm"
@@ -332,7 +325,9 @@ function editRoom() {
               aria-label="Security Deposit"
               size="sm"
               variant="bordered"
-              onChange={(e) => setRoom({...room,securityDeposit:e.target.value} as Room)}
+              onChange={(e) =>
+                setRoom({ ...room, securityDeposit: e.target.value } as Room)
+              }
             >
               {SecurityDeposit.map((deposit) => (
                 <SelectItem key={deposit.key} value={deposit.key}>
@@ -345,7 +340,9 @@ function editRoom() {
               aria-label="Preferable Gender"
               size="sm"
               variant="bordered"
-              onChange={(e) => setRoom({...room,gender:e.target.value} as Room)}
+              onChange={(e) =>
+                setRoom({ ...room, gender: e.target.value } as Room)
+              }
             >
               {Gender.map((gen) => (
                 <SelectItem key={gen.key} value={gen.key}>
@@ -359,7 +356,9 @@ function editRoom() {
               aria-label="Room Type"
               size="sm"
               variant="bordered"
-              onChange={(e) => setRoom({...room,roomType:e.target.value} as Room)}
+              onChange={(e) =>
+                setRoom({ ...room, roomType: e.target.value } as Room)
+              }
             >
               {RoomType.map((room) => (
                 <SelectItem key={room.key} value={room.key}>
@@ -374,7 +373,9 @@ function editRoom() {
               aria-label="Notice Period"
               size="sm"
               variant="bordered"
-              onChange={(e) => setRoom({...room,noticePeriod:e.target.value} as Room)}
+              onChange={(e) =>
+                setRoom({ ...room, noticePeriod: e.target.value } as Room)
+              }
             >
               {NoticePeriod.map((period) => (
                 <SelectItem key={period.key} value={period.key}>
@@ -389,7 +390,9 @@ function editRoom() {
               value={room?.slots}
               size="sm"
               variant="bordered"
-              onChange={(e) => setRoom({...room,slots:e.target.value} as Room)}
+              onChange={(e) =>
+                setRoom({ ...room, slots: e.target.value } as Room)
+              }
               required
             />
 
@@ -428,10 +431,12 @@ function editRoom() {
 
           <Textarea
             name="description"
-            value={ room?.description}
+            value={room?.description}
             size="sm"
             variant="bordered"
-            onChange={(e) => setRoom({...room,description:e.target.value} as Room)}  
+            onChange={(e) =>
+              setRoom({ ...room, description: e.target.value } as Room)
+            }
             required
           />
 
@@ -462,25 +467,22 @@ function editRoom() {
             )}
           </div>
           {(room?.images?.length ?? 0) < 3 && (
-  <div className="mt-4">
-    <Input
-      type="file"
-      accept="image/*"
-      multiple
-      size="sm"
-      variant="bordered"
-      onChange={handleImageChange}
-      required
-      className="bg-gray-100 border-2 border-dashed border-gray-300  rounded-md p-3 text-center text-sm"
-   
-    />
-     <div className="mt-2 text-red-500 text-sm font-mono font-light">
-      Add {imgCount} images
-    </div>
-  </div>
-)}
-
-
+            <div className="mt-4">
+              <Input
+                type="file"
+                accept="image/*"
+                multiple
+                size="sm"
+                variant="bordered"
+                onChange={handleImageChange}
+                required
+                className="bg-gray-100 border-2 border-dashed border-gray-300  rounded-md p-3 text-center text-sm"
+              />
+              <div className="mt-2 text-red-500 text-sm font-mono font-light">
+                Add {imgCount} images
+              </div>
+            </div>
+          )}
 
           <div className="mt-6 text-center">
             <Button

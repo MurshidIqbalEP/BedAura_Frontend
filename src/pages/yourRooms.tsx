@@ -1,10 +1,9 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
-import { addRoom, fetchRooms } from "../api/user";
+import { fetchRooms } from "../api/user";
 import { Button } from "@nextui-org/react";
-import { Link, useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
 
 interface Coordinates {
   lat: number;
@@ -30,15 +29,10 @@ interface Room {
   isAproved: boolean;
 }
 
-
-  
- 
-
 function yourRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
   const SERVER_URL = "http://localhost:3000";
-  
 
   useEffect(() => {
     const getRooms = async () => {
@@ -53,9 +47,6 @@ function yourRooms() {
 
     getRooms();
   }, [userId]);
-
- 
-
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -81,10 +72,12 @@ function yourRooms() {
                   <h2 className="text-xl font-semibold mb-2">{room.name}</h2>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium p-2">Mobile:</span> {room.mobile}
+                      <span className="font-medium p-2">Mobile:</span>{" "}
+                      {room.mobile}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium p-2">Slots:</span> {room.slots}
+                      <span className="font-medium p-2">Slots:</span>{" "}
+                      {room.slots}
                     </p>
                     <p className="text-sm text-gray-600">
                       <span className="font-medium p-2">Maintenance:</span> ₹
@@ -95,10 +88,12 @@ function yourRooms() {
                       {room.securityDeposit}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium p-2">Type:</span> {room.roomType}
+                      <span className="font-medium p-2">Type:</span>{" "}
+                      {room.roomType}
                     </p>
                     <p className="text-sm text-gray-600">
-                      <span className="font-medium p-2">Gender:</span> {room.gender}
+                      <span className="font-medium p-2">Gender:</span>{" "}
+                      {room.gender}
                     </p>
                     <p className="text-sm text-gray-600">
                       <span className="font-medium p-2">Notice:</span>{" "}
@@ -115,46 +110,49 @@ function yourRooms() {
                   </p>
                 </div>
                 <div className="flex justify-between items-center mt-4">
-  {room.isAproved === true ? (
-    <div className="w-full flex justify-end  " >
-    <Link to={`/editRoom/${room._id}`}>
-      <Button size="md" className="ml-auto h-[30px] bg-custom-yellow">Edit</Button>
-    </Link>
-    </div>
-  ) : (
-    <Button
-      isLoading
-      color="secondary"
-      className="ml-auto"
-      spinner={
-        <svg
-          className="animate-spin h-5 w-5 text-current"
-          fill="none"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            fill="currentColor"
-          />
-        </svg>
-      }
-    >
-      Not Approved
-    </Button>
-  )}
-</div>
-
-
+                  {room.isAproved === true ? (
+                    <div className="w-full flex justify-end  ">
+                      <Link to={`/editRoom/${room._id}`}>
+                        <Button
+                          size="md"
+                          className="ml-auto h-[30px] bg-custom-yellow"
+                        >
+                          Edit
+                        </Button>
+                      </Link>
+                    </div>
+                  ) : (
+                    <Button
+                      isLoading
+                      color="secondary"
+                      className="ml-auto"
+                      spinner={
+                        <svg
+                          className="animate-spin h-5 w-5 text-current"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <circle
+                            className="opacity-25"
+                            cx="12"
+                            cy="12"
+                            r="10"
+                            stroke="currentColor"
+                            strokeWidth="4"
+                          />
+                          <path
+                            className="opacity-75"
+                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      }
+                    >
+                      Not Approved
+                    </Button>
+                  )}
+                </div>
               </div>
             </div>
           ))}

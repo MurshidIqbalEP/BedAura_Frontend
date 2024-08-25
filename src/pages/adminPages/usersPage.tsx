@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Button, Space, Table, Popconfirm } from 'antd';
-import type { TableColumnsType, TableProps } from 'antd';
-import { getAllUsers } from '../../api/admin';
-import { blockUser } from '../../api/admin';
-import { unBlockUser } from '../../api/admin';
+import React, { useState, useEffect } from "react";
+import { Button, Space, Table, Popconfirm } from "antd";
+import type { TableColumnsType, TableProps } from "antd";
+import { getAllUsers } from "../../api/admin";
+import { blockUser } from "../../api/admin";
+import { unBlockUser } from "../../api/admin";
 
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 interface DataType {
   key: string;
@@ -14,7 +14,7 @@ interface DataType {
   isBlocked: boolean;
 }
 
-type OnChange = NonNullable<TableProps<DataType>['onChange']>;
+type OnChange = NonNullable<TableProps<DataType>["onChange"]>;
 type Filters = Parameters<OnChange>[1];
 type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
@@ -30,7 +30,7 @@ const App: React.FC = () => {
         const fetchedUsers = await getAllUsers();
         setData(fetchedUsers.data.data);
       } catch (error) {
-        toast.error('Failed to fetch users');
+        toast.error("Failed to fetch users");
       }
     };
 
@@ -48,54 +48,52 @@ const App: React.FC = () => {
     setSortedInfo({});
   };
 
-  const handleBlock =async (email: string) => {
-        let blocked =  await blockUser(email)
-        if(blocked){
-            setData((prevData) => 
-                prevData.map((user) => 
-                  user.email === email ? { ...user, isBlocked: true } : user
-                )
-              );
-              toast.success("User blocked successfully!");
-        }
-        
+  const handleBlock = async (email: string) => {
+    let blocked = await blockUser(email);
+    if (blocked) {
+      setData((prevData) =>
+        prevData.map((user) =>
+          user.email === email ? { ...user, isBlocked: true } : user
+        )
+      );
+      toast.success("User blocked successfully!");
+    }
   };
 
-  const handleUnblock = async(email: string) => {
-    let unBlocked =  await unBlockUser(email)
-    if(unBlocked){
-        setData((prevData) => 
-            prevData.map((user) => 
-              user.email === email ? { ...user, isBlocked: false } : user
-            )
-          );
-          toast.success("User unblocked successfully!",);
+  const handleUnblock = async (email: string) => {
+    let unBlocked = await unBlockUser(email);
+    if (unBlocked) {
+      setData((prevData) =>
+        prevData.map((user) =>
+          user.email === email ? { ...user, isBlocked: false } : user
+        )
+      );
+      toast.success("User unblocked successfully!");
     }
-
   };
 
   const columns: TableColumnsType<DataType> = [
     {
-      title: 'Name',
-      dataIndex: 'name',
-      key: 'name',
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
       sorter: (a, b) => a.name.localeCompare(b.name),
-      sortOrder: sortedInfo.columnKey === 'name' ? sortedInfo.order : null,
+      sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
       ellipsis: true,
-      align: 'center',
+      align: "center",
     },
     {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
       sorter: (a, b) => a.email.localeCompare(b.email),
-      sortOrder: sortedInfo.columnKey === 'email' ? sortedInfo.order : null,
+      sortOrder: sortedInfo.columnKey === "email" ? sortedInfo.order : null,
       ellipsis: true,
-      align: 'center',
+      align: "center",
     },
     {
-      title: 'Action',
-      key: 'action',
+      title: "Action",
+      key: "action",
       render: (_, record) => (
         <Space size="middle">
           {record.isBlocked ? (
@@ -115,7 +113,7 @@ const App: React.FC = () => {
           )}
         </Space>
       ),
-      align: 'center',
+      align: "center",
     },
   ];
 
@@ -131,10 +129,10 @@ const App: React.FC = () => {
         dataSource={data}
         onChange={handleChange}
         bordered
-        pagination={{ 
-            position: ['bottomCenter'], 
-            size: 'small' 
-          }}
+        pagination={{
+          position: ["bottomCenter"],
+          size: "small",
+        }}
       />
     </>
   );

@@ -2,38 +2,35 @@ import Img from "../assets/img/loging-bg.png";
 import Logo from "../assets/img/white.png";
 import { Input } from "@nextui-org/react";
 import { useState, FormEvent } from "react";
-import { Link, useNavigate,useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { changePass } from "../api/user";
 import { toast } from "react-toastify";
 
-
 type LocationState = {
-    email: string;
-  };
+  email: string;
+};
 
 export default function Login() {
   const [password, setPassword] = useState("");
   const [conformPass, setConformPass] = useState("");
-  const [errors, setErrors] = useState({ password: "", conformPass:"" });
+  const [errors, setErrors] = useState({ password: "", conformPass: "" });
   const navigate = useNavigate();
   const location = useLocation();
   const { email } = (location.state as LocationState) || {};
 
   const validateForm = () => {
     let valid = true;
-    let tempErrors = { password: "" ,conformPass:"" };
+    let tempErrors = { password: "", conformPass: "" };
 
-    
     if (!password || password.trim() === "" || password.length < 6) {
-        tempErrors.password = "Invalid Password";
-        valid = false;
-      }
-    
-      if (conformPass !== password) {
-        tempErrors.password = "Conform password is not Correct";
-        valid = false;
-      }
+      tempErrors.password = "Invalid Password";
+      valid = false;
+    }
 
+    if (conformPass !== password) {
+      tempErrors.password = "Conform password is not Correct";
+      valid = false;
+    }
 
     setErrors(tempErrors);
     return valid;
@@ -45,13 +42,10 @@ export default function Login() {
     if (!validateForm()) return;
 
     try {
-      let response = await changePass(email,password);
+      let response = await changePass(email, password);
 
-      
-      
-      toast.success(response.message)
-      navigate('/login');
-      
+      toast.success(response.message);
+      navigate("/login");
     } catch (error) {
       toast.error("Password reset failed. Please try again.");
     }
@@ -62,10 +56,12 @@ export default function Login() {
       <div className="flex w-[900px] max-w-screen-sm h-[400px]">
         <div className="w-1/2 bg-white p-4 rounded-tl-lg flex flex-col rounded-bl-lg items-center shadow-2xl">
           <img className="p-5 pb-0" src={Logo} alt="logo" />
-          <p className="font-mono font-light text-slate-500 text-xs">Please enter your Email</p>
+          <p className="font-mono font-light text-slate-500 text-xs">
+            Please enter your Email
+          </p>
           <form
             className="flex flex-col w-full justify-center mt-1 items-center md:flex-nowrap mb-0 md:mb-0 gap-1"
-            onSubmit={handleSubmit} // Use onSubmit here
+            onSubmit={handleSubmit}
           >
             <Input
               type="password"
@@ -82,7 +78,7 @@ export default function Login() {
               </p>
             )}
 
-<Input
+            <Input
               type="password"
               label="Conform Password"
               labelPlacement="outside"
@@ -96,7 +92,7 @@ export default function Login() {
                 {errors.conformPass}
               </p>
             )}
-            
+
             <button
               type="submit" // Use type="submit" here
               className="bg-custom-red w-[250px] mt-4 rounded-lg font-poppins text-sm text-white h-8"
@@ -107,12 +103,18 @@ export default function Login() {
           <p className="text-xs mt-2 text-gray-400">
             Back to?{" "}
             <Link to="/register">
-              <span className="text-custom-red hover:text-gray-400">Sign up!</span>
+              <span className="text-custom-red hover:text-gray-400">
+                Sign up!
+              </span>
             </Link>
           </p>
         </div>
         <div className="w-1/2">
-          <img className="h-full rounded-tr-lg rounded-br-lg" src={Img} alt="background" />
+          <img
+            className="h-full rounded-tr-lg rounded-br-lg"
+            src={Img}
+            alt="background"
+          />
         </div>
       </div>
     </div>

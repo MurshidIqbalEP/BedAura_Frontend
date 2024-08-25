@@ -51,9 +51,8 @@ const fetchSuggestions = async (query: string) => {
 };
 
 function AddSpace() {
-
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [maintenanceCharge, setMaintenanceCharge] = useState("");
@@ -114,8 +113,6 @@ function AddSpace() {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
- 
-
     let valid = true;
 
     // Name validation
@@ -160,7 +157,7 @@ function AddSpace() {
       valid = false;
     }
 
-    if (slots.trim() === "" || Number(slots) <= 0 ) {
+    if (slots.trim() === "" || Number(slots) <= 0) {
       toast.error(" Enter Available Slots");
       valid = false;
     }
@@ -211,19 +208,17 @@ function AddSpace() {
       formData.append("slots", slots);
       formData.append("location", location);
       formData.append("description", description);
-      formData.append('coordinates', JSON.stringify(selectedLocation ?? {})); 
-     
+      formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
 
-      // Append each image with the same field name 'images'
       image.forEach((img) => {
-        formData.append("images", img); // Note the same field name 'images'
+        formData.append("images", img);
       });
 
       let response = await addRoom(formData);
 
       if (response) {
-        toast.success(response.message)
-        navigate('/yourRooms')
+        toast.success(response.message);
+        navigate("/yourRooms");
       }
     }
   };
