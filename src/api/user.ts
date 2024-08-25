@@ -152,9 +152,9 @@ export const fetchRooms = async (id:string) => {
   }
 };
 
-export const fetchAllRooms = async ()=>{
+export const fetchAllRooms = async (page: number, limit: number)=>{
   try {
-    const response = await Api.get(userRoutes.fetchAllRooms);
+    const response = await Api.get(`${userRoutes.fetchAllRooms}?page=${page}&limit=${limit}`);
 
     return response.data;
   } catch (error) {
