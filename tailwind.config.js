@@ -12,6 +12,7 @@ export default {
     extend: {
       colors: {
         'custom-red': '#EA454C',
+        'custom-yellow': '#F9B90F',
       },
       fontFamily: {
         kode: ['Kode Mono', 'monospace'],

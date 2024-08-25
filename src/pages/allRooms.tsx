@@ -1,65 +1,58 @@
-import { FormEvent, useEffect, useRef, useState } from "react";
-import { RootState } from "../redux/store";
-import { useSelector } from "react-redux";
-import { addRoom, fetchRooms } from "../api/user";
-import { Button } from "@nextui-org/react";
-import { Link, useNavigate } from "react-router-dom";
 
+import AllRoomsBanner from "../components/allRoomsBanner";
+import { useEffect, useState } from "react";
+import { fetchAllRooms } from "../api/user";
+import { Button } from "antd";
 
 interface Coordinates {
-  lat: number;
-  lng: number;
-}
+    lat: number;
+    lng: number;
+  }
 
 interface Room {
-  _id: string;
-  name: string;
-  mobile: string;
-  userId: string;
-  maintenanceCharge: string;
-  securityDeposit: string;
-  gender: string;
-  slots: number;
-  roomType: string;
-  noticePeriod: string;
-  electricityCharge: string;
-  location: string;
-  description: string;
-  coordinates: Coordinates;
-  images: string[];
-  isAproved: boolean;
-}
-
-
+    _id: string;
+    name: string;
+    mobile: string;
+    userId: string;
+    maintenanceCharge: string;
+    securityDeposit: string;
+    gender: string;
+    slots: number;
+    roomType: string;
+    noticePeriod: string;
+    electricityCharge: string;
+    location: string;
+    description: string;
+    coordinates: Coordinates;
+    images: string[];
+    isAproved: boolean;
+  }
   
- 
+function allRooms() {
+    const SERVER_URL = "http://localhost:3000";
+    const [rooms, setRooms] = useState<Room[]>([]);
 
-function yourRooms() {
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const userId = useSelector((state: RootState) => state.auth.userInfo._id);
-  const SERVER_URL = "http://localhost:3000";
-  
-
-  useEffect(() => {
-    const getRooms = async () => {
-      try {
-        const rooms = await fetchRooms(userId);
-
-        setRooms(rooms.data);
-      } catch (error) {
-        console.error("Error fetching rooms:", error);
-      }
-    };
-
-    getRooms();
-  }, [userId]);
-
- 
-
+    useEffect(() => {
+        const getRooms = async () => {
+          try {
+            const rooms = await fetchAllRooms();
+             
+            setRooms(rooms.rooms);
+          } catch (error) {
+            console.error("Error fetching rooms:", error);
+          }
+        };
+    
+        getRooms();
+      }, []);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-      <h1 className="text-3xl font-bold mb-6">Your Rooms</h1>
+    <div>
+      <AllRoomsBanner />
+      
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+     
       {rooms.length === 0 ? (
         <p className="text-gray-500">You don't have any rooms yet.</p>
       ) : (
@@ -114,45 +107,13 @@ function yourRooms() {
                     {room.description}
                   </p>
                 </div>
-                <div className="flex justify-between items-center mt-4">
-  {room.isAproved === true ? (
-    <div className="w-full flex justify-end  " >
-    <Link to={`/editRoom/${room._id}`}>
-      <Button size="md" className="ml-auto h-[30px] bg-custom-yellow">Edit</Button>
-    </Link>
-    </div>
-  ) : (
-    <Button
-      isLoading
-      color="secondary"
-      className="ml-auto"
-      spinner={
-        <svg
-          className="animate-spin h-5 w-5 text-current"
-          fill="none"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            fill="currentColor"
-          />
-        </svg>
-      }
-    >
-      Not Approved
-    </Button>
-  )}
-</div>
+                
+               <div className="w-full flex justify-end " >
+               <Button className=" bg-blue-700 text-white">
+                 Details
+              </Button> 
+               </div>
+ 
 
 
               </div>
@@ -161,7 +122,8 @@ function yourRooms() {
         </div>
       )}
     </div>
+    </div>
   );
 }
 
-export default yourRooms;
+export default allRooms;

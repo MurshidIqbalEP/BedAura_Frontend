@@ -30,8 +30,8 @@ export default function Header() {
           </Link>
 
           <div className="hidden md:flex items-center space-x-6">
-            <NavLink to="/">Our Rooms</NavLink>
-            <NavLink to="/about">About</NavLink>
+            <NavLink to="/allRooms"> Rooms</NavLink>
+            <NavLink to="/yourRooms">Your Rooms</NavLink>
             <NavLink to="/contact">Contact</NavLink>
           </div>
 
@@ -99,15 +99,9 @@ export default function Header() {
       {isMenuOpen && (
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-            <NavLink to="/" className="block">
-              Our Rooms
-            </NavLink>
-            <NavLink to="/about" className="block">
-              About
-            </NavLink>
-            <NavLink to="/contact" className="block">
-              Contact
-            </NavLink>
+          <NavLink to="/allRooms"> Rooms</NavLink>
+            <NavLink to="/rourRooms">Your Rooms</NavLink>
+            <NavLink to="/contact">Contact</NavLink>
           </div>
           <div className="pt-2 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5 space-x-2">

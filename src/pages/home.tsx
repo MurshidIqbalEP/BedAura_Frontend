@@ -2,7 +2,7 @@ import { Button } from "@nextui-org/react";
 import LandingPageImage from "../assets/img/landing page img.png";
 import secondLandingPageImg from "../assets/img/second landingPage img.png";
 import { Link } from "react-router-dom";
-import addSpace from "./addSpace";
+
 
 export default function Home() {
   return (
@@ -21,7 +21,7 @@ export default function Home() {
             Nestled in the heart of the city, our exquisite hotel is your home away from home,
             where every stay is a memorable experience.
           </p>
-          <Link to="/addSpace">
+          <Link to="/allRooms">
           <Button 
             radius="full" 
             className="self-start px-6 py-2 bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-semibold shadow-lg hover:opacity-90 transition-all duration-300 ease-in-out"
@@ -29,6 +29,7 @@ export default function Home() {
             Book Your Space
           </Button>
           </Link>
+          
         </div>
 
         <div className="w-full lg:w-3/5 relative min-h-[300px] lg:min-h-[80vh]">
@@ -54,13 +55,14 @@ export default function Home() {
       Turn your unused space into an opportunity. List your accommodation    
       easily and start earning by providing unique stays for guests.
     </p>
-
+    <Link to="/addSpace">
     <Button 
       radius="full" 
       className="self-start px-6 py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white font-semibold shadow-lg hover:opacity-90 transition-all duration-300 ease-in-out"
     >
       Post Your Space
     </Button>
+    </Link>
   </div>
 
   <div className="w-full lg:w-3/5 relative min-h-[300px] lg:min-h-[80vh]">

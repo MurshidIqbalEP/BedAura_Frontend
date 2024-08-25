@@ -152,6 +152,17 @@ export const fetchRooms = async (id:string) => {
   }
 };
 
+export const fetchAllRooms = async ()=>{
+  try {
+    const response = await Api.get(userRoutes.fetchAllRooms);
+
+    return response.data;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 export const fetchRoom = async (id:string) => {
   try {
     const response = await Api.get(userRoutes.fetchRoomById, {

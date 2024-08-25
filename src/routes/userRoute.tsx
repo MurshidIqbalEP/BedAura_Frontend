@@ -11,6 +11,7 @@ import ChangePass from "../pages/change-pass.tsx"
 import AddSpace from "../pages/addSpace.tsx";
 import YourRooms from "../pages/yourRooms.tsx";
 import EditRoom from "../pages/editRoom.tsx";
+import AllRooms from "../pages/allRooms.tsx";
 
 export default function userRoute() {
   return (
@@ -21,6 +22,7 @@ export default function userRoute() {
       <Route path="addSpace" element={<AddSpace />} /> 
       <Route path="yourRooms" element={<YourRooms />} /> 
       <Route path="editRoom/:id" element={< EditRoom/>} /> 
+      <Route path="allRooms" element={< AllRooms/>} /> 
       
     </Route>
 
