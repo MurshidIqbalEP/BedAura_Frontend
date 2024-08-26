@@ -1,15 +1,27 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaUsers } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
 import { MdUpcoming } from "react-icons/md";    
 import { RiLogoutBoxFill } from "react-icons/ri";
+import { adminLogout } from "../redux/Slices/adminSlice";
+import { useSelector, useDispatch } from "react-redux";
+
 
 
 function sideBar() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const activeStyle = {
     backgroundColor: "#0F1015",
     color: "white ",
   };
+
+  const handleLogOut = ()=>{
+    dispatch(adminLogout());
+    localStorage.removeItem('token')
+    navigate("/login");
+  }
 
   return (
     <div className="mt-20">
@@ -98,7 +110,7 @@ function sideBar() {
               >
                 <RiLogoutBoxFill />
 
-                <span className="flex-1 ms-3 whitespace-nowrap">LogOut</span>
+                <span className="flex-1 ms-3 whitespace-nowrap" onClick={handleLogOut}>LogOut</span>
               </NavLink>
             </li>
           </ul>

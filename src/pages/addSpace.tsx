@@ -51,6 +51,8 @@ const fetchSuggestions = async (query: string) => {
 };
 
 function AddSpace() {
+
+  
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
   const navigate = useNavigate();
   const [name, setName] = useState("");
