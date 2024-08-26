@@ -2,10 +2,10 @@ import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
 import { RootState } from "../redux/store";
 
-function userProtect() {
-  const { userInfo } = useSelector((state: RootState) => state.auth);
+function adminProtect() {
+  const { adminInfo } = useSelector((state: RootState) => state.adminAuth);
 
-  return userInfo ? <Outlet /> : <Navigate to="/home" replace />;
+  return adminInfo ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
-export default userProtect;
+export default adminProtect;

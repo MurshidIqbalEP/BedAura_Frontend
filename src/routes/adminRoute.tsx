@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import AdminLayout from "../layouts/adminLayout";
-import AdminProtect from "../utils/userProtectedRoute";
+import AdminProtect from "../utils/adminProtectedRoute";
 import UsersPage from "../pages/adminPages/usersPage";
 import Login from "../pages/login";
 
@@ -10,7 +10,7 @@ export default function adminRoute() {
     <Routes>
       <Route path="/" element={<Login />} />
       <Route element={<AdminLayout />}>
-        {/* admin Protected Routes */}
+        {/* admin Private Routes */}
         <Route element={<AdminProtect />}>
           <Route path="/users" element={<UsersPage />} />
         </Route>

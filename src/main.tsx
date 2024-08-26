@@ -11,13 +11,13 @@ import { ToastContainer } from "react-toastify";
 
 createRoot(document.getElementById("root")!).render(
   <GoogleOAuthProvider clientId='1009282809407-sh8h2kgmot2q295a503sl5530pldnaj9.apps.googleusercontent.com'>
-  <StrictMode>
+  
     <NextUIProvider>
       <ToastContainer />
       <Provider store={store}>
         <App />
       </Provider>
     </NextUIProvider>
-  </StrictMode>
+  
   </GoogleOAuthProvider>
 );

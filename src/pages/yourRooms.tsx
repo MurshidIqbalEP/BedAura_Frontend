@@ -58,16 +58,16 @@ function yourRooms() {
           {rooms.map((room) => (
             <div
               key={room._id}
-              className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row"
+  className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]"
             >
               <div className="sm:w-1/3">
                 <img
                   src={`${SERVER_URL}/uploads/${room.images[0]}`}
                   alt={room.name}
-                  className="w-full h-48 sm:h-full object-cover"
+                 className="w-full h-full object-cover"
                 />
               </div>
-              <div className="sm:w-2/3 p-4 flex flex-col justify-between">
+              <div className="sm:w-2/3 p-4 flex flex-col justify-between overflow-y-auto">
                 <div>
                   <h2 className="text-xl font-semibold mb-2">{room.name}</h2>
                   <div className="grid grid-cols-2 gap-2 mb-3">

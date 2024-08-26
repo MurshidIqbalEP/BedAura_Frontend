@@ -12,7 +12,7 @@ import { useGoogleLogin } from "@react-oauth/google";
 import { login } from "../api/user";
 import { Gsign_up } from "../api/user";
 import axios from "axios";
-import { toast } from "react-toastify";
+
 
 export default function Login() {
   const [email, setEmail] = useState("");

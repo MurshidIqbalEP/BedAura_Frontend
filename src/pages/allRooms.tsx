@@ -67,16 +67,16 @@ function AllRooms() {
                 key={room._id}
                 className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-64"
               >
-                <div className="sm:w-1/3 h-full overflow-hidden">
+                <div className="sm:w-1/3 h-64 overflow-hidden">
                   <img
                     src={`${SERVER_URL}/uploads/${room.images[0]}`}
                     alt={room.name}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="sm:w-2/3 p-4 flex flex-col justify-between h-full">
+                <div className="sm:w-2/3  overflow-hidden px-4 flex flex-col justify-between ">
                   <div>
-                    <h2 className="text-xl font-semibold mb-2">{room.name}</h2>
+                    <h2 className="text-lg font-semibold mb-2">{room.name}</h2>
                     <div className="grid grid-cols-2 gap-2 mb-3">
                       <p className="text-sm text-gray-600">
                         <span className="font-medium p-2">Mobile:</span>{" "}
