@@ -1,6 +1,7 @@
 import errorHandle from "./error";
 import Api from "../services/axois";
 import userRoutes from "../services/endpoints/userEndpoints";
+import axios from "axios";
 
 export const login = async (email: string, password: string) => {
   try {
@@ -141,6 +142,8 @@ export const editRoomApi = async (formData: FormData) => {
 
 export const fetchRooms = async (id:string) => {
   try {
+
+
     const response = await Api.get(userRoutes.fetchRoomsById, {
       params: { id }
     });

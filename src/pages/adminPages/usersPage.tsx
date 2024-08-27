@@ -1,10 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Button, Space, Table, Popconfirm } from "antd";
+import { Button, Space, Table, Popconfirm, Input } from "antd";
 import type { TableColumnsType, TableProps } from "antd";
-import { getAllUsers } from "../../api/admin";
-import { blockUser } from "../../api/admin";
-import { unBlockUser } from "../../api/admin";
-
+import { getAllUsers, blockUser, unBlockUser } from "../../api/admin";
 import { toast } from "react-toastify";
 
 interface DataType {
@@ -23,6 +20,7 @@ const App: React.FC = () => {
   const [data, setData] = useState<DataType[]>([]);
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
+  const [searchText, setSearchText] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -42,10 +40,10 @@ const App: React.FC = () => {
     setSortedInfo(sorter as Sorts);
   };
 
-  const clearFilters = () => setFilteredInfo({});
   const clearAll = () => {
     setFilteredInfo({});
     setSortedInfo({});
+    setSearchText("");
   };
 
   const handleBlock = async (email: string) => {
@@ -72,6 +70,13 @@ const App: React.FC = () => {
     }
   };
 
+  // Filter data based on search text
+  const filteredData = data.filter(
+    (user) =>
+      user.name.toLowerCase().includes(searchText.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchText.toLowerCase())
+  );
+
   const columns: TableColumnsType<DataType> = [
     {
       title: "Name",
@@ -81,6 +86,8 @@ const App: React.FC = () => {
       sortOrder: sortedInfo.columnKey === "name" ? sortedInfo.order : null,
       ellipsis: true,
       align: "center",
+      filteredValue: filteredInfo.name || null,
+      onFilter: (value, record) => record.name.includes(value as string),
     },
     {
       title: "Email",
@@ -90,6 +97,8 @@ const App: React.FC = () => {
       sortOrder: sortedInfo.columnKey === "email" ? sortedInfo.order : null,
       ellipsis: true,
       align: "center",
+      filteredValue: filteredInfo.email || null,
+      onFilter: (value, record) => record.email.includes(value as string),
     },
     {
       title: "Action",
@@ -119,14 +128,21 @@ const App: React.FC = () => {
 
   return (
     <>
-      <Space style={{ marginBottom: 16 }}>
-        <h1 className="text-lg font-bold">Users</h1>
-        <Button onClick={clearFilters}>Clear Filters</Button>
-        <Button onClick={clearAll}>Clear Filters and Sorters</Button>
-      </Space>
+      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 9 }}>
+        <h1 className="text-lg font-bold ml-2 ">Users :</h1>
+        <Space>
+          <Input
+            placeholder="Search by name or email"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 200 }}
+          />
+          <Button onClick={clearAll}>Clear Search and Sorters</Button>
+        </Space>
+      </div>
       <Table
         columns={columns}
-        dataSource={data}
+        dataSource={filteredData}
         onChange={handleChange}
         bordered
         pagination={{
