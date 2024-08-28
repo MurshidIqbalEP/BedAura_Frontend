@@ -12,6 +12,7 @@ import { RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
+import { addRoom } from "../api/user";
 
 
 const RoomType = [
@@ -261,19 +262,13 @@ function AddSpace() {
         formData.append("images", img);
       });
 
-      try {
-        const response = await axios.post('/api/rooms', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        });
-
-        toast.success(response.data.message);
+  
+        const response = await addRoom(formData)
+        console.log(response);
+      
+        toast.success(response);
         navigate("/yourRooms");
-      } catch (error) {
-        toast.error('Error adding room');
-        console.error("Error adding room:", error);
-      }
+      
     }
   };
 

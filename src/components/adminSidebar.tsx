@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaUsers } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
-import { MdUpcoming } from "react-icons/md";    
+import { MdUpcoming ,MdEditDocument} from "react-icons/md";    
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { adminLogout } from "../redux/Slices/adminSlice";
 import { useSelector, useDispatch } from "react-redux";
@@ -58,7 +58,7 @@ function sideBar() {
         >
           <ul className="space-y-2 font-medium">
             
-            <li>
+            <li className=" border-gray-300 border-b-1">
               <NavLink
                 to="/admin/users"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -72,7 +72,7 @@ function sideBar() {
               </NavLink>
             </li>
 
-            <li>
+            <li  className=" border-gray-300 border-b-1">
               <NavLink
                 to="/admin/rooms"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
@@ -86,9 +86,9 @@ function sideBar() {
               </NavLink>
             </li>
 
-            <li>
+            <li className=" border-gray-300 border-b-1">
               <NavLink
-                to="/admin/requests"
+                to="/admin/RoomRequests"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
               >
@@ -100,9 +100,23 @@ function sideBar() {
               </NavLink>
             </li>
 
+            <li className=" border-gray-300 border-b-1">
+              <NavLink
+                to="/admin/Editrequests"
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                style={({ isActive }) => (isActive ? activeStyle : undefined)}
+              >
+                <MdEditDocument />
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  Edit Requests
+                </span>
+                
+              </NavLink>
+            </li>
+
             
             
-            <li>
+            <li className=" border-gray-300 border-b-1 ">
               <NavLink
                 to="/admin/coupons"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"

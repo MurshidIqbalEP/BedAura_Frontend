@@ -5,7 +5,6 @@ import axios from "axios";
 
 export const login = async (email: string, password: string) => {
   try {
-    console.log("login api caalling");
 
     let response = await Api.post(userRoutes.login, { email, password });
     return response;

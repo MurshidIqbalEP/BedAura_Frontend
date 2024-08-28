@@ -58,13 +58,13 @@ function yourRooms() {
           {rooms.map((room) => (
             <div
               key={room._id}
-  className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]"
+              className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]"
             >
               <div className="sm:w-1/3">
                 <img
                   src={`${SERVER_URL}/uploads/${room.images[0]}`}
                   alt={room.name}
-                 className="w-full h-full object-cover"
+                  className="w-full h-full object-cover"
                 />
               </div>
               <div className="sm:w-2/3 p-4 flex flex-col justify-between overflow-y-auto">
@@ -110,47 +110,21 @@ function yourRooms() {
                   </p>
                 </div>
                 <div className="flex justify-between items-center mt-4">
-                  {room.isAproved === true ? (
-                    <div className="w-full flex justify-end  ">
-                      <Link to={`/editRoom/${room._id}`}>
-                        <Button
-                          size="md"
-                          className="ml-auto h-[30px] bg-custom-yellow"
-                        >
-                          Edit
-                        </Button>
-                      </Link>
-                    </div>
-                  ) : (
-                    <Button
-                      isLoading
-                      color="secondary"
-                      className="ml-auto"
-                      spinner={
-                        <svg
-                          className="animate-spin h-5 w-5 text-current"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="currentColor"
-                            strokeWidth="4"
-                          />
-                          <path
-                            className="opacity-75"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            fill="currentColor"
-                          />
-                        </svg>
-                      }
-                    >
-                      Not Approved
-                    </Button>
+                  <div className="w-full flex justify-end  ">
+                    <Link to={`/editRoom/${room._id}`}>
+                      <Button
+                        size="md"
+                        className="ml-auto mr-1 bg-custom-yellow"
+                      >
+                        Edit
+                      </Button>
+                    </Link>
+                  </div>
+
+                  {room.isAproved === false && (
+                    <Button color="primary" isLoading>
+                    Not Approved
+                  </Button>
                   )}
                 </div>
               </div>

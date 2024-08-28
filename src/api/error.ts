@@ -17,11 +17,11 @@ const errorHandle = (error: Error | AxiosError) => {
     if (axiosError.response) {
       const errorResponse = axiosError.response.data as IErrorResponse;
 
-      console.log("Error Response:", errorResponse);
+      
 
       switch (axiosError.response.status) {
-        case 400:
-        case 401:
+        // case 400:
+        // case 401:
         case 403:
           toast.error(
             errorResponse.message || "A client error occurred. Please try again."
