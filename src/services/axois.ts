@@ -61,12 +61,7 @@ Api.interceptors.response.use(
       }
     }
 
-    // Handle other errors
-    if (error.response) {
-      errorHandle(error); // Your custom error handling function
-    } else {
-      console.log("Axios error:", error);
-    }
+    
     return Promise.reject(error);
   }
 );

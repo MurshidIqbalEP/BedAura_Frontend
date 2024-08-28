@@ -1,11 +1,18 @@
-import { Input, Button, Select, SelectItem, Textarea } from "@nextui-org/react";
+import {
+  Input,
+  Button,
+  Select,
+  SelectItem,
+  Textarea,
+} from "@nextui-org/react";
 import axios from "axios";
 import { useState, FormEvent, useEffect, useRef } from "react";
-import { toast } from "react-toastify";
-import { addRoom } from "../api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { MdDeleteOutline } from "react-icons/md";
+
 
 const RoomType = [
   { key: "BedSpace", label: "BedSpace" },
@@ -51,8 +58,6 @@ const fetchSuggestions = async (query: string) => {
 };
 
 function AddSpace() {
-
-  
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -66,6 +71,7 @@ function AddSpace() {
   const [location, setLocation] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File[]>([]);
+  const [imgCount,setImgCount] = useState(3)
 
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -75,10 +81,27 @@ function AddSpace() {
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
 
+  // Error state management
+  const [errors, setErrors] = useState({
+    name: "",
+    mobile: "",
+    maintenanceCharge: "",
+    securityDeposit: "",
+    gender: "",
+    type: "",
+    noticePeriod: "",
+    slots: "",
+    location: "",
+    description: "",
+    image: "",
+  });
+
   useEffect(() => {
     if (location) {
       fetchSuggestions(location)
         .then((data) => {
+          console.log(data);
+          
           setSuggestions(data);
           setIsOpen(true);
         })
@@ -104,69 +127,91 @@ function AddSpace() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
 
-    if (selectedFiles.length > 5) {
-      alert("You can only upload up to 5 images.");
+    if (selectedFiles.length > imgCount) {
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        image: `You can only upload up to ${imgCount} images.`,
+      }));
       return;
     }
 
-    setImage(selectedFiles);
+    setImage((prevImages) => [...prevImages, ...selectedFiles]);
+    setImgCount(imgCount-selectedFiles.length)
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      image: "",
+    }));
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
 
     let valid = true;
+    const newErrors = {
+      name: "",
+      mobile: "",
+      maintenanceCharge: "",
+      securityDeposit: "",
+      gender: "",
+      type: "",
+      noticePeriod: "",
+      slots: "",
+      location: "",
+      description: "",
+      image: "",
+    };
 
     // Name validation
     if (name.trim() === "") {
-      toast.error("Name required");
+      newErrors.name = "Please Enter Name ";
       valid = false;
     }
 
     // Mobile number validation
     if (mobile.length < 10) {
-      toast.error("10 digit number needed");
+      newErrors.mobile = "10 digit number Required";
       valid = false;
     }
 
     // Maintenance charge validation
     if (maintenanceCharge.trim() === "") {
-      toast.error("Maintenance charge required");
+      newErrors.maintenanceCharge = "Maintenance charge required";
       valid = false;
     }
 
     // Security deposit validation
     if (securityDeposit.trim() === "") {
-      toast.error("Security deposit required");
+      newErrors.securityDeposit = "Security deposit required";
       valid = false;
     }
 
     // Gender validation
     if (gender.trim() === "") {
-      toast.error("Gender required");
+      newErrors.gender = "Gender required";
       valid = false;
     }
 
     // Room type validation
     if (type.trim() === "") {
-      toast.error("Room type required");
+      newErrors.type = "Room type required";
       valid = false;
     }
 
     // Notice period validation
     if (noticePeriod.trim() === "") {
-      toast.error("Notice period required");
+      newErrors.noticePeriod = "Notice period required";
       valid = false;
     }
 
+    // Slots validation
     if (slots.trim() === "" || Number(slots) <= 0) {
-      toast.error(" Enter Available Slots");
+      newErrors.slots = "Enter available slots";
       valid = false;
     }
 
     // Location validation
     if (location.trim() === "" || !selectedLocation) {
-      toast.error("Select location");
+      newErrors.location = "Select location";
       valid = false;
     } else if (selectedLocation) {
       const { lat, lng } = selectedLocation;
@@ -178,24 +223,24 @@ function AddSpace() {
         lng < -180 ||
         lng > 180
       ) {
-        toast.error("Invalid location coordinates");
+        newErrors.location = "Invalid location coordinates";
         valid = false;
       }
     }
 
     // Description validation
     if (description.trim() === "") {
-      toast.error("Enter description");
+      newErrors.description = "Enter description";
       valid = false;
     }
 
     // Image validation
     if (image.length !== 3) {
-      toast.error("3 images required");
+      newErrors.image = ` add ${imgCount}  more images`;
       valid = false;
     }
 
-    // Set errors and check validity
+    setErrors(newErrors);
 
     if (valid) {
       const formData = new FormData();
@@ -216,62 +261,100 @@ function AddSpace() {
         formData.append("images", img);
       });
 
-      let response = await addRoom(formData);
+      try {
+        const response = await axios.post('/api/rooms', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
 
-      if (response) {
-        toast.success(response.message);
+        toast.success(response.data.message);
         navigate("/yourRooms");
+      } catch (error) {
+        toast.error('Error adding room');
+        console.error("Error adding room:", error);
       }
     }
   };
 
+  const dltImage = (imgToDelete:any) => {
+    setImage(image.filter((img) => img.name !== imgToDelete.name));
+    setImgCount((prev) => prev + 1);
+    
+  };
+
+
   return (
     <div className="bg-white p-6 m-6 rounded-md shadow-md max-w-3xl mx-auto">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-gray-700">
-        Add Your Room/Space
-      </h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Input
-            name="name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name"
-            required
-            variant="bordered"
-            size="sm"
-          />
+    <h2 className="text-2xl font-semibold mb-6 text-center text-gray-700">
+      Add Your Room/Space
+    </h2>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Three Input Fields in One Row */}
+      <div className="flex flex-wrap gap-6 justify-center  ">
+          {/* Name Field */}
+          <div className="w-full md:w-1/4">
+            <Input
+              name="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Name"
+              required
+              variant="bordered"
+              size="sm"
+              className="w-full"
+            />
+            {errors.name && <p className="text-red-500 text-xs mt-1">{errors.name}</p>}
+          </div>
 
-          <Input
-            type="tel"
-            name="mobile"
-            value={mobile}
-            onChange={(e) => setMobile(e.target.value)}
-            placeholder="Mobile"
-            variant="bordered"
-            required
-            size="sm"
-          />
+          {/* Mobile Field */}
+          <div className="w-full md:w-1/4">
+            <Input
+              type="tel"
+              name="mobile"
+              value={mobile}
+              onChange={(e) => setMobile(e.target.value)}
+              placeholder="Mobile"
+              variant="bordered"
+              required
+              size="sm"
+              className="w-full"
+            />
+            {errors.mobile && (
+              <p className="text-red-500 text-xs mt-1">{errors.mobile}</p>
+            )}
+          </div>
 
-          <Input
-            type="number"
-            name="maintenanceCharge"
-            value={maintenanceCharge}
-            onChange={(e) => setMaintenanceCharge(e.target.value)}
-            placeholder="Maintenance Charge"
-            variant="bordered"
-            required
-            size="sm"
-          />
+          {/* Maintenance Charge Field */}
+          <div className="w-full md:w-1/4">
+            <Input
+              type="number"
+              name="maintenanceCharge"
+              value={maintenanceCharge}
+              onChange={(e) => setMaintenanceCharge(e.target.value)}
+              placeholder="Maintenance Charge"
+              variant="bordered"
+              required
+              size="sm"
+              className="w-full"
+            />
+            {errors.maintenanceCharge && (
+              <p className="text-red-500 text-xs mt-1">{errors.maintenanceCharge}</p>
+            )}
+          </div>
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+  
+      {/* Select Inputs in Another Row */}
+      <div className="flex flex-wrap gap-6 justify-center ">
+        {/* Security Deposit Field */}
+        <div className="w-full md:w-1/4">
           <Select
             placeholder="Select Security Deposit"
             aria-label="Security Deposit"
             size="sm"
             variant="bordered"
             onChange={(e) => setSecurityDeposit(e.target.value)}
+            className="w-full"
           >
             {SecurityDeposit.map((deposit) => (
               <SelectItem key={deposit.key} value={deposit.key}>
@@ -279,12 +362,20 @@ function AddSpace() {
               </SelectItem>
             ))}
           </Select>
+          {errors.securityDeposit && (
+            <p className="text-red-500 text-xs mt-1">{errors.securityDeposit}</p>
+          )}
+        </div>
+  
+        {/* Gender Field */}
+        <div className="w-full md:w-1/4">
           <Select
             placeholder="Select Gender"
             aria-label="Preferable Gender"
             size="sm"
             variant="bordered"
             onChange={(e) => setGender(e.target.value)}
+            className="w-full"
           >
             {Gender.map((gen) => (
               <SelectItem key={gen.key} value={gen.key}>
@@ -292,13 +383,20 @@ function AddSpace() {
               </SelectItem>
             ))}
           </Select>
-
+          {errors.gender && (
+            <p className="text-red-500 text-xs mt-1">{errors.gender}</p>
+          )}
+        </div>
+  
+        {/* Room Type Field */}
+        <div className="w-full md:w-1/4">
           <Select
             placeholder="Select Room Type"
             aria-label="Room Type"
             size="sm"
             variant="bordered"
             onChange={(e) => setType(e.target.value)}
+            className="w-full"
           >
             {RoomType.map((room) => (
               <SelectItem key={room.key} value={room.key}>
@@ -306,15 +404,23 @@ function AddSpace() {
               </SelectItem>
             ))}
           </Select>
+          {errors.type && (
+            <p className="text-red-500 text-xs mt-1">{errors.type}</p>
+          )}
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      </div>
+  
+      {/* Another Row for Inputs */}
+      <div className="flex flex-wrap gap-6 justify-center ">
+        {/* Notice Period Field */}
+        <div className="w-full md:w-1/4">
           <Select
             placeholder="Select Notice Period"
             aria-label="Notice Period"
             size="sm"
             variant="bordered"
             onChange={(e) => setNoticePeriod(e.target.value)}
+            className="w-full"
           >
             {NoticePeriod.map((period) => (
               <SelectItem key={period.key} value={period.key}>
@@ -322,7 +428,13 @@ function AddSpace() {
               </SelectItem>
             ))}
           </Select>
-
+          {errors.noticePeriod && (
+            <p className="text-red-500 text-xs mt-1">{errors.noticePeriod}</p>
+          )}
+        </div>
+  
+        {/* Available Slots Field */}
+        <div className="w-full md:w-1/4">
           <Input
             type="number"
             name="slots"
@@ -332,41 +444,52 @@ function AddSpace() {
             onChange={(e) => setSlots(e.target.value)}
             placeholder="Available Slots"
             required
+            className="w-full"
           />
-
-          <div className="relative" ref={wrapperRef}>
-            <Input
-              type="text"
-              name="location"
-              value={location}
-              size="sm"
-              variant="bordered"
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Location"
-              required
-            />
-
-            {isOpen && suggestions.length > 0 && (
-              <ul className="absolute left-0 right-0 bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto">
-                {suggestions.map((suggestion) => (
-                  <li
-                    key={suggestion.id}
-                    onClick={() => handleSelect(suggestion)}
-                    className="px-3 py-2 cursor-pointer hover:bg-gray-100 transition-colors duration-150"
-                  >
-                    <div className="font-medium">{suggestion.place_name}</div>
-                    {suggestion.description && (
-                      <div className="text-xs text-gray-500">
-                        {suggestion.description}
-                      </div>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          {errors.slots && (
+            <p className="text-red-500 text-xs mt-1">{errors.slots}</p>
+          )}
         </div>
-
+  
+        {/* Location Field */}
+        <div className="w-full md:w-1/4 relative" ref={wrapperRef}>
+          <Input
+            type="text"
+            name="location"
+            value={location}
+            size="sm"
+            variant="bordered"
+            onChange={(e) => setLocation(e.target.value)}
+            placeholder="Location"
+            required
+            className="w-full"
+          />
+          {errors.location && (
+            <p className="text-red-500 text-xs mt-1">{errors.location}</p>
+          )}
+          {isOpen && suggestions.length > 0 && (
+            <ul className="absolute left-0 right-0 bg-white border border-gray-300 rounded-md mt-1 shadow-lg z-10 max-h-40 overflow-y-auto">
+              {suggestions.map((suggestion) => (
+                <li
+                  key={suggestion.id}
+                  onClick={() => handleSelect(suggestion)}
+                  className="px-3 py-2 cursor-pointer hover:bg-gray-100 transition-colors duration-150"
+                >
+                  <div className="font-medium">{suggestion.place_name}</div>
+                  {suggestion.description && (
+                    <div className="text-xs text-gray-500">
+                      {suggestion.description}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </div>
+  
+      {/* Description Field */}
+      <div >
         <Textarea
           name="description"
           value={description}
@@ -375,35 +498,80 @@ function AddSpace() {
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Description"
           required
+          className="w-full"
         />
+        {errors.description && (
+          <p className="text-red-500 text-xs mt-1">{errors.description}</p>
+        )}
+      </div>
 
-        <div className="mt-4">
-          <Input
-            type="file"
-            accept="image/*"
-            multiple
-            size="sm"
-            variant="bordered"
-            onChange={handleImageChange}
-            required
-            className="bg-gray-100 border-2 border-dashed border-gray-300 rounded-md p-3 text-center text-sm"
-            description="Click or drag images to upload"
-          />
-        </div>
+      {/* Image Previews */}
 
-        <div className="mt-6 text-center">
-          <Button
-            type="submit"
-            color="success"
-            size="md"
-            className="w-full"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-        </div>
-      </form>
-    </div>
+      {image.length > 0 && (
+         <div className="flex justify-center">
+         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-8 ">
+           {image.map((img, index) => (
+             <div
+               key={index}
+               className="flex items-center relative justify-center  max-w-[200px]"
+             >
+               <img
+                 src={URL.createObjectURL(img)}
+                 alt={`Room image ${index + 1}`}
+                 className="w-full h-fit sm:h-40 md:h-48 object-cover rounded-lg shadow-md"
+               />
+               <button
+                 className="absolute top-0 right-0 p-1 rounded-md bg-black"
+                 onClick={() => dltImage(img)}
+               >
+                 <MdDeleteOutline className="text-white" />
+               </button>
+             </div>
+           ))}
+         </div>
+       </div>
+      )}
+      
+
+      {/* Image Upload Field */}
+      {image.length < 3 && (
+       <div className="mt-4" >
+       <Input
+         type="file"
+         accept="image/*"
+         multiple
+         size="sm"
+         variant="bordered"
+         onChange={handleImageChange}
+         required
+         className="bg-gray-100 border-2 border-dashed border-gray-300  rounded-md p-3 text-center text-sm w-full"
+         description={`Click or drag ${imgCount } images to upload`}
+       />
+       {errors.image && (
+         <p className="text-red-500 text-xs mt-1">{errors.image}</p>
+       )}
+     </div>
+
+      )}
+      
+  
+      {/* Submit Button */}
+      <div className="mt-6 text-center">
+        <Button
+          type="submit"
+          color="success"
+          size="md"
+          className="w-full"
+          onClick={handleSubmit}
+        >
+          Submit
+        </Button>
+      </div>
+    </form>
+  </div>
+  
+  
+
   );
 }
 

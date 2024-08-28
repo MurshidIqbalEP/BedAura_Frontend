@@ -12,6 +12,7 @@ import AddSpace from "../pages/addSpace.tsx";
 import YourRooms from "../pages/yourRooms.tsx";
 import EditRoom from "../pages/editRoom.tsx";
 import AllRooms from "../pages/allRooms.tsx";
+import BlockedPage from "../pages/userPages/blockedPage.tsx"
 
 export default function userRoute() {
   return (
@@ -34,7 +35,9 @@ export default function userRoute() {
       <Route path="forgetOtp" element={<ForgetOtp />} />
       <Route path="forget-pass" element={<ForgetPass />} />
       <Route path="change-Pass" element={<ChangePass />} />
+      <Route path="blocked" element={<BlockedPage />} />
       <Route path="*" element={<Navigate to="/login" />} />
+      
     </Routes>
   );
 }
