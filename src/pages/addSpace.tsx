@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
 import { addRoom } from "../api/user";
+import { fetchOptions } from "../api/admin";
 
 
 const RoomType = [
@@ -58,6 +59,13 @@ const fetchSuggestions = async (query: string) => {
   }
 };
 
+interface Options {
+  securityDeposit: string[];
+  genders: string[];
+  roomType: string[];
+  noticePeriod: string[];
+}
+
 function AddSpace() {
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
   const navigate = useNavigate();
@@ -73,7 +81,12 @@ function AddSpace() {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState<File[]>([]);
   const [imgCount,setImgCount] = useState(3)
-
+  const [options, setOptions] = useState<Options>({
+    securityDeposit: [],
+    genders: [],
+    roomType: [],
+    noticePeriod: [],
+  });
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{
     lat: number;
@@ -114,6 +127,17 @@ function AddSpace() {
       setIsOpen(false);
     }
   }, [location]);
+
+  useEffect(()=>{
+    const fetchOptionsData = async () => {
+      
+        const response = await fetchOptions();
+        setOptions(response.data);
+      
+    };
+
+    fetchOptionsData();
+  },[])
 
   const handleSelect = (suggestion: any) => {
     setSelectedLocation({
@@ -351,9 +375,9 @@ function AddSpace() {
             onChange={(e) => setSecurityDeposit(e.target.value)}
             className="w-full"
           >
-            {SecurityDeposit.map((deposit) => (
-              <SelectItem key={deposit.key} value={deposit.key}>
-                {deposit.label}
+            {options.securityDeposit.map((deposit) => (
+              <SelectItem key={deposit} value={deposit}>
+                {deposit}
               </SelectItem>
             ))}
           </Select>
@@ -372,9 +396,9 @@ function AddSpace() {
             onChange={(e) => setGender(e.target.value)}
             className="w-full"
           >
-            {Gender.map((gen) => (
-              <SelectItem key={gen.key} value={gen.key}>
-                {gen.label}
+            {options.genders.map((gen) => (
+              <SelectItem key={gen} value={gen}>
+                {gen}
               </SelectItem>
             ))}
           </Select>
@@ -393,9 +417,9 @@ function AddSpace() {
             onChange={(e) => setType(e.target.value)}
             className="w-full"
           >
-            {RoomType.map((room) => (
-              <SelectItem key={room.key} value={room.key}>
-                {room.label}
+            {options.roomType.map((room) => (
+              <SelectItem key={room} value={room}>
+                {room}
               </SelectItem>
             ))}
           </Select>
@@ -417,9 +441,9 @@ function AddSpace() {
             onChange={(e) => setNoticePeriod(e.target.value)}
             className="w-full"
           >
-            {NoticePeriod.map((period) => (
-              <SelectItem key={period.key} value={period.key}>
-                {period.label}
+            {options.noticePeriod.map((period) => (
+              <SelectItem key={period} value={period}>
+                {period}
               </SelectItem>
             ))}
           </Select>

@@ -26,7 +26,8 @@ interface Room {
   description: string;
   coordinates: Coordinates;
   images: string[];
-  isAproved: boolean;
+  isApproved: boolean;
+  isEdited: boolean;
 }
 
 function yourRooms() {
@@ -38,7 +39,8 @@ function yourRooms() {
     const getRooms = async () => {
       try {
         const rooms = await fetchRooms(userId);
-
+        console.log(rooms.data);
+        
         setRooms(rooms.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -121,7 +123,7 @@ function yourRooms() {
                     </Link>
                   </div>
 
-                  {room.isAproved === false && (
+                  {room.isApproved === false || room.isEdited === true && (
                     <Button color="primary" isLoading>
                     Not Approved
                   </Button>
