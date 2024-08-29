@@ -6,6 +6,8 @@ import UsersPage from "../pages/adminPages/usersPage";
 import Login from "../pages/login";
 import EditRequestes from "../pages/adminPages/editRequestes";
 import RoomRequests from "../pages/adminPages/roomRequests"
+import AllRooms from "../pages/adminPages/allRooms";
+import Options from "../pages/adminPages/options";
 
 export default function adminRoute() {
   return (
@@ -15,8 +17,11 @@ export default function adminRoute() {
         {/* admin Private Routes */}
         <Route element={<AdminProtect />}>
           <Route path="/users" element={<UsersPage />} />
+          <Route path="/rooms" element={<AllRooms />} />
+
           <Route path="/Editrequests" element={<EditRequestes />} />
           <Route path="/RoomRequests" element={< RoomRequests/>} />
+          <Route path="/options" element={<Options/>} />
         </Route>
       </Route>
 

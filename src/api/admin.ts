@@ -86,3 +86,63 @@ export const getAllUsers = async () : Promise<any> => {
     }
   }
 
+  export const fetchAllRooms = async ():Promise<any> =>{
+    try {
+      let response = await Api.get(adminEndpoints.fetchAllRoom)
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      errorHandle(err);
+    }
+  }
+
+  export const UnlistRoom = async (id:string):Promise<any> =>{
+    try {
+      let response = await Api.patch(adminEndpoints.unlistRoom,{id})
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      errorHandle(err);
+    }
+  }
+
+  export const ListRoom = async(id:string):Promise<any> =>{
+    try {
+      let response = await Api.patch(adminEndpoints.listRoom,{id})
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      errorHandle(err);
+    }
+  }
+
+  export const fetchOptions = async():Promise<any>=>{
+    try {
+      let response = await Api.get(adminEndpoints.fetchOptions)
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      errorHandle(err);
+    }
+  }
+
+  export const addOption = async(category:string,newValue:string):Promise<any> =>{
+    try {
+      let response = await Api.patch(adminEndpoints.addOption,{category,newValue})
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      errorHandle(err);
+    }
+  }
+
+  export const removeOption = async (category:string,newValue:string):Promise<any> =>{
+    try {
+      let response = await Api.patch(adminEndpoints.removeOption,{category,newValue})
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      errorHandle(err);
+    }
+  }
+
