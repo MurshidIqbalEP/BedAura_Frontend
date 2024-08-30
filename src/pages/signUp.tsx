@@ -134,8 +134,9 @@ export default function SignUp() {
         const email = res.data.email;
         const password = "qwerty123";
         const isGoogle = true;
+        const image = res.data.picture
 
-        const response2 = await Gsign_up(name, email, password, isGoogle);
+        const response2 = await Gsign_up(name, email, password, isGoogle,image);
 
         if (response2) {
           localStorage.setItem("token", response2.data.token);

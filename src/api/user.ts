@@ -40,7 +40,8 @@ export const Gsign_up = async (
   name: string,
   email: string,
   password: string,
-  isGoogle: boolean
+  isGoogle: boolean,
+  image:string
 ) => {
   try {
     let response = await Api.post(userRoutes.Gsignup, {
@@ -48,6 +49,7 @@ export const Gsign_up = async (
       email,
       password,
       isGoogle,
+      image
     });
 
     return response;

@@ -91,8 +91,9 @@ export default function Login() {
         const email = res.data.email;
         const password = "qwerty123";
         const isGoogle = true;
+        const image = res.data.picture
 
-        const response2 = await Gsign_up(name, email, password, isGoogle);
+        const response2 = await Gsign_up(name, email, password, isGoogle,image);
         console.log(response2);
 
         if (response2) {

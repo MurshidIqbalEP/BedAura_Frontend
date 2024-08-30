@@ -25,6 +25,8 @@ import { editUser } from "../../api/user";
 
 const Profile = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+  console.log(userInfo.image);
+  
   const [user, setUser] = useState(userInfo);
   const dispatch = useDispatch();
   const [valErr, setValerr] = useState({
@@ -99,9 +101,10 @@ const Profile = () => {
             width={150}
             height={150}
             alt="User Profile Picture"
-            src={userInfo.profilePicture || defaultProfile} 
+            src={userInfo.image || defaultProfile} 
             className="object-cover"
           />
+
         </div>
         <div className="absolute top-[140px] left-4 text-center">
           <h2 className="font-bold text-lg text-gray-800">{userInfo.name}</h2>
