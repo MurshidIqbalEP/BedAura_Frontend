@@ -12,7 +12,8 @@ import AddSpace from "../pages/addSpace.tsx";
 import YourRooms from "../pages/yourRooms.tsx";
 import EditRoom from "../pages/editRoom.tsx";
 import AllRooms from "../pages/allRooms.tsx";
-import BlockedPage from "../pages/userPages/blockedPage.tsx"
+import BlockedPage from "../pages/userPages/blockedPage.tsx";
+import Profile from "../pages/userPages/profile.tsx";
 
 export default function userRoute() {
   return (
@@ -26,6 +27,7 @@ export default function userRoute() {
           <Route path="addSpace" element={<AddSpace />} />
           <Route path="yourRooms" element={<YourRooms />} />
           <Route path="editRoom/:id" element={<EditRoom />} />
+          <Route path="profile" element={<Profile />} />
         </Route>
       </Route>
 

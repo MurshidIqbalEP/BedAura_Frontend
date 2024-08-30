@@ -2,6 +2,7 @@ import errorHandle from "./error";
 import Api from "../services/axois";
 import userRoutes from "../services/endpoints/userEndpoints";
 import axios from "axios";
+import { User } from "../services/types"
 
 export const login = async (email: string, password: string) => {
   try {
@@ -177,3 +178,15 @@ export const fetchRoom = async (id:string) => {
     return errorHandle(err);
   }
 };
+
+export const editUser = async (user:User)=>{
+  try {
+    const response = await Api.put(userRoutes.editUser, user)
+    
+    return response.data;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+
+}
