@@ -1,6 +1,11 @@
+import { Button } from "antd";
 import BannerImage from "../assets/img/allRoomsBG.png";
 
-function allRoomsBanner() {
+interface AllRoomsBannerProps {
+  handleFindNearestRooms: () => void;
+}
+
+function allRoomsBanner({ handleFindNearestRooms }: AllRoomsBannerProps) {
   return (
     <div>
   <div className="relative w-full h-80 overflow-hidden">
@@ -27,6 +32,9 @@ function allRoomsBanner() {
           Search
         </button>
       </div>
+      <Button className="bg-transparent " type="dashed" ghost onClick={handleFindNearestRooms}>
+      Find Nearest Room
+    </Button>
     </div>
   </div>
 </div>

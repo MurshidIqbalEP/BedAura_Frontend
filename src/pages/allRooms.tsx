@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import AllRoomsBanner from "../components/allRoomsBanner";
-import { fetchAllRooms } from "../api/user";
+import { fetchAllRooms, fetchNearestRooms } from "../api/user";
 import { Button } from "antd";
-import { Pagination } from "@nextui-org/react";
+import { Pagination, skeleton } from "@nextui-org/react";
+import { toast } from "sonner";
+import SkeletonImage from "antd/es/skeleton/Image";
+
 
 interface Coordinates {
   lat: number;
@@ -33,6 +36,8 @@ function AllRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isNear, setIsNear] = useState(false);
+  const [isLoading,setIsLoading] = useState(false)
   const limit = 1;
 
   useEffect(() => {
@@ -46,17 +51,46 @@ function AllRooms() {
       }
     };
 
-    getRooms();
+    if (isNear) {
+      handleFindNearestRooms();
+    } else {
+      getRooms();
+    }
   }, [currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
 
+  const handleFindNearestRooms = async () => {
+    setIsLoading(true)
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(async (position) => {
+        const { latitude, longitude } = position.coords;
+
+        console.log(latitude, "latitude", longitude, "longitude");
+        setIsNear(true);
+        const response = await fetchNearestRooms(
+          latitude,
+          longitude,
+          limit,
+          currentPage
+        );
+
+
+        setRooms(response.rooms); // Update rooms to show nearest ones
+        setTotalPages(response.totalPages);
+      });
+    } else {
+      toast.error("Geolocation is not supported by your browser.");
+    }
+  };
+
   return (
     <div>
-      <AllRoomsBanner />
-
+      <AllRoomsBanner handleFindNearestRooms={handleFindNearestRooms} />
+      
+      {isLoading && (<SkeletonImage/>)}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {rooms.length === 0 ? (
           <p className="text-gray-500">You don't have any rooms yet.</p>

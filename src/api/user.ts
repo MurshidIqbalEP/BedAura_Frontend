@@ -192,3 +192,14 @@ export const editUser = async (user:User)=>{
   }
 
 }
+
+export const fetchNearestRooms = async (lat:number,lon:number,limit:number,currentPage:number)=>{
+  try {
+    const response = await Api.get(`${userRoutes.fetchNearestRooms}?lat=${lat}&lon=${lon}&page=${currentPage}&limit=${limit}`)
+    
+    return response.data;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
