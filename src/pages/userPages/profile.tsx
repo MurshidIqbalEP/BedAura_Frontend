@@ -25,7 +25,7 @@ import { editUser } from "../../api/user";
 
 const Profile = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
-  console.log(userInfo.image);
+  
   
   const [user, setUser] = useState(userInfo);
   const dispatch = useDispatch();

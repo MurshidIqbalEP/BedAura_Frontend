@@ -15,7 +15,8 @@ const userRoutes={
     editRoom:"/user/editRoom",
     fetchAllRooms:"/user/fetchAllRooms",
     editUser:"/user/editUser",
-    fetchNearestRooms:"/user/fetchNearestRooms"
+    fetchNearestRooms:"/user/fetchNearestRooms",
+    bookRoom:"/user/bookRoom"
 
     
 }

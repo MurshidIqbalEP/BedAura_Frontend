@@ -203,3 +203,15 @@ export const fetchNearestRooms = async (lat:number,lon:number,limit:number,curre
     return errorHandle(err);
   }
 }
+
+export const bookRoom = async (token:object,roomId:string,userId:string,slots:number)=>{
+  try {
+    const response = await Api.post(userRoutes.bookRoom,{token,roomId,userId,slots})
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+

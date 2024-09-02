@@ -14,6 +14,7 @@ import EditRoom from "../pages/editRoom.tsx";
 import AllRooms from "../pages/allRooms.tsx";
 import BlockedPage from "../pages/userPages/blockedPage.tsx";
 import Profile from "../pages/userPages/profile.tsx";
+import RoomDetails from "../pages/userPages/roomDetails.tsx";
 
 export default function userRoute() {
   return (
@@ -28,6 +29,7 @@ export default function userRoute() {
           <Route path="yourRooms" element={<YourRooms />} />
           <Route path="editRoom/:id" element={<EditRoom />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="/room-details/:id" element={<RoomDetails />} />
         </Route>
       </Route>
 

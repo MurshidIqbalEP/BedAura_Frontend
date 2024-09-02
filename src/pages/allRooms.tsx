@@ -5,6 +5,7 @@ import { Button } from "antd";
 import { Pagination, skeleton } from "@nextui-org/react";
 import { toast } from "sonner";
 import SkeletonImage from "antd/es/skeleton/Image";
+import { useNavigate } from "react-router-dom";
 
 
 interface Coordinates {
@@ -38,6 +39,7 @@ function AllRooms() {
   const [totalPages, setTotalPages] = useState(1);
   const [isNear, setIsNear] = useState(false);
   const [isLoading,setIsLoading] = useState(false)
+  const navigate = useNavigate();
   const limit = 1;
 
   useEffect(() => {
@@ -86,11 +88,15 @@ function AllRooms() {
     }
   };
 
+  const handleDetails = (id:string)=>{
+    navigate(`/room-details/${id}`);
+  }
+
   return (
     <div>
       <AllRoomsBanner handleFindNearestRooms={handleFindNearestRooms} />
       
-      {isLoading && (<SkeletonImage/>)}
+      {/* {isLoading && (<SkeletonImage/>)} */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {rooms.length === 0 ? (
           <p className="text-gray-500">You don't have any rooms yet.</p>
@@ -152,7 +158,7 @@ function AllRooms() {
                   </div>
 
                   <div className="w-full flex justify-end">
-                    <Button className="bg-blue-700 text-white">Details</Button>
+                    <Button className="bg-blue-700 text-white" onClick={()=>handleDetails(room._id)}>Details</Button>
                   </div>
                 </div>
               </div>
