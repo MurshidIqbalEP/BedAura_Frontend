@@ -214,4 +214,14 @@ export const bookRoom = async (token:object,roomId:string,userId:string,slots:nu
   }
 }
 
+export const logOut = async ()=>{
+  try {
+    const response = await Api.post(userRoutes.logOut)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 

@@ -15,6 +15,7 @@ import AllRooms from "../pages/allRooms.tsx";
 import BlockedPage from "../pages/userPages/blockedPage.tsx";
 import Profile from "../pages/userPages/profile.tsx";
 import RoomDetails from "../pages/userPages/roomDetails.tsx";
+import MyBookings from "../pages/userPages/myBookings.tsx";
 
 export default function userRoute() {
   return (
@@ -25,21 +26,26 @@ export default function userRoute() {
 
         {/* user protected Routes */}
         <Route element={<UserProtect />}>
-          <Route path="addSpace" element={<AddSpace />} />
+          
           <Route path="yourRooms" element={<YourRooms />} />
           <Route path="editRoom/:id" element={<EditRoom />} />
           <Route path="profile" element={<Profile />} />
           <Route path="/room-details/:id" element={<RoomDetails />} />
+          <Route path="/myBookings" element={<MyBookings />} />
         </Route>
+        
+        <Route path="addSpace" element={<AddSpace />} />
+        <Route path="blocked" element={<BlockedPage />} />
       </Route>
-
+      
+     
       <Route path="login" element={<LoginPage />} />
       <Route path="register" element={<SignUp />} />
       <Route path="otp" element={<OtpPage />} />
       <Route path="forgetOtp" element={<ForgetOtp />} />
       <Route path="forget-pass" element={<ForgetPass />} />
       <Route path="change-Pass" element={<ChangePass />} />
-      <Route path="blocked" element={<BlockedPage />} />
+      
       <Route path="*" element={<Navigate to="/login" />} />
       
     </Routes>

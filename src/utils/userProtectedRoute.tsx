@@ -6,7 +6,7 @@ function userProtect() {
   const { userInfo } = useSelector((state: RootState) => state.auth);
   
    
-  return userInfo && userInfo.isAdmin=== false ? <Outlet /> : <Navigate to="/" replace />;
+  return userInfo && userInfo.isAdmin=== false ? <Outlet /> : <Navigate to="/login" replace />;
 }
 
 export default userProtect;

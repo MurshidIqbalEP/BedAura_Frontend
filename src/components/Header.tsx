@@ -6,6 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { RootState } from "../redux/store";
 import defaultProfile from "../assets/img/Default_pfp.svg.png";
 import { Button } from "@nextui-org/react";
+import { logOut } from "../api/user";
 
 
 
@@ -15,7 +16,10 @@ export default function Header() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
+  const handleLogout = async() => {
+    let clearCookie = await logOut()
+    console.log(clearCookie);
+    
     dispatch(userLogout());
     localStorage.removeItem('token')
     navigate("/login");
@@ -125,7 +129,7 @@ export default function Header() {
   );
 }
 
-function NavLink({ to, children }) {
+function NavLink({ to, children }:any) {
   return (
     <Link
       to={to}

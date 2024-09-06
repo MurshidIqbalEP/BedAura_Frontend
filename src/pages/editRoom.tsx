@@ -5,6 +5,10 @@ import { editRoomApi, fetchRoom } from "../api/user";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
+import { fetchOptions } from "../api/admin";
+import uploadToCloudinary from "../services/cloudinary";
+import Lottie from "react-lottie";
+import loadingAnimation from "../assets/loading.json"
 
 interface Coordinates {
   lat: number;
@@ -30,28 +34,6 @@ interface Room {
   isAproved: boolean;
 }
 
-const RoomType = [
-  { key: "BedSpace", label: "BedSpace" },
-  { key: "Room", label: "Room" },
-];
-
-const Gender = [
-  { key: "Male", label: "Male" },
-  { key: "Female", label: "Female" },
-  { key: "Both", label: "Both" },
-];
-
-const SecurityDeposit = [
-  { key: "1000", label: "1000" },
-  { key: "2000", label: "2000" },
-  { key: "4000", label: "4000" },
-];
-
-const NoticePeriod = [
-  { key: "15 Days", label: "15 Days" },
-  { key: "20 Days", label: "20 Days" },
-  { key: "30 Days", label: "30 Days" },
-];
 
 const fetchSuggestions = async (query: string) => {
   try {
@@ -73,14 +55,34 @@ const fetchSuggestions = async (query: string) => {
   }
 };
 
+interface Options {
+  securityDeposit: string[];
+  genders: string[];
+  roomType: string[];
+  noticePeriod: string[];
+}
+
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: loadingAnimation,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
+
 function editRoom() {
   const { id } = useParams();
   const [room, setRoom] = useState<Room>();
   const navigate = useNavigate();
-  const SERVER_URL = "http://localhost:3000";
   const [location, setLocation] = useState("");
-  const [image, setImage] = useState<File[]>([]);
   const [imgCount, setImgCount] = useState(0);
+  const [options, setOptions] = useState<Options>({
+    securityDeposit: [],
+    genders: [],
+    roomType: [],
+    noticePeriod: [],
+  });
 
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -89,6 +91,7 @@ function editRoom() {
   } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
+  const [isLoading,setLoading] = useState(false)
 
   useEffect(() => {
     if (location) {
@@ -119,6 +122,15 @@ function editRoom() {
     getRoom();
   }, [id]);
 
+  useEffect(() => {
+    const fetchOptionsData = async () => {
+      const response = await fetchOptions();
+      setOptions(response.data);
+    };
+
+    fetchOptionsData();
+  }, []);
+
   const handleSelect = (suggestion: any) => {
     setSelectedLocation({
       lat: suggestion.center[1],
@@ -129,15 +141,27 @@ function editRoom() {
     setIsOpen(false);
   };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
 
     if (selectedFiles.length > imgCount) {
       toast.error(`select ${imgCount} images`);
       return;
     }
+    setLoading(true)
+    const uploadedURLs = await Promise.all(
+      selectedFiles.map((file) => uploadToCloudinary(file))
+    );
+    console.log(uploadedURLs);
+    setLoading(false)
+    
+    setRoom((prevRoom:any) => ({
+      ...prevRoom,
+      images: [...prevRoom.images, ...uploadedURLs], // Append new URLs to existing images
+    }));
 
-    setImage(selectedFiles);
+    setImgCount((prev)=> prev-uploadedURLs.length)
+    
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -219,7 +243,7 @@ function editRoom() {
     }
 
     // Image validation
-    if (image.length !== imgCount) {
+    if (room?.images.length !== 3 ) {
       let msg = `${imgCount} expected`;
       toast.error(msg);
       valid = false;
@@ -241,15 +265,12 @@ function editRoom() {
       formData.append("roomId", room?._id as string);
       formData.append("userId", room?.userId as string);
 
-      if (room?.images && Array.isArray(room.images)) {
-        room.images.forEach((image) => {
-          formData.append("ExistingImg", image);
-        });
-      }
+     
 
-      image.forEach((img) => {
-        formData.append("images", img);
+      room?.images.forEach((url) => {
+        formData.append("images", url);  
       });
+
 
       let response = await editRoomApi(formData);
 
@@ -329,9 +350,9 @@ function editRoom() {
                 setRoom({ ...room, securityDeposit: e.target.value } as Room)
               }
             >
-              {SecurityDeposit.map((deposit) => (
-                <SelectItem key={deposit.key} value={deposit.key}>
-                  {deposit.label}
+             {options.securityDeposit.map((deposit) => (
+                <SelectItem key={deposit} value={deposit}>
+                  {deposit}
                 </SelectItem>
               ))}
             </Select>
@@ -344,9 +365,9 @@ function editRoom() {
                 setRoom({ ...room, gender: e.target.value } as Room)
               }
             >
-              {Gender.map((gen) => (
-                <SelectItem key={gen.key} value={gen.key}>
-                  {gen.label}
+              {options.genders.map((gen) => (
+                <SelectItem key={gen} value={gen}>
+                  {gen}
                 </SelectItem>
               ))}
             </Select>
@@ -360,9 +381,9 @@ function editRoom() {
                 setRoom({ ...room, roomType: e.target.value } as Room)
               }
             >
-              {RoomType.map((room) => (
-                <SelectItem key={room.key} value={room.key}>
-                  {room.label}
+               {options.roomType.map((room) => (
+                <SelectItem key={room} value={room}>
+                  {room}
                 </SelectItem>
               ))}
             </Select>
@@ -377,9 +398,9 @@ function editRoom() {
                 setRoom({ ...room, noticePeriod: e.target.value } as Room)
               }
             >
-              {NoticePeriod.map((period) => (
-                <SelectItem key={period.key} value={period.key}>
-                  {period.label}
+              {options.noticePeriod.map((period) => (
+                <SelectItem key={period} value={period}>
+                  {period}
                 </SelectItem>
               ))}
             </Select>
@@ -450,7 +471,7 @@ function editRoom() {
                       className="flex items-center relative justify-center  max-w-[200px]"
                     >
                       <img
-                        src={`${SERVER_URL}/uploads/${image}`}
+                        src={image}
                         alt={`Room image ${index + 1}`}
                         className="w-full h-fit sm:h-40 md:h-48 object-cover rounded-lg shadow-md"
                       />
@@ -484,17 +505,23 @@ function editRoom() {
             </div>
           )}
 
-          <div className="mt-6 text-center">
-            <Button
-              type="submit"
-              color="success"
-              size="md"
-              className="w-full"
-              onClick={handleSubmit}
-            >
-              Save
-            </Button>
+{isLoading ?(
+            <div className="flex justify-center items-center h-[100px]">
+           <Lottie options={defaultOptions} height={150} width={150} />
           </div>
+        ):(
+          <div className="mt-6 text-center">
+          <Button
+            type="submit"
+            color="success"
+            size="md"
+            className="w-full"
+            onClick={handleSubmit}
+          >
+            Submit
+          </Button>
+        </div>
+        )}
         </form>
       </div>
     </div>

@@ -33,7 +33,7 @@ interface Room {
 function yourRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
-  const SERVER_URL = "http://localhost:3000";
+
 
   useEffect(() => {
     const getRooms = async () => {
@@ -64,7 +64,7 @@ function yourRooms() {
             >
               <div className="sm:w-1/3">
                 <img
-                  src={`${SERVER_URL}/uploads/${room.images[0]}`}
+                  src={room.images[0]}
                   alt={room.name}
                   className="w-full h-full object-cover"
                 />

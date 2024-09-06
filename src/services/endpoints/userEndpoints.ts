@@ -16,7 +16,8 @@ const userRoutes={
     fetchAllRooms:"/user/fetchAllRooms",
     editUser:"/user/editUser",
     fetchNearestRooms:"/user/fetchNearestRooms",
-    bookRoom:"/user/bookRoom"
+    bookRoom:"/user/bookRoom",
+    logOut:"/user/logOut"
 
     
 }

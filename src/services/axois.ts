@@ -39,7 +39,7 @@ Api.interceptors.response.use(
       console.log(error.response.status);
       try {
         // Refresh the access token
-        console.log("hai");
+        console.log("hai api call for reffresh ");
 
         const res = await axios.get(
           BASE_URL+"/user/refresh-token",
@@ -56,7 +56,7 @@ Api.interceptors.response.use(
         console.error("Failed to refresh token:", refreshError);
         // localStorage.removeItem("token");
         // localStorage.removeItem('userInfo')
-        window.location.href = "/";
+        // window.location.href = "/";
         return Promise.reject(refreshError);
       }
     }

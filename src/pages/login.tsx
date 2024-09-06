@@ -3,13 +3,13 @@ import Img from "../assets/img/loging-bg.png";
 import Logo from "../assets/img/white.png";
 import { Input } from "@nextui-org/react";
 import { FcGoogle } from "react-icons/fc";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { setCredentials } from "../redux/Slices/authSlice";
 import { setAdminCredentials } from "../redux/Slices/adminSlice";
 import { useGoogleLogin } from "@react-oauth/google";
 import { login, Gsign_up } from "../api/user";
-import { RootState } from "../redux/store"; // Assuming you have RootState defined in store
+import { RootState } from "../redux/store"; 
 import axios from "axios";
 
 export default function Login() {
@@ -18,8 +18,11 @@ export default function Login() {
   const [err, SetErr] = useState({ email: "", password: "" });
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const previousPage = location.state?.from || "/";
+  console.log(previousPage);
+  
   const dispatch = useDispatch();
-
 
   const { adminInfo } = useSelector((state: RootState) => state.adminAuth);
   const { userInfo } = useSelector((state: RootState) => state.auth);
@@ -28,7 +31,7 @@ export default function Login() {
     if (adminInfo) {
       navigate("/admin/users", { replace: true });
     } else if (userInfo) {
-      navigate("/", { replace: true });
+      navigate(previousPage, { replace: true });
     }
   }, [adminInfo, userInfo, navigate]);
 
@@ -63,7 +66,6 @@ export default function Login() {
     if (valid) {
       const response = await login(email, password);
       if (response) {
-        
         if (response.data.isAdmin) {
           localStorage.setItem("token", response.data.token);
           dispatch(setAdminCredentials(response.data.message));
@@ -72,7 +74,7 @@ export default function Login() {
           console.log(response);
           localStorage.setItem("token", response.data.token);
           dispatch(setCredentials(response.data.message));
-          navigate("/");
+          navigate(previousPage);
         }
       }
     }
@@ -91,9 +93,15 @@ export default function Login() {
         const email = res.data.email;
         const password = "qwerty123";
         const isGoogle = true;
-        const image = res.data.picture
+        const image = res.data.picture;
 
-        const response2 = await Gsign_up(name, email, password, isGoogle,image);
+        const response2 = await Gsign_up(
+          name,
+          email,
+          password,
+          isGoogle,
+          image
+        );
         console.log(response2);
 
         if (response2) {
@@ -180,7 +188,9 @@ export default function Login() {
           <p className="text-xs mt-2 text-gray-400">
             Don’t have an account?
             <Link to="/register">
-              <span className="text-custom-red hover:text-gray-400">Sign up!</span>
+              <span className="text-custom-red hover:text-gray-400">
+                Sign up!
+              </span>
             </Link>
           </p>
         </div>

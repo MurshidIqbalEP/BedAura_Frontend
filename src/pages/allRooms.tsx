@@ -33,7 +33,7 @@ interface Room {
 }
 
 function AllRooms() {
-  const SERVER_URL = "http://localhost:3000";
+
   const [rooms, setRooms] = useState<Room[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -109,7 +109,7 @@ function AllRooms() {
               >
                 <div className="sm:w-1/3 h-64 overflow-hidden">
                   <img
-                    src={`${SERVER_URL}/uploads/${room.images[0]}`}
+                    src={room.images[0]}
                     alt={room.name}
                     className="w-full h-full object-cover"
                   />

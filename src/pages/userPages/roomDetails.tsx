@@ -7,6 +7,7 @@ import ReactMapGL, { Marker, ViewportProps } from "react-map-gl";
 import { Button } from "@nextui-org/react";
 import { MdOutlineMessage } from "react-icons/md";
 import { CiBookmarkCheck } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 import {
   Modal,
   ModalContent,
@@ -21,8 +22,8 @@ import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 
 function RoomDetails() {
-  const { id } = useParams<{ id: string }>(); // useParams should be typed
-  const [room, setRoom] = useState<Room | null>(null); // Room type or null
+  const { id } = useParams<{ id: string }>(); 
+  const [room, setRoom] = useState<Room | null>(null); 
   const [viewPort, setViewPort] = useState<ViewportProps>({
     latitude: 0,
     longitude: 0,
@@ -30,16 +31,15 @@ function RoomDetails() {
     width: "100%",
     height: "100%",
   });
-
+  const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string; // assert type
-  const SERVER_URL = "http://localhost:3000";
-  const [bookingSlots, setBookingSlots] = useState<number>(0); // explicitly typed as number
-  const [amount, setAmount] = useState<number>(0); // explicitly typed as number
+  const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string; 
+  const [bookingSlots, setBookingSlots] = useState<number>(0); 
+  const [amount, setAmount] = useState<number>(0);
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   useEffect(() => {
     const fetchRoomData = async () => {
-      const roomResponse = await fetchRoom(id as string); // asserting id as string
+      const roomResponse = await fetchRoom(id as string); 
       console.log(roomResponse);
       const fetchedRoom = roomResponse.data;
       setRoom(fetchedRoom);
@@ -52,8 +52,8 @@ function RoomDetails() {
         const [longitude, latitude] = fetchedRoom.coordinates.coordinates;
         setViewPort((prev:any) => ({
           ...prev,
-          latitude, // Latitude from the coordinates
-          longitude, // Longitude from the coordinates
+          latitude, // Latitude 
+          longitude, // Longitude 
         }));
       }
     };
@@ -61,16 +61,16 @@ function RoomDetails() {
   }, [id]);
 
   const handleBookingSlots = (value: string) => {
-    // accept string input
-    const slotValue = Number(value); // Convert to number
+   
+    const slotValue = Number(value); 
     if (isNaN(slotValue) || slotValue > (room?.slots || 0) || slotValue <= 0) {
       toast.error("Slot exceeded");
-      setBookingSlots(0); // Reset to prevent invalid state
+      setBookingSlots(0);
       setAmount(0);
       return;
     }
     setBookingSlots(slotValue);
-    let amt = (room?.securityDeposit || 0) * slotValue; // handle potential undefined
+    let amt :number = (Number(room?.securityDeposit )|| 0) * slotValue; 
     setAmount(amt);
   };
 
@@ -80,7 +80,7 @@ function RoomDetails() {
     
     let booked = await bookRoom(token,room?._id as string,userInfo._id,bookingSlots)
     if(booked){
-     
+      navigate("/myBookings");
       toast.success("Room Booked")
       
     }
@@ -88,9 +88,9 @@ function RoomDetails() {
   }
 
   return (
-    <div className="w-full h-full flex justify-center items-center">
+    <div className="w-full h-full flex justify-center  bg-gray-200 items-center">
       {/* Parent container with column layout */}
-      <div className="w-[80%] m-[30px] p-9 rounded-2xl bg-lime-200 flex flex-col items-center space-y-4">
+      <div className="w-[80%] m-[30px] p-9 rounded-2xl bg-white flex flex-col items-center space-y-4">
         {/* Image section */}
         <h1 className="text-2xl font-mono font-bold mb-2">{room?.name}</h1>
         <div className="flex flex-col sm:flex-row justify-center gap-6 ">
@@ -105,7 +105,7 @@ function RoomDetails() {
                 width={180}
                 height={180}
                 key={index}
-                src={`${SERVER_URL}/uploads/${imageSrc}`}
+                src={imageSrc}
                 className="rounded-2xl "
               />
             ))}
@@ -199,14 +199,7 @@ function RoomDetails() {
                     </p>
                     <p className="text-sm text-gray-600">{room?.slots}</p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600 font-medium mb-2">
-                      Maintenance
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      ₹ {room?.maintenanceCharge}
-                    </p>
-                  </div>
+                  
                   <div>
                     <p className="text-sm text-gray-600 font-medium mb-2">
                       Deposit
@@ -215,14 +208,7 @@ function RoomDetails() {
                       ₹ {room?.securityDeposit}
                     </p>
                   </div>
-                  <div>
-                    <p className="text-sm text-gray-600 font-medium mb-2">
-                      Notice
-                    </p>
-                    <p className="text-sm text-gray-600">
-                      {room?.noticePeriod} days
-                    </p>
-                  </div>
+                  
                 </div>
                 <div className="my-4">
                   <label className="block mb-2 text-sm font-medium text-gray-600">
@@ -243,22 +229,25 @@ function RoomDetails() {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button
-                  onPress={() => {
-                    onOpenChange(); // Close the modal
-                    // Open Stripe Checkout (this logic might need to be handled explicitly)
-                  }}
-                  
-                  size="sm"
-                  className="bg-transparent"
-                >
-                  <StripeCheckout
-                    token={onToken}
-                    amount={amount*100}
-                    currency="INR"
-                    stripeKey={import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY}
-                  />
-                </Button>
+                 {amount && (
+                    <Button
+                    onPress={() => {
+                      onOpenChange(); // Close the modal
+                      // Open Stripe Checkout (this logic might need to be handled explicitly)
+                    }}
+                    
+                    size="sm"
+                    className="bg-transparent"
+                  >
+                    <StripeCheckout
+                      token={onToken}
+                      amount={amount*100}
+                      currency="INR"
+                      stripeKey={import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY}
+                    />
+                  </Button>
+                 )}
+                
               </ModalFooter>
             </ModalContent>
           </Modal>
