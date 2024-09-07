@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Button,Space, Table, Popconfirm, Input, Modal } from "antd";
-import { TiTick } from "react-icons/ti";
+
 
 import {
   FaCalendar,
@@ -12,7 +12,7 @@ import {
   FaUser,
 } from "react-icons/fa";
 import type { TableColumnsType, TableProps } from "antd";
-import { ApproveEdit, fetchAllRooms, fetchEditRequests, ListRoom, UnlistRoom } from "../../api/admin";
+import {  fetchAllRooms, ListRoom, UnlistRoom } from "../../api/admin";
 import { toast } from "react-toastify";
 
 interface DataType {
@@ -133,13 +133,7 @@ const App: React.FC = () => {
       filteredValue: filteredInfo.name || null,
       onFilter: (value, record) => record.name.includes(value as string),
     },
-    {
-      title: "Owner ID",
-      dataIndex: "userId",
-      key: "userId",
-      ellipsis: true,
-      align: "center",
-    },
+   
     {
       title: "Slots",
       dataIndex: "slots",
@@ -330,7 +324,7 @@ const App: React.FC = () => {
                 {selectedUser.images.slice(0, 3).map((image, index) => (
                   <img
                     key={index}
-                    src={`${SERVER_URL}/uploads/${image}`}
+                    src={image}
                     alt={`User image ${index + 1}`}
                     className="w-28 h-28 object-cover rounded-lg"
                   />

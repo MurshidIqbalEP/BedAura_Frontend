@@ -106,7 +106,8 @@ function RoomDetails() {
                 height={180}
                 key={index}
                 src={imageSrc}
-                className="rounded-2xl "
+                className="rounded-2xl object-cover transition-transform transform hover:scale-105"
+                loading="lazy" // Optimize loading
               />
             ))}
           </Image.PreviewGroup>

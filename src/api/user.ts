@@ -224,4 +224,14 @@ export const logOut = async ()=>{
   }
 }
 
+export const fetchBooking =async (userId:string)=>{
+  try {
+    const response = await Api.get(`${userRoutes.fetchBookings}/${userId}`)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 

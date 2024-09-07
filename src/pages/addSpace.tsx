@@ -10,7 +10,9 @@ import { addRoom } from "../api/user";
 import { fetchOptions } from "../api/admin";
 import imageCompression from "browser-image-compression";
 import Lottie from "react-lottie";
-import loadingAnimation from "../assets/loading.json"
+import loadingAnimation from "../assets/loading.json";
+import { Progress } from "@nextui-org/react";
+import { Popconfirm } from "antd";
 
 const fetchSuggestions = async (query: string) => {
   try {
@@ -47,6 +49,7 @@ interface Options {
   roomType: string[];
   noticePeriod: string[];
 }
+
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/drsh8bkaf/upload";
 const CLOUDINARY_UPLOAD_PRESET = "BedAura";
 
@@ -79,7 +82,36 @@ function AddSpace() {
   } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
-  const [isLoading,setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
+  const [filledFields, setFilledFields] = useState(0);
+  const totalFields = 11; // Total number of input fields, including the file input
+  const progress = Math.round((filledFields / totalFields) * 100);
+  type ProgressFields = {
+    name: boolean;
+    mobile: boolean;
+    maintenanceCharge: boolean;
+    securityDeposit: boolean;
+    gender: boolean;
+    type: boolean;
+    noticePeriod: boolean;
+    slots: boolean;
+    location: boolean;
+    description: boolean;
+    image: boolean;
+  };
+  const [progressFilled, setProgressFilled] = useState<ProgressFields>({
+    name: false,
+    mobile: false,
+    maintenanceCharge: false,
+    securityDeposit: false,
+    gender: false,
+    type: false,
+    noticePeriod: false,
+    slots: false,
+    location: false,
+    description: false,
+    image: false,
+  });
 
   // Error state management
   const [errors, setErrors] = useState({
@@ -127,7 +159,7 @@ function AddSpace() {
     if (savedFormData) {
       const formData = JSON.parse(savedFormData);
       console.log(formData);
-      
+
       setName(formData.name);
       setMobile(formData.mobile);
       setMaintenanceCharge(formData.maintenanceCharge);
@@ -139,7 +171,7 @@ function AddSpace() {
       setLocation(formData.location);
       setDescription(formData.description);
       setUploadedImageURLs(formData.images);
-      setImgCount(0)
+      setImgCount(0);
     }
 
     localStorage.removeItem("addRoomFormData");
@@ -172,6 +204,12 @@ function AddSpace() {
       ...prevErrors,
       image: "",
     }));
+
+    console.log(imgCount);
+
+    if (imgCount == 3) {
+      handleFieldFill("image");
+    }
   };
 
   const uploadToCloudinary = async (file: File) => {
@@ -300,13 +338,12 @@ function AddSpace() {
     setErrors(newErrors);
 
     if (valid) {
-      setLoading(true)
+      setLoading(true);
       const uploadedURLs = await Promise.all(image.map(uploadToCloudinary));
       console.log(uploadedURLs);
-      
+
       setUploadedImageURLs(uploadedURLs);
-      setLoading(false)
-      
+      setLoading(false);
 
       if (!userId) {
         const formDataObject = {
@@ -324,14 +361,12 @@ function AddSpace() {
           images: uploadedURLs,
         };
 
-       
-
         localStorage.setItem("addRoomFormData", JSON.stringify(formDataObject));
         navigate("/login", { state: { from: "/addSpace" } });
         return;
       } else {
-        console.log(userId,"user Data");
-        
+        console.log(userId, "user Data");
+
         const formData = new FormData();
         formData.append("name", name);
         formData.append("userId", userId._id);
@@ -347,12 +382,11 @@ function AddSpace() {
         formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
 
         uploadedURLs.forEach((url) => {
-          formData.append("images", url);  
+          formData.append("images", url);
         });
-        
-        
+
         const response = await addRoom(formData);
-     
+
         localStorage.removeItem("addRoomFormData");
         toast.success(response);
         navigate("/yourRooms");
@@ -365,20 +399,46 @@ function AddSpace() {
     setImgCount((prev) => prev + 1);
   };
 
+  const handleFieldFill = (field: keyof ProgressFields) => {
+    console.log(field);
+
+    setProgressFilled((prev) => {
+      if (prev[field]) {
+        return prev;
+      } else {
+        const updatedProgressFilled = { ...prev, [field]: true };
+        setFilledFields((prevCount) => prevCount + 1);
+        return updatedProgressFilled;
+      }
+    });
+  };
+
   return (
-    <div className="bg-white p-6 m-6 rounded-md shadow-md max-w-3xl mx-auto">
+    <div className="bg-neutral-100 p-6 m-6 rounded-md shadow-md max-w-3xl mx-auto">
       <h2 className="text-2xl font-semibold mb-6 text-center text-gray-700">
         Add Your Room/Space
       </h2>
+
       <form onSubmit={handleSubmit} className="space-y-4">
         {/* Three Input Fields in One Row */}
         <div className="flex flex-wrap gap-6 justify-center  ">
+          <Progress
+            aria-label="Add Post.."
+            size="md"
+            value={progress}
+            color="success"
+            showValueLabel={true}
+            className="max-w-[80%] mb-1  "
+          />
           {/* Name Field */}
           <div className="w-full md:w-1/4">
             <Input
               name="name"
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                handleFieldFill("name");
+              }}
               placeholder="Name"
               required
               variant="bordered"
@@ -393,10 +453,13 @@ function AddSpace() {
           {/* Mobile Field */}
           <div className="w-full md:w-1/4">
             <Input
-              type="tel"
+              type="number"
               name="mobile"
               value={mobile}
-              onChange={(e) => setMobile(e.target.value)}
+              onChange={(e) => {
+                setMobile(e.target.value);
+                handleFieldFill("mobile");
+              }}
               placeholder="Mobile"
               variant="bordered"
               required
@@ -414,7 +477,10 @@ function AddSpace() {
               type="number"
               name="maintenanceCharge"
               value={maintenanceCharge}
-              onChange={(e) => setMaintenanceCharge(e.target.value)}
+              onChange={(e) => {
+                setMaintenanceCharge(e.target.value),
+                  handleFieldFill("maintenanceCharge");
+              }}
               placeholder="Maintenance Charge"
               variant="bordered"
               required
@@ -438,7 +504,10 @@ function AddSpace() {
               aria-label="Security Deposit"
               size="sm"
               variant="bordered"
-              onChange={(e) => setSecurityDeposit(e.target.value)}
+              onChange={(e) => {
+                setSecurityDeposit(e.target.value),
+                  handleFieldFill("securityDeposit");
+              }}
               className="w-full"
             >
               {options.securityDeposit.map((deposit) => (
@@ -461,7 +530,9 @@ function AddSpace() {
               aria-label="Preferable Gender"
               size="sm"
               variant="bordered"
-              onChange={(e) => setGender(e.target.value)}
+              onChange={(e) => {
+                setGender(e.target.value), handleFieldFill("gender");
+              }}
               className="w-full"
             >
               {options.genders.map((gen) => (
@@ -482,7 +553,9 @@ function AddSpace() {
               aria-label="Room Type"
               size="sm"
               variant="bordered"
-              onChange={(e) => setType(e.target.value)}
+              onChange={(e) => {
+                setType(e.target.value), handleFieldFill("type");
+              }}
               className="w-full"
             >
               {options.roomType.map((room) => (
@@ -506,7 +579,10 @@ function AddSpace() {
               aria-label="Notice Period"
               size="sm"
               variant="bordered"
-              onChange={(e) => setNoticePeriod(e.target.value)}
+              onChange={(e) => {
+                setNoticePeriod(e.target.value),
+                  handleFieldFill("noticePeriod");
+              }}
               className="w-full"
             >
               {options.noticePeriod.map((period) => (
@@ -528,7 +604,9 @@ function AddSpace() {
               value={slots}
               size="sm"
               variant="bordered"
-              onChange={(e) => setSlots(e.target.value)}
+              onChange={(e) => {
+                setSlots(e.target.value), handleFieldFill("slots");
+              }}
               placeholder="Available Slots"
               required
               className="w-full"
@@ -546,7 +624,9 @@ function AddSpace() {
               value={location}
               size="sm"
               variant="bordered"
-              onChange={(e) => setLocation(e.target.value)}
+              onChange={(e) => {
+                setLocation(e.target.value), handleFieldFill("location");
+              }}
               placeholder="Location"
               required
               className="w-full"
@@ -582,7 +662,9 @@ function AddSpace() {
             value={description}
             size="sm"
             variant="bordered"
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) => {
+              setDescription(e.target.value), handleFieldFill("description");
+            }}
             placeholder="Description"
             required
             className="w-full"
@@ -594,84 +676,82 @@ function AddSpace() {
 
         {/* Image Previews */}
         <div className="flex justify-center">
-  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-8">
-    {uploadedImageURLs.length > 0 ? (
-      uploadedImageURLs.map((imgUrl, index) => (
-        <div
-          key={index}
-          className="flex items-center relative justify-center max-w-[200px]"
-        >
-          <img
-            src={imgUrl}
-            alt={`Room image ${index + 1}`}
-            className="w-full h-fit sm:h-40 md:h-48 object-cover rounded-lg shadow-md"
-          />
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 gap-8">
+            {uploadedImageURLs.length > 0
+              ? uploadedImageURLs.map((imgUrl, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center relative justify-center max-w-[200px]"
+                  >
+                    <img
+                      src={imgUrl}
+                      alt={`Room image ${index + 1}`}
+                      className="w-full h-fit sm:h-40 md:h-48 object-cover rounded-lg shadow-md"
+                    />
+                  </div>
+                ))
+              : image.map((img, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center relative justify-center max-w-[200px]"
+                  >
+                    <img
+                      src={URL.createObjectURL(img)}
+                      alt={`Room image ${index + 1}`}
+                      className="w-full h-fit sm:h-40 md:h-48 object-cover rounded-lg shadow-md"
+                    />
+                    <Popconfirm
+                      title="Are you sure you want to delete this image?"
+                      onConfirm={() => dltImage(img)}
+                      
+                    >
+                      <button className="absolute top-0 right-0 p-1 rounded-md bg-black">
+                        <MdDeleteOutline className="text-white" />
+                      </button>
+                    </Popconfirm>
+                  </div>
+                ))}
+          </div>
         </div>
-      ))
-    ) : (
-      image.map((img, index) => (
-        <div
-          key={index}
-          className="flex items-center relative justify-center max-w-[200px]"
-        >
-          <img
-            src={URL.createObjectURL(img)}
-            alt={`Room image ${index + 1}`}
-            className="w-full h-fit sm:h-40 md:h-48 object-cover rounded-lg shadow-md"
-          />
-          <button
-            className="absolute top-0 right-0 p-1 rounded-md bg-black"
-            onClick={() => dltImage(img)}
-          >
-            <MdDeleteOutline className="text-white" />
-          </button>
-        </div>
-      ))
-    )}
-  </div>
-</div>
-
 
         {/* Image Upload Field */}
-        {(image.length < 3 || uploadedImageURLs.length < 3 ) && (
-  <div className="mt-4">
-    <Input
-      type="file"
-      accept="image/*"
-      multiple
-      size="sm"
-      variant="bordered"
-      onChange={handleImageChange}
-      required
-      className="bg-gray-100 border-2 border-dashed border-gray-300  rounded-md p-3 text-center text-sm w-full"
-      description={`Click or drag ${imgCount} images to upload`}
-    />
-    {errors.image && (
-      <p className="text-red-500 text-xs mt-1">{errors.image}</p>
-    )}
-  </div>
-)}
-
+        {(image.length < 3 || uploadedImageURLs.length < 3) && (
+          <div className="mt-4">
+            <Input
+              type="file"
+              accept="image/*"
+              multiple
+              size="sm"
+              variant="bordered"
+              onChange={handleImageChange}
+              required
+              className="bg-gray-100 border-2 border-dashed border-gray-300  rounded-md p-3 text-center text-sm w-full"
+              description={`Click or drag ${imgCount} images to upload`}
+            />
+            {errors.image && (
+              <p className="text-red-500 text-xs mt-1">{errors.image}</p>
+            )}
+          </div>
+        )}
 
         {/* Submit Button */}
-        {isLoading ?(
-            <div className="flex justify-center items-center h-[100px]">
-           <Lottie options={defaultOptions} height={150} width={150} />
+        {isLoading ? (
+          <div className="flex justify-center items-center h-[100px]">
+            <Lottie options={defaultOptions} height={150} width={150} />
           </div>
-        ):(
+        ) : (
           <div className="mt-6 text-center">
-          <Button
-            type="submit"
-            color="success"
-            size="md"
-            className="w-full"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-        </div>
+            <Button
+              type="submit"
+              color="success"
+              size="md"
+              className="w-full"
+              onClick={handleSubmit}
+            >
+              Submit
+            </Button>
+          </div>
         )}
-        
       </form>
     </div>
   );

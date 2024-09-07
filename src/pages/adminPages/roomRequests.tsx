@@ -120,13 +120,6 @@ const App: React.FC = () => {
       align: "center",
     },
     {
-      title: "Owner ID",
-      dataIndex: "userId",
-      key: "userId",
-      ellipsis: true,
-      align: "center",
-    },
-    {
       title: "Action",
       key: "action",
       render: (_, record) => (
@@ -295,7 +288,7 @@ const App: React.FC = () => {
                 {selectedUser.images.slice(0, 3).map((image, index) => (
                   <img
                     key={index}
-                    src={`${SERVER_URL}/uploads/${image}`}
+                    src={image}
                     alt={`User image ${index + 1}`}
                     className="w-28 h-28 object-cover rounded-lg"
                   />

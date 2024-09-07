@@ -35,8 +35,8 @@ export default function Header() {
 
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to="/allRooms"> Rooms</NavLink>
-            <NavLink to="/yourRooms">Your Rooms</NavLink>
-            <NavLink to="/contact">Contact</NavLink>
+            <NavLink to="/yourRooms">My Rooms</NavLink>
+            <NavLink to="/myBookings">Bookings</NavLink>
           </div>
 
           <div className="hidden md:flex items-center space-x-3">
@@ -104,8 +104,8 @@ export default function Header() {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink to="/allRooms"> Rooms</NavLink>
-            <NavLink to="/rourRooms">Your Rooms</NavLink>
-            <NavLink to="/contact">Contact</NavLink>
+            <NavLink to="/rourRooms">My Rooms</NavLink>
+            <NavLink to="/myBookings">Bookings</NavLink>
           </div>
           <div className="pt-2 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5 space-x-2">

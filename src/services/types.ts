@@ -30,4 +30,36 @@ export interface Room {
     images: string[];
     isAproved: boolean;
   }
+
+  export interface RoomData {
+    amount: number;
+    createdAt: string;
+    paymentId: string;
+    roomId: Room;
+    coordinates: {
+      type: string;
+      coordinates: [number, number];
+    };
+    description: string;
+    gender: string;
+    images: string[];
+    isApproved: boolean;
+    isEdited: boolean;
+    isListed: boolean;
+    location: string;
+    maintenanceCharge: string;
+    mobile: string;
+    name: string;
+    noticePeriod: string;
+    roomType: string;
+    securityDeposit: string;
+    slots: number;
+    userId: string;
+    __v: number;
+    _id: string;
+    roomName: string;
+    status: string;
+    updatedAt: string;
+  }
+  
   

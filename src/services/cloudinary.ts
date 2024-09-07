@@ -4,11 +4,11 @@ const CLOUDINARY_UPLOAD_PRESET = "BedAura";
 import axios from "axios";
 
 const uploadToCloudinary = async (file: File) => {
-    const options = {
-      maxSizeMB: 10,
-      maxWidthOrHeight: 1920,
-      useWebWorker: true,
-    };
+  const options = {
+    maxSizeMB: 2, 
+    maxWidthOrHeight: 1080, 
+    useWebWorker: true,
+  };
 
     const compressedFile = await imageCompression(file, options);
 
