@@ -20,8 +20,11 @@ const errorHandle = (error: Error | AxiosError) => {
       
 
       switch (axiosError.response.status) {
-        // case 400:
-        // case 401:
+        case 400:
+             
+             toast.error( errorResponse.message )
+             
+             break;
         case 403:
           toast.error(
             errorResponse.message || "A client error occurred. Please try again."

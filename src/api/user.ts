@@ -234,4 +234,15 @@ export const fetchBooking =async (userId:string)=>{
   }
 }
 
+export const changePassword = async (oldPassword:string, newPassword:string , email:string)=>{
+  try {
+    
+    const response = await Api.post(userRoutes.changePassword,{oldPassword,newPassword,email})
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 

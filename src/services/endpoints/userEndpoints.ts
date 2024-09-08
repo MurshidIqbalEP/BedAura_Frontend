@@ -18,7 +18,8 @@ const userRoutes={
     fetchNearestRooms:"/user/fetchNearestRooms",
     bookRoom:"/user/bookRoom",
     logOut:"/user/logOut",
-    fetchBookings:"/user/getbookings"
+    fetchBookings:"/user/getbookings",
+    changePassword:"/user/changePassword"
 
     
 }
