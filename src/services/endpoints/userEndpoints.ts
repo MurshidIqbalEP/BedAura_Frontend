@@ -19,7 +19,8 @@ const userRoutes={
     bookRoom:"/user/bookRoom",
     logOut:"/user/logOut",
     fetchBookings:"/user/getbookings",
-    changePassword:"/user/changePassword"
+    changePassword:"/user/changePassword",
+    fetchWallet:"/user/fetchWallet"
 
     
 }

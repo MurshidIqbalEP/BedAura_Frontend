@@ -61,5 +61,18 @@ export interface Room {
     status: string;
     updatedAt: string;
   }
+
+  export interface ITransaction {
+    amount: number;
+    description: string;
+    date?: Date; 
+    transactionType: 'credit' | 'debit';
+  }
+  
+  export interface IWallet {
+    userId: string;
+    balance: number;
+    transactions: ITransaction[];
+  }
   
   

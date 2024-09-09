@@ -245,4 +245,14 @@ export const changePassword = async (oldPassword:string, newPassword:string , em
   }
 }
 
+export const fetchWallet = async (userId:string)=>{
+  try {
+    const response = await Api.get(`${userRoutes.fetchWallet}/${userId}`)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 
