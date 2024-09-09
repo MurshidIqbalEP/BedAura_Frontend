@@ -20,7 +20,7 @@ const Wallet = () => {
     FetchWallet();
   }, [userInfo]);
 
-  // Define the columns for the table
+
   const columns = [
     { key: "date", label: "Date" },
     { key: "amount", label: "Amount" },

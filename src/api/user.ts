@@ -255,4 +255,14 @@ export const fetchWallet = async (userId:string)=>{
   }
 }
 
+export const postReview = async (roomId:string,userId:String,rating:number,review:string)=>{
+  try {
+    const response = await Api.post(userRoutes.postReview,{roomId,userId,rating,review})
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 

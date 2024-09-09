@@ -11,25 +11,27 @@ import {
 } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
-import { FaPhoneAlt, FaUser, FaRegUser } from "react-icons/fa";
+import { FaPhoneAlt, FaUser } from "react-icons/fa";
 import { IoMail } from "react-icons/io5";
-import { MdEmail } from "react-icons/md";
+
 import { setCredentials } from "../../redux/Slices/authSlice";
 import { useState } from "react";
-import { changePassword, editUser } from "../../api/user";
+import { editUser } from "../../api/user";
 import { toast } from "sonner";
 import defaultProfile from "../../assets/img/Default_pfp.svg.png";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell } from "@nextui-org/react";
-import ChangePassword from "../userPages/changePassword"
-import Wallet from "../userPages/wallet"
+
+import ChangePassword from "../userPages/changePassword";
+import Wallet from "../userPages/wallet";
 
 const Profile = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+
   const dispatch = useDispatch();
   const [user, setUser] = useState(userInfo);
-  const [currentTab, setCurrentTab] = useState<"about" | "changePassword" | "wallet">(
-    "about"
-  ); // Tab state
+
+  const [currentTab, setCurrentTab] = useState<
+    "about" | "changePassword" | "wallet"
+  >("about"); // Tab state
   const [valErr, setValerr] = useState({
     nameErr: "",
     emailErr: "",
@@ -39,14 +41,6 @@ const Profile = () => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setUser({ ...user, [e.target.name]: e.target.value });
-  };
-
-  const validateForm = () => {
-    const { name, email, number } = user;
-    if (!name || !email || !number) return "All fields are required.";
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) return "Invalid email format.";
-    return null;
   };
 
   const handleSave = async (onClose: () => void) => {
@@ -80,9 +74,6 @@ const Profile = () => {
       onClose();
     }
   };
-
-  
- 
 
   return (
     <div className="flex min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 ">
@@ -136,15 +127,16 @@ const Profile = () => {
               <div className="space-y-4">
                 <div className="flex items-center">
                   <FaUser size={18} className="text-blue-500 mr-2" />
-                  <p className="text-sm text-gray-600">{userInfo.name}</p>
+                  <p className="text-sm text-gray-600">{user.name}</p>
                 </div>
                 <div className="flex items-center">
                   <IoMail size={18} className="text-blue-500 mr-2" />
-                  <p className="text-sm text-gray-600">{userInfo.email}</p>
+                  <p className="text-sm text-gray-600">{user.email}</p>
                 </div>
                 <div className="flex items-center">
                   <FaPhoneAlt size={18} className="text-blue-500 mr-2" />
-                  <p className="text-sm text-gray-600">{userInfo.number}</p>
+
+                  <p className="text-sm text-gray-600">{user.number}</p>
                 </div>
                 <Button onPress={onOpen} color="primary">
                   Edit Profile
@@ -221,8 +213,7 @@ const Profile = () => {
           </div>
         ) : currentTab === "changePassword" ? (
           <ChangePassword />
-        )
-        : (
+        ) : (
           <Wallet />
         )}
       </main>

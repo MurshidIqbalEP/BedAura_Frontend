@@ -20,7 +20,8 @@ const userRoutes={
     logOut:"/user/logOut",
     fetchBookings:"/user/getbookings",
     changePassword:"/user/changePassword",
-    fetchWallet:"/user/fetchWallet"
+    fetchWallet:"/user/fetchWallet",
+    postReview:"/user/postReview"
 
     
 }
