@@ -71,7 +71,7 @@ function myBookings() {
 
     if (valid) {
       const response = await postReview(
-        selectedRoom!._id,
+        selectedRoom!.roomId._id,
         userId,
         selectedStars,
         review
@@ -198,6 +198,7 @@ function myBookings() {
             <>
               <ModalHeader className="flex flex-col gap-1">{`Rate ${selectedRoom?.roomName}`}</ModalHeader>
               <ModalBody>
+                <h1>{}</h1>
                 <div className="flex justify-center mb-4">
                   {[...Array(5)].map((_, index) => (
                     <span

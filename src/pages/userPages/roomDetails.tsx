@@ -1,13 +1,22 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { bookRoom, fetchRoom } from "../../api/user";
+import { bookRoom, fetchReviews, fetchRoom } from "../../api/user";
 import { Room } from "../../services/types";
-import { Image } from "antd";
+import { Image, Rate } from "antd";
 import ReactMapGL, { Marker, ViewportProps } from "react-map-gl";
+import "mapbox-gl/dist/mapbox-gl.css"; // Import the CSS
 import { Button } from "@nextui-org/react";
 import { MdOutlineMessage } from "react-icons/md";
 import { CiBookmarkCheck } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardHeader,
+  CardBody,
+  CardFooter,
+  Avatar,
+} from "@nextui-org/react";
+import { IReview } from "../../services/types";
 import {
   Modal,
   ModalContent,
@@ -20,10 +29,13 @@ import { toast } from "sonner";
 import StripeCheckout from "react-stripe-checkout";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+import CardCarousel from "../../components/cardCarousel";
+import defaultProfile from "../../assets/img/Default_pfp.svg.png";
+
 
 function RoomDetails() {
-  const { id } = useParams<{ id: string }>(); 
-  const [room, setRoom] = useState<Room | null>(null); 
+  const { id } = useParams<{ id: string }>();
+  const [room, setRoom] = useState<Room | null>(null);
   const [viewPort, setViewPort] = useState<ViewportProps>({
     latitude: 0,
     longitude: 0,
@@ -33,36 +45,43 @@ function RoomDetails() {
   });
   const navigate = useNavigate();
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-  const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string; 
-  const [bookingSlots, setBookingSlots] = useState<number>(0); 
+  const token = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN as string;
+  const [bookingSlots, setBookingSlots] = useState<number>(0);
   const [amount, setAmount] = useState<number>(0);
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+
+  const [reviews, setReviews] = useState<IReview[]>([]);
   useEffect(() => {
     const fetchRoomData = async () => {
-      const roomResponse = await fetchRoom(id as string); 
-      console.log(roomResponse);
+      const roomResponse = await fetchRoom(id as string);
       const fetchedRoom = roomResponse.data;
       setRoom(fetchedRoom);
 
-      // Update viewport with room coordinates
       if (
         fetchedRoom.coordinates &&
         Array.isArray(fetchedRoom.coordinates.coordinates)
       ) {
         const [longitude, latitude] = fetchedRoom.coordinates.coordinates;
-        setViewPort((prev:any) => ({
+        setViewPort((prev: any) => ({
           ...prev,
-          latitude, // Latitude 
-          longitude, // Longitude 
+          latitude,
+          longitude,
         }));
       }
     };
+
+    const fetchReview = async () => {
+      const reviews = await fetchReviews(id as string);
+      console.log(reviews?.data.reviews);
+      setReviews(reviews?.data.reviews);
+    };
+
     fetchRoomData();
+    fetchReview();
   }, [id]);
 
   const handleBookingSlots = (value: string) => {
-   
-    const slotValue = Number(value); 
+    const slotValue = Number(value);
     if (isNaN(slotValue) || slotValue > (room?.slots || 0) || slotValue <= 0) {
       toast.error("Slot exceeded");
       setBookingSlots(0);
@@ -70,25 +89,28 @@ function RoomDetails() {
       return;
     }
     setBookingSlots(slotValue);
-    let amt :number = (Number(room?.securityDeposit )|| 0) * slotValue; 
+    let amt: number = (Number(room?.securityDeposit) || 0) * slotValue;
     setAmount(amt);
   };
 
-  const onToken = async(token: any)=> {
+  const onToken = async (token: any) => {
     // console.log(token);
     // console.log(room?._id,userInfo._id,bookingSlots);
-    
-    let booked = await bookRoom(token,room?._id as string,userInfo._id,bookingSlots)
-    if(booked){
-      navigate("/myBookings");
-      toast.success("Room Booked")
-      
-    }
 
-  }
+    let booked = await bookRoom(
+      token,
+      room?._id as string,
+      userInfo._id,
+      bookingSlots
+    );
+    if (booked) {
+      navigate("/myBookings");
+      toast.success("Room Booked");
+    }
+  };
 
   return (
-    <div className="w-full h-full flex justify-center  bg-gray-200 items-center">
+    <div className="w-full h-full flex  flex-col justify-center  bg-gray-200 items-center">
       {/* Parent container with column layout */}
       <div className="w-[80%] m-[30px] p-9 rounded-2xl bg-white flex flex-col items-center space-y-4">
         {/* Image section */}
@@ -200,7 +222,7 @@ function RoomDetails() {
                     </p>
                     <p className="text-sm text-gray-600">{room?.slots}</p>
                   </div>
-                  
+
                   <div>
                     <p className="text-sm text-gray-600 font-medium mb-2">
                       Deposit
@@ -209,7 +231,6 @@ function RoomDetails() {
                       ₹ {room?.securityDeposit}
                     </p>
                   </div>
-                  
                 </div>
                 <div className="my-4">
                   <label className="block mb-2 text-sm font-medium text-gray-600">
@@ -230,29 +251,64 @@ function RoomDetails() {
                 </div>
               </ModalBody>
               <ModalFooter>
-                 {amount && (
-                    <Button
+                {amount && (
+                  <Button
                     onPress={() => {
-                      onOpenChange(); // Close the modal
-                      // Open Stripe Checkout (this logic might need to be handled explicitly)
+                      onOpenChange();
                     }}
-                    
                     size="sm"
                     className="bg-transparent"
                   >
                     <StripeCheckout
                       token={onToken}
-                      amount={amount*100}
+                      amount={amount * 100}
                       currency="INR"
                       stripeKey={import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY}
                     />
                   </Button>
-                 )}
-                
+                )}
               </ModalFooter>
             </ModalContent>
           </Modal>
         </div>
+        {reviews!.length <= 2 ? (
+          <div className="text-center flex p-4">
+            
+            {reviews.map((review, index) => (
+              <Card key={index} className="max-w-[400px] min-w-[340px] min-h-[180px] m-2 shadow-xl">
+                <CardHeader className="justify-between">
+                  <div className="flex gap-5">
+                    <Avatar
+                      isBordered
+                      radius="full"
+                      size="md"
+                      className="bg-black"
+                      src={userInfo.profilePicture || defaultProfile}
+                    />
+                    <div className="flex flex-col gap-1 items-start justify-center">
+                      <h4 className="text-small font-semibold leading-none text-default-600">
+                        {review.userId.name}
+                      </h4>
+                      <Rate disabled defaultValue={review.rating}  style={{ fontSize: '14px' }}  />
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardBody className="px-3 py-0 text-small text-default-400">
+                  
+                <p>Rating: {review.rating} / 5</p>
+                <p>{review.review}</p>
+                  
+                </CardBody>
+                <CardFooter className="gap-3">
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <div className="w-full">
+            <CardCarousel reviews={reviews} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -32,6 +32,7 @@ export default function userRoute() {
           <Route path="profile" element={<Profile />} />
           <Route path="/room-details/:id" element={<RoomDetails />} />
           <Route path="/myBookings" element={<MyBookings />} />
+         
         </Route>
         
         <Route path="addSpace" element={<AddSpace />} />

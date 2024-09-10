@@ -74,5 +74,15 @@ export interface Room {
     balance: number;
     transactions: ITransaction[];
   }
+
+  export interface IReview {
+    _id: string;           
+    userId: User;        
+    roomId: string;        
+    rating: number;        
+    review: string;      
+    createdAt: string;     
+    updatedAt?: string;   
+  }
   
   

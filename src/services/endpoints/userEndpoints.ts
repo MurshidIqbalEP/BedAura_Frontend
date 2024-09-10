@@ -21,7 +21,8 @@ const userRoutes={
     fetchBookings:"/user/getbookings",
     changePassword:"/user/changePassword",
     fetchWallet:"/user/fetchWallet",
-    postReview:"/user/postReview"
+    postReview:"/user/postReview",
+    fetchReviews:"/user/fetchReviews"
 
     
 }

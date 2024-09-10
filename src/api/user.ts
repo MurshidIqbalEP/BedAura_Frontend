@@ -265,4 +265,14 @@ export const postReview = async (roomId:string,userId:String,rating:number,revie
   }
 }
 
+export const fetchReviews = async (roomId:string)=>{
+  try {
+    const response = await Api.get(`${userRoutes.fetchReviews}/${roomId}`)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 
