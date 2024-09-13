@@ -22,7 +22,10 @@ const userRoutes={
     changePassword:"/user/changePassword",
     fetchWallet:"/user/fetchWallet",
     postReview:"/user/postReview",
-    fetchReviews:"/user/fetchReviews"
+    fetchReviews:"/user/fetchReviews",
+    postMessage:"/user/addMessage",
+    fetchPrevMsgs:"/user/fetchMessages",
+    fetchContacts:"/user/fetchContacts"
 
     
 }

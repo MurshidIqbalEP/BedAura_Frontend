@@ -275,4 +275,36 @@ export const fetchReviews = async (roomId:string)=>{
   }
 }
 
+export const postMessage = async (messageData:any)=>{
+  try {
+    const response = await Api.post(userRoutes.postMessage,{sender:messageData.senderId,reciever:messageData.receiverId,message:messageData.message})
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+export const fetchPrevMsgs = async (sender:string,receiver:string)=>{
+  try {
+    const response = await Api.get(`${userRoutes.fetchPrevMsgs}?sender=${sender}&receiver=${receiver}`)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+export const fetchContacts = async (currentUserId:string)=>{
+  try {
+    console.log(currentUserId);
+    
+    const response = await Api.get(`${userRoutes.fetchContacts}?currentUserId=${currentUserId}`)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 

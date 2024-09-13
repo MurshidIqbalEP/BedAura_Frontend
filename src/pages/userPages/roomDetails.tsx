@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { bookRoom, fetchReviews, fetchRoom } from "../../api/user";
 import { Room } from "../../services/types";
-import { Image, Rate } from "antd";
+import { Image, Rate, Drawer } from "antd";
 import ReactMapGL, { Marker, ViewportProps } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Import the CSS
 import { Button } from "@nextui-org/react";
@@ -31,7 +31,7 @@ import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import CardCarousel from "../../components/cardCarousel";
 import defaultProfile from "../../assets/img/Default_pfp.svg.png";
-
+import Chat from "../../components/chat";
 
 function RoomDetails() {
   const { id } = useParams<{ id: string }>();
@@ -51,10 +51,13 @@ function RoomDetails() {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
 
   const [reviews, setReviews] = useState<IReview[]>([]);
+  const [open, setOpen] = useState(false);
+
   useEffect(() => {
     const fetchRoomData = async () => {
       const roomResponse = await fetchRoom(id as string);
       const fetchedRoom = roomResponse.data;
+
       setRoom(fetchedRoom);
 
       if (
@@ -79,6 +82,14 @@ function RoomDetails() {
     fetchRoomData();
     fetchReview();
   }, [id]);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
 
   const handleBookingSlots = (value: string) => {
     const slotValue = Number(value);
@@ -195,7 +206,12 @@ function RoomDetails() {
           </ReactMapGL>
         </div>
         <div className="flex  gap-2">
-          <Button color="primary" size="sm" variant="bordered">
+          <Button
+            color="primary"
+            size="sm"
+            variant="bordered"
+            onClick={showDrawer}
+          >
             <MdOutlineMessage />
             Chat
           </Button>
@@ -203,6 +219,17 @@ function RoomDetails() {
             <CiBookmarkCheck />
             Book
           </Button>
+
+          <Drawer title="Chat" onClose={onClose} open={open}>
+            {room?.userId ? (
+              <Chat
+                currentUserId={userInfo._id}
+                chattingWithUserId={room?.userId}
+              />
+            ) : (
+              <p>Loading chat...</p>
+            )}
+          </Drawer>
 
           <Modal
             isOpen={isOpen}
@@ -273,9 +300,11 @@ function RoomDetails() {
         </div>
         {reviews!.length <= 2 ? (
           <div className="text-center flex p-4">
-            
             {reviews.map((review, index) => (
-              <Card key={index} className="max-w-[400px] min-w-[340px] min-h-[180px] m-2 shadow-xl">
+              <Card
+                key={index}
+                className="max-w-[400px] min-w-[340px] min-h-[180px] m-2 shadow-xl"
+              >
                 <CardHeader className="justify-between">
                   <div className="flex gap-5">
                     <Avatar
@@ -289,18 +318,19 @@ function RoomDetails() {
                       <h4 className="text-small font-semibold leading-none text-default-600">
                         {review.userId.name}
                       </h4>
-                      <Rate disabled defaultValue={review.rating}  style={{ fontSize: '14px' }}  />
+                      <Rate
+                        disabled
+                        defaultValue={review.rating}
+                        style={{ fontSize: "14px" }}
+                      />
                     </div>
                   </div>
                 </CardHeader>
                 <CardBody className="px-3 py-0 text-small text-default-400">
-                  
-                <p>Rating: {review.rating} / 5</p>
-                <p>{review.review}</p>
-                  
+                  <p>Rating: {review.rating} / 5</p>
+                  <p>{review.review}</p>
                 </CardBody>
-                <CardFooter className="gap-3">
-                </CardFooter>
+                <CardFooter className="gap-3"></CardFooter>
               </Card>
             ))}
           </div>

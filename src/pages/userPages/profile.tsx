@@ -22,6 +22,7 @@ import defaultProfile from "../../assets/img/Default_pfp.svg.png";
 
 import ChangePassword from "../userPages/changePassword";
 import Wallet from "../userPages/wallet";
+import ChatPage from "../../components/chatPage";
 
 const Profile = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
@@ -30,7 +31,7 @@ const Profile = () => {
   const [user, setUser] = useState(userInfo);
 
   const [currentTab, setCurrentTab] = useState<
-    "about" | "changePassword" | "wallet"
+    "about" | "changePassword" | "wallet" | "chat"
   >("about"); // Tab state
   const [valErr, setValerr] = useState({
     nameErr: "",
@@ -76,9 +77,9 @@ const Profile = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 ">
+    <div className="flex h-screen bg-gradient-to-br from-blue-50 to-indigo-100 ">
       {/* Aside Navigation */}
-      <aside className="w-[210px] p-4 bg-white shadow-md">
+      <aside className="w-1/4 p-4 min-h-screen bg-white shadow-md">
         <div className="flex flex-col items-center justify-center text-center">
           <Image
             isZoomed
@@ -115,11 +116,19 @@ const Profile = () => {
           >
             Wallet
           </Button>
+          <Button
+            className={`w-full ${
+              currentTab === "chat" ? "bg-blue-500 text-white" : ""
+            }`}
+            onPress={() => setCurrentTab("chat")}
+          >
+            Chat
+          </Button>
         </nav>
       </aside>
 
       {/* Main Content */}
-      <main className="w-3/4 p-6 ">
+      <main className="w-full  p-6 ">
         {currentTab === "about" ? (
           <div className="flex  justify-center min-h-screen ">
             <div className="bg-white mt-[30px]  p-6 rounded-lg h-[250px] shadow-lg space-y-6 w-full max-w-sm">
@@ -213,7 +222,9 @@ const Profile = () => {
           </div>
         ) : currentTab === "changePassword" ? (
           <ChangePassword />
-        ) : (
+        ) : currentTab === "chat"?(
+           <ChatPage currentUserId={user._id} />
+        ) :(
           <Wallet />
         )}
       </main>

@@ -17,6 +17,7 @@ import Profile from "../pages/userPages/profile.tsx";
 import RoomDetails from "../pages/userPages/roomDetails.tsx";
 import MyBookings from "../pages/userPages/myBookings.tsx";
 
+
 export default function userRoute() {
   return (
     <Routes>
@@ -32,6 +33,7 @@ export default function userRoute() {
           <Route path="profile" element={<Profile />} />
           <Route path="/room-details/:id" element={<RoomDetails />} />
           <Route path="/myBookings" element={<MyBookings />} />
+         
          
         </Route>
         
