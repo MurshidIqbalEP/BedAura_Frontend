@@ -25,7 +25,8 @@ const userRoutes={
     fetchReviews:"/user/fetchReviews",
     postMessage:"/user/addMessage",
     fetchPrevMsgs:"/user/fetchMessages",
-    fetchContacts:"/user/fetchContacts"
+    fetchContacts:"/user/fetchContacts",
+    fetchOwnerDetails:"/user/fetchOwnerDetails"
 
     
 }

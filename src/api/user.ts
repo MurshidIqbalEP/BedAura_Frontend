@@ -297,9 +297,17 @@ export const fetchPrevMsgs = async (sender:string,receiver:string)=>{
 
 export const fetchContacts = async (currentUserId:string)=>{
   try {
-    console.log(currentUserId);
-    
     const response = await Api.get(`${userRoutes.fetchContacts}?currentUserId=${currentUserId}`)
+    return response;
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+export const fetchOwnerDetails = async (chattingWithUserId:string)=>{
+  try {
+    const response = await Api.get(`${userRoutes.fetchOwnerDetails}?ownerUserId=${chattingWithUserId}`)
     return response;
   } catch (error) {
     const err: Error = error as Error;
