@@ -32,6 +32,22 @@ import { useSelector } from "react-redux";
 import CardCarousel from "../../components/cardCarousel";
 import defaultProfile from "../../assets/img/Default_pfp.svg.png";
 import Chat from "../../components/chat";
+import { FaMapMarkerAlt } from "react-icons/fa";
+
+// Keyframes for bounce animation
+const bounceAnimation = `
+  @keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+      transform: translateY(0);
+    }
+    40% {
+      transform: translateY(-10px);
+    }
+    60% {
+      transform: translateY(-5px);
+    }
+  }
+`;
 
 function RoomDetails() {
   const { id } = useParams<{ id: string }>();
@@ -52,6 +68,7 @@ function RoomDetails() {
 
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [open, setOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -188,6 +205,7 @@ function RoomDetails() {
 
         {/* Map section */}
         <div className="w-full h-[250px] mt-4 rounded-2xl overflow-hidden">
+        <style>{bounceAnimation}</style>
           <ReactMapGL
             {...viewPort}
             mapboxAccessToken={token}
@@ -201,7 +219,13 @@ function RoomDetails() {
               longitude={viewPort.longitude}
               anchor="bottom"
             >
-              <div className="text-red-500 text-xl">&#x1F4CD;</div>
+              <div  style={{
+              color: "red",
+              fontSize: "2rem",
+              animation: "bounce 2s infinite",
+            }}>
+             <FaMapMarkerAlt />
+              </div>
             </Marker>
           </ReactMapGL>
         </div>
