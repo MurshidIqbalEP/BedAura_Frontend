@@ -16,6 +16,7 @@
     "@react-oauth/google": "^0.12.1",
     "@reduxjs/toolkit": "^2.2.7",
     "@shadcn/ui": "^0.0.4",
+    "@zegocloud/zego-uikit-prebuilt": "^2.9.0",
     "antd": "^5.20.2",
     "axios": "^1.7.4",
     "browser-image-compression": "^2.0.2",

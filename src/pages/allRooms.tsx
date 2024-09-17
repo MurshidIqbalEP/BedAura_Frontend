@@ -100,6 +100,7 @@ function AllRooms() {
 
   const handleDetails = (id:string)=>{
     navigate(`/room-details/${id}`);
+    
   }
 
   return (

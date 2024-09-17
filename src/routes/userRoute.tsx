@@ -16,7 +16,7 @@ import BlockedPage from "../pages/userPages/blockedPage.tsx";
 import Profile from "../pages/userPages/profile.tsx";
 import RoomDetails from "../pages/userPages/roomDetails.tsx";
 import MyBookings from "../pages/userPages/myBookings.tsx";
-
+import Videocall from "../components/videocall.tsx";
 
 export default function userRoute() {
   return (
@@ -33,6 +33,7 @@ export default function userRoute() {
           <Route path="profile" element={<Profile />} />
           <Route path="/room-details/:id" element={<RoomDetails />} />
           <Route path="/myBookings" element={<MyBookings />} />
+          <Route path="/videocallRoom/:roomId" element={<Videocall />} />
          
          
         </Route>

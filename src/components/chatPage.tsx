@@ -1,13 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { Avatar } from "@nextui-org/react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import io from "socket.io-client";
 import Picker from "emoji-picker-react";
 import { IoMdSend } from "react-icons/io";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import { fetchContacts, fetchPrevMsgs, postMessage } from "../api/user";
 import defaultProfile from "../assets/img/Default_pfp.svg.png";
+import { FaVideo } from "react-icons/fa";
+import chatLoadingAnimatio from "../assets/chatLoadingAnimation.json";
+import Lottie from "react-lottie";
+import { Button, notification, Space } from "antd";
 
 const socket = io("http://localhost:3000");
+
+const defaultOptions = {
+  loop: true,
+  autoplay: true,
+  animationData: chatLoadingAnimatio,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
 
 interface Contact {
   id: string;
@@ -40,46 +54,50 @@ const ChatApp: React.FC<{ currentUserId: string }> = ({ currentUserId }) => {
   }, [currentUserId]);
 
   return (
-    <div className="flex h-[90%] bg-gray-100  rounded-xl overflow-hidden shadow-lg">
+    <div className="flex h-[90%] bg-gray-100 rounded-xl overflow-hidden shadow-lg">
       {/* Contact List */}
       <div className="w-1/4 bg-white border-r border-gray-200 overflow-y-auto">
         <h2 className="text-2xl font-bold p-2 border-b border-gray-200">
           Contacts
         </h2>
         <ul className="space-y-1">
-          {contacts.map((contact) => (
-            <li
-              key={contact.id}
-              className={`flex items-center p-2 cursor-pointer transition-colors duration-200 ${
-                selectedContact?.id === contact.id
-                  ? "bg-blue-50 border-l-4 border-blue-500"
-                  : "hover:bg-gray-50"
-              }`}
-              onClick={() => setSelectedContact(contact)}
-            >
-              <Avatar
-                isBordered
-                radius="full"
-                size="md"
-                src={contact?.image ?? defaultProfile}
-                className="border-2 border-gray-200"
-              />
-              <div className="flex-1 min-w-0 ml-3">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  {contact.name}
-                </p>
-                <p className="text-xs text-gray-500 truncate">
-                  {contact.message}
-                </p>
-              </div>
-              <span className="text-xs text-gray-400">
-                {new Date(contact.updatedAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            </li>
-          ))}
+          {contacts?.length > 0 ? (
+            contacts.map((contact) => (
+              <li
+                key={contact.id}
+                className={`flex items-center p-2 cursor-pointer transition-colors duration-200 ${
+                  selectedContact?.id === contact.id
+                    ? "bg-blue-50 border-l-4 border-blue-500"
+                    : "hover:bg-gray-50"
+                }`}
+                onClick={() => setSelectedContact(contact)}
+              >
+                <Avatar
+                  isBordered
+                  radius="full"
+                  size="md"
+                  src={contact?.image ?? defaultProfile}
+                  className="border-2 border-gray-200"
+                />
+                <div className="flex-1 min-w-0 ml-3">
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {contact.name}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {contact.message}
+                  </p>
+                </div>
+                <span className="text-xs text-gray-400">
+                  {new Date(contact.updatedAt).toLocaleTimeString([], {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })}
+                </span>
+              </li>
+            ))
+          ) : (
+            <p className="text-gray-400 text-center">No contacts available.</p>
+          )}
         </ul>
       </div>
 
@@ -92,9 +110,13 @@ const ChatApp: React.FC<{ currentUserId: string }> = ({ currentUserId }) => {
             contactName={selectedContact.name}
           />
         ) : (
-          <div className="flex-1 flex items-center justify-center bg-gray-50">
-            <p className="text-xl text-gray-400">
+          <div className="flex flex-col items-center justify-center  bg-gray-50 min-h-screen">
+            <Lottie options={defaultOptions} height={300} width={300} />
+            <p className="text-2xl font-semibold text-gray-500 mt-4 mb-2 text-center">
               Select a contact to start chatting
+            </p>
+            <p className="text-base text-gray-400 text-center">
+              Choose a conversation from the list to begin messaging
             </p>
           </div>
         )}
@@ -113,6 +135,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
     Array<{ fromSelf: boolean; message: string }>
   >([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const navigate = useNavigate(); // Use navigate hook
 
   useEffect(() => {
     socket.emit("joinRoom", {
@@ -144,8 +167,39 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
       ]);
     });
 
+    socket.on("receiveVideoCall", ({ senderId, roomId }) => {
+      console.log("call comming", roomId);
+
+      if (senderId !== currentUserId) {
+        const key = `open${Date.now()}`;
+        const btn = (
+          <Space>
+            <Button
+              type="primary"
+              size="small"
+              onClick={() => navigate(`/videocallRoom/${roomId}`)}
+            >
+              Join
+            </Button>
+          </Space>
+        );
+
+        notification.open({
+          message: "Incoming Video Call!",
+          description: `You have a video call from ${senderId}.`,
+          btn,
+          key,
+          duration: 0,
+          onClose: () => {
+            console.log("Notification closed");
+          },
+        });
+      }
+    });
+
     return () => {
       socket.off("receiveMessage");
+      socket.off("receiveVideoCall");
     };
   }, [currentUserId, chattingWithUserId]);
 
@@ -169,18 +223,36 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
     setShowEmojiPicker(false);
   };
 
+  const handleVideoCall = () => {
+    socket.emit("videoCall", {
+      senderId: currentUserId,
+      receiverId: chattingWithUserId,
+      roomId: currentUserId,
+    });
+
+    navigate(`/videocallRoom/${currentUserId}`);
+  };
+
   return (
     <>
       {/* Chat Header */}
-      <div className="bg-white border-b border-gray-200 p-2 flex items-center">
-        <Avatar
-          isBordered
-          radius="full"
-          size="sm"
-          src={defaultProfile}
-          className="mr-2"
-        />
-        <h3 className="font-semibold">{contactName}</h3>
+      <div className="bg-white border-b border-gray-200 p-2 flex items-center justify-between">
+        <div className="flex items-center">
+          <Avatar
+            isBordered
+            radius="full"
+            size="sm"
+            src={defaultProfile}
+            className="mr-2"
+          />
+          <h3 className="font-semibold">{contactName}</h3>
+        </div>
+        <button
+          className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600"
+          onClick={handleVideoCall}
+        >
+          <FaVideo />
+        </button>
       </div>
 
       {/* Messages */}
@@ -232,12 +304,12 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
           type="text"
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          className="flex-1 border border-gray-300 rounded-lg px-4 py-2"
           placeholder="Type your message..."
-          className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600"
         >
           <IoMdSend size={24} />
         </button>
