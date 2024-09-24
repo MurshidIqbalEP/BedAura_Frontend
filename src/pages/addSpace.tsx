@@ -13,6 +13,7 @@ import Lottie from "react-lottie";
 import loadingAnimation from "../assets/loading.json";
 import { Progress } from "@nextui-org/react";
 import { Popconfirm } from "antd";
+import { Checkbox } from "@nextui-org/react";
 
 const fetchSuggestions = async (query: string) => {
   try {
@@ -22,7 +23,6 @@ const fetchSuggestions = async (query: string) => {
     const response = await axios.get(url);
 
     if (response.data && response.data.features) {
-      console.log("Mapbox response data:", response.data.features);
       return response.data.features;
     } else {
       console.error("No features found in response:", response.data);
@@ -48,6 +48,7 @@ interface Options {
   genders: string[];
   roomType: string[];
   noticePeriod: string[];
+  AdditionalOptions:string[]
 }
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/drsh8bkaf/upload";
@@ -74,6 +75,7 @@ function AddSpace() {
     genders: [],
     roomType: [],
     noticePeriod: [],
+    AdditionalOptions:[]
   });
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -84,7 +86,7 @@ function AddSpace() {
   const wrapperRef = useRef(null);
   const [isLoading, setLoading] = useState(false);
   const [filledFields, setFilledFields] = useState(0);
-  const totalFields = 11; // Total number of input fields, including the file input
+  const totalFields = 11; 
   const progress = Math.round((filledFields / totalFields) * 100);
   type ProgressFields = {
     name: boolean;
@@ -128,6 +130,9 @@ function AddSpace() {
     image: "",
   });
 
+  const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
+
+
   useEffect(() => {
     if (location) {
       fetchSuggestions(location)
@@ -158,19 +163,19 @@ function AddSpace() {
 
     if (savedFormData) {
       const formData = JSON.parse(savedFormData);
-      console.log(formData);
-
+      
       setName(formData.name);
       setMobile(formData.mobile);
       setMaintenanceCharge(formData.maintenanceCharge);
       setSecurityDeposit(formData.securityDeposit);
       setGender(formData.gender);
-      setType(formData.type);
+      setType(formData.roomType);
       setNoticePeriod(formData.noticePeriod);
       setSlots(formData.slots);
       setLocation(formData.location);
       setDescription(formData.description);
       setUploadedImageURLs(formData.images);
+      setCheckedOptions(formData.checkedOptions)
       setImgCount(0);
     }
 
@@ -205,8 +210,6 @@ function AddSpace() {
       image: "",
     }));
 
-    console.log(imgCount);
-
     if (imgCount == 3) {
       handleFieldFill("image");
     }
@@ -238,9 +241,18 @@ function AddSpace() {
     }
   };
 
+  const handleCheckboxChange = (option:string) => {
+    
+    if (checkedOptions.includes(option)) { 
+      setCheckedOptions(checkedOptions.filter((item) => item !== option));
+    } else {
+      setCheckedOptions([...checkedOptions, option]);
+    }
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-
+    
     let valid = true;
     const newErrors = {
       name: "",
@@ -330,7 +342,7 @@ function AddSpace() {
     }
 
     // Image validation
-    if (image.length !== 3) {
+    if (imgCount !== 0) {
       newErrors.image = ` add ${imgCount}  more images`;
       valid = false;
     }
@@ -338,14 +350,12 @@ function AddSpace() {
     setErrors(newErrors);
 
     if (valid) {
-      setLoading(true);
-      const uploadedURLs = await Promise.all(image.map(uploadToCloudinary));
-      console.log(uploadedURLs);
-
-      setUploadedImageURLs(uploadedURLs);
-      setLoading(false);
-
       if (!userId) {
+        setLoading(true);
+        const uploadedURLs = await Promise.all(image.map(uploadToCloudinary));
+        setUploadedImageURLs(uploadedURLs);
+        setLoading(false);
+
         const formDataObject = {
           name,
           mobile,
@@ -359,14 +369,23 @@ function AddSpace() {
           description,
           coordinates: selectedLocation ?? {},
           images: uploadedURLs,
+          checkedOptions:checkedOptions
         };
 
         localStorage.setItem("addRoomFormData", JSON.stringify(formDataObject));
         navigate("/login", { state: { from: "/addSpace" } });
         return;
       } else {
-        console.log(userId, "user Data");
-
+        let finalUploadedURLs = uploadedImageURLs;
+        if (!uploadedImageURLs.length) {
+          setLoading(true);
+          const uploadedURLs = await Promise.all(image.map(uploadToCloudinary));
+          finalUploadedURLs = uploadedURLs;
+          setUploadedImageURLs(uploadedURLs);
+          setLoading(false);
+        }
+        console.log(checkedOptions);
+        
         const formData = new FormData();
         formData.append("name", name);
         formData.append("userId", userId._id);
@@ -380,8 +399,9 @@ function AddSpace() {
         formData.append("location", location);
         formData.append("description", description);
         formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
+        formData.append("additionalOptions", JSON.stringify(checkedOptions ?? []));
 
-        uploadedURLs.forEach((url) => {
+        finalUploadedURLs.forEach((url) => {
           formData.append("images", url);
         });
 
@@ -400,8 +420,6 @@ function AddSpace() {
   };
 
   const handleFieldFill = (field: keyof ProgressFields) => {
-    console.log(field);
-
     setProgressFilled((prev) => {
       if (prev[field]) {
         return prev;
@@ -655,6 +673,20 @@ function AddSpace() {
           </div>
         </div>
 
+        <div className="flex flex-wrap gap-4 justify-center">
+    <h2>Additional Options :</h2>
+    {options.AdditionalOptions.map((AdditionalOP) => (
+       
+      <Checkbox
+        key={AdditionalOP}
+        isSelected={checkedOptions.includes(AdditionalOP)}
+        onChange={() => handleCheckboxChange(AdditionalOP)} // Handle check/uncheck
+      >
+        {AdditionalOP}
+      </Checkbox>
+    ))}
+  </div>
+
         {/* Description Field */}
         <div>
           <Textarea
@@ -703,9 +735,8 @@ function AddSpace() {
                     <Popconfirm
                       title="Are you sure you want to delete this image?"
                       onConfirm={() => dltImage(img)}
-                      
                     >
-                      <button className="absolute top-0 right-0 p-1 rounded-md bg-black">
+                      <button type="button" className="absolute top-0 right-0 p-1 rounded-md bg-black">
                         <MdDeleteOutline className="text-white" />
                       </button>
                     </Popconfirm>

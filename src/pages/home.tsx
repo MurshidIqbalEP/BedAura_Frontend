@@ -2,8 +2,11 @@ import { Button } from "@nextui-org/react";
 import LandingPageImage from "../assets/img/landing page img.png";
 import secondLandingPageImg from "../assets/img/second landingPage img.png";
 import { Link } from "react-router-dom";
+import { useEffect } from "react";
+import axios from "axios";
 
 export default function Home() {
+  
   return (
     <div className="bg-gray-100">
       {/* First Hero Section */}

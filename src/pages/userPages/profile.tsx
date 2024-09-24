@@ -145,7 +145,7 @@ const Profile = () => {
                 <div className="flex items-center">
                   <FaPhoneAlt size={18} className="text-blue-500 mr-2" />
 
-                  <p className="text-sm text-gray-600">{user.number}</p>
+                  <p className="text-sm text-gray-600">{user.phone}</p>
                 </div>
                 <Button onPress={onOpen} color="primary">
                   Edit Profile
@@ -186,9 +186,9 @@ const Profile = () => {
                           )}
                           <Input
                             label="Number"
-                            name="number"
+                            name="phone"
                             type="number"
-                            value={user.number}
+                            value={user.phone}
                             onChange={handleInputChange}
                             variant="bordered"
                           />

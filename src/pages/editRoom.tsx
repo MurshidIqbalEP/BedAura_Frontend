@@ -1,5 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { Input, Button, Select, SelectItem, Textarea } from "@nextui-org/react";
+import {
+  Input,
+  Button,
+  Select,
+  SelectItem,
+  Textarea,
+  Checkbox,
+} from "@nextui-org/react";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { editRoomApi, fetchRoom } from "../api/user";
 import axios from "axios";
@@ -8,7 +15,7 @@ import { MdDeleteOutline } from "react-icons/md";
 import { fetchOptions } from "../api/admin";
 import uploadToCloudinary from "../services/cloudinary";
 import Lottie from "react-lottie";
-import loadingAnimation from "../assets/loading.json"
+import loadingAnimation from "../assets/loading.json";
 
 interface Coordinates {
   lat: number;
@@ -33,7 +40,6 @@ interface Room {
   images: string[];
   isAproved: boolean;
 }
-
 
 const fetchSuggestions = async (query: string) => {
   try {
@@ -60,6 +66,7 @@ interface Options {
   genders: string[];
   roomType: string[];
   noticePeriod: string[];
+  AdditionalOptions: string[];
 }
 
 const defaultOptions = {
@@ -82,6 +89,7 @@ function editRoom() {
     genders: [],
     roomType: [],
     noticePeriod: [],
+    AdditionalOptions: [],
   });
 
   const [suggestions, setSuggestions] = useState<any[]>([]);
@@ -91,7 +99,8 @@ function editRoom() {
   } | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const wrapperRef = useRef(null);
-  const [isLoading,setLoading] = useState(false)
+  const [isLoading, setLoading] = useState(false);
+  const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
 
   useEffect(() => {
     if (location) {
@@ -114,6 +123,9 @@ function editRoom() {
       try {
         const room = await fetchRoom(id as string);
         setRoom(room.data);
+        console.log(room.data.additionalOptions);
+
+        setCheckedOptions(room.data.additionalOptions);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -141,32 +153,30 @@ function editRoom() {
     setIsOpen(false);
   };
 
-  const handleImageChange = async(e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
 
     if (selectedFiles.length > imgCount) {
       toast.error(`select ${imgCount} images`);
       return;
     }
-    setLoading(true)
+    setLoading(true);
     const uploadedURLs = await Promise.all(
       selectedFiles.map((file) => uploadToCloudinary(file))
     );
     console.log(uploadedURLs);
-    setLoading(false)
-    
-    setRoom((prevRoom:any) => ({
+    setLoading(false);
+
+    setRoom((prevRoom: any) => ({
       ...prevRoom,
       images: [...prevRoom.images, ...uploadedURLs], // Append new URLs to existing images
     }));
 
-    setImgCount((prev)=> prev-uploadedURLs.length)
-    
+    setImgCount((prev) => prev - uploadedURLs.length);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    console.log("submiteddddddddddddddd");
 
     let valid = true;
 
@@ -243,7 +253,7 @@ function editRoom() {
     }
 
     // Image validation
-    if (room?.images.length !== 3 ) {
+    if (room?.images.length !== 3) {
       let msg = `${imgCount} expected`;
       toast.error(msg);
       valid = false;
@@ -264,13 +274,11 @@ function editRoom() {
       formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
       formData.append("roomId", room?._id as string);
       formData.append("userId", room?.userId as string);
-
-     
+      formData.append("additionalOptions", JSON.stringify(checkedOptions ?? []));
 
       room?.images.forEach((url) => {
-        formData.append("images", url);  
+        formData.append("images", url);
       });
-
 
       let response = await editRoomApi(formData);
 
@@ -297,6 +305,20 @@ function editRoom() {
 
     setImgCount(3 - (room?.images?.length ?? 0) + 1);
   };
+
+  const handleCheckboxChange = (option: string) => {
+    if (checkedOptions.includes(option)) {
+      setCheckedOptions(checkedOptions.filter((item) => item !== option));
+    } else {
+      setCheckedOptions([...checkedOptions, option]);
+    }
+  };
+
+  console.log(
+    checkedOptions,
+    options,
+    "==========================================="
+  );
 
   return (
     <div>
@@ -350,7 +372,7 @@ function editRoom() {
                 setRoom({ ...room, securityDeposit: e.target.value } as Room)
               }
             >
-             {options.securityDeposit.map((deposit) => (
+              {options.securityDeposit.map((deposit) => (
                 <SelectItem key={deposit} value={deposit}>
                   {deposit}
                 </SelectItem>
@@ -381,7 +403,7 @@ function editRoom() {
                 setRoom({ ...room, roomType: e.target.value } as Room)
               }
             >
-               {options.roomType.map((room) => (
+              {options.roomType.map((room) => (
                 <SelectItem key={room} value={room}>
                   {room}
                 </SelectItem>
@@ -450,6 +472,19 @@ function editRoom() {
             </div>
           </div>
 
+          <div className="flex flex-wrap gap-4 justify-center">
+          <h2>Additional Options :</h2>
+            {options.AdditionalOptions.map((AdditionalOP) => (
+              <Checkbox
+                key={AdditionalOP}
+                isSelected={checkedOptions.includes(AdditionalOP)}
+                onChange={() => handleCheckboxChange(AdditionalOP)} // Handle check/uncheck
+              >
+                {AdditionalOP}
+              </Checkbox>
+            ))}
+          </div>
+
           <Textarea
             name="description"
             value={room?.description}
@@ -505,23 +540,23 @@ function editRoom() {
             </div>
           )}
 
-{isLoading ?(
+          {isLoading ? (
             <div className="flex justify-center items-center h-[100px]">
-           <Lottie options={defaultOptions} height={150} width={150} />
-          </div>
-        ):(
-          <div className="mt-6 text-center">
-          <Button
-            type="submit"
-            color="success"
-            size="md"
-            className="w-full"
-            onClick={handleSubmit}
-          >
-            Submit
-          </Button>
-        </div>
-        )}
+              <Lottie options={defaultOptions} height={150} width={150} />
+            </div>
+          ) : (
+            <div className="mt-6 text-center">
+              <Button
+                type="submit"
+                color="success"
+                size="md"
+                className="w-full"
+                onClick={handleSubmit}
+              >
+                Submit
+              </Button>
+            </div>
+          )}
         </form>
       </div>
     </div>

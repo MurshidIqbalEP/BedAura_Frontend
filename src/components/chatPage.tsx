@@ -132,7 +132,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
 }) => {
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState<
-    Array<{ fromSelf: boolean; message: string }>
+    Array<{ fromSelf: boolean; message: string; timestamp: string }>
   >([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const navigate = useNavigate(); // Use navigate hook
@@ -141,7 +141,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
     socket.emit("joinRoom", {
       senderId: currentUserId,
       receiverId: chattingWithUserId,
-    });
+    }); 
 
     const fetchPrevMessages = async () => {
       try {
@@ -163,6 +163,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
         {
           fromSelf: messageData.senderId === currentUserId,
           message: messageData.message,
+          timestamp:messageData.timestamp
         },
       ]);
     });
@@ -172,12 +173,24 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
 
       if (senderId !== currentUserId) {
         const key = `open${Date.now()}`;
+        const handleJoin = () => {
+          navigate(`/videocallRoom/${roomId}`); 
+          notification.destroy();
+        };
+
         const btn = (
           <Space>
             <Button
+              type="dashed"
+              size="middle"
+              onClick={()=>notification.destroy()}
+            >
+              Close
+            </Button>
+            <Button
               type="primary"
-              size="small"
-              onClick={() => navigate(`/videocallRoom/${roomId}`)}
+              size="middle"
+              onClick={handleJoin}
             >
               Join
             </Button>
@@ -186,7 +199,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
 
         notification.open({
           message: "Incoming Video Call!",
-          description: `You have a video call from ${senderId}.`,
+          description: `You have a video call .`,
           btn,
           key,
           duration: 0,
@@ -273,6 +286,15 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
                 }`}
               >
                 <p>{msg.message}</p>
+                <span
+                  className={`text-[9px] mt-1 block  ${
+                    msg.fromSelf
+                      ? "text-white  text-right"
+                      : "text-gray-500  text-left"
+                  }`}
+                >
+                  {msg.timestamp}
+                </span>
               </div>
             </div>
           ))

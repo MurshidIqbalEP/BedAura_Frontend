@@ -1,6 +1,6 @@
 
 import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function randomID(len: number) {
   let result = '';
@@ -22,7 +22,7 @@ export default function Videocall() {
 
     let {roomId} =useParams()
   const roomID = roomId as string
-
+  const navigate = useNavigate();
 
   let myMeeting = async (element:any) => {
     
@@ -34,7 +34,7 @@ export default function Videocall() {
       
      // Create instance object from Kit Token.
       const zp = ZegoUIKitPrebuilt.create(kitToken);
-      console.log(zp);
+
       
       // start the call
       zp.joinRoom({
@@ -51,6 +51,9 @@ export default function Videocall() {
         ],
         scenario: {
           mode: ZegoUIKitPrebuilt.OneONoneCall, // To implement 1-on-1 calls, modify the parameter here to [ZegoUIKitPrebuilt.OneONoneCall].
+        },
+        onLeaveRoom: () => {
+          navigate('/'); // Redirect to home page
         },
       });
     }

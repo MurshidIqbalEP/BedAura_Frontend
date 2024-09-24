@@ -21,7 +21,7 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
     image: "",
   });
   const [chat, setChat] = useState<
-    Array<{ fromSelf: boolean; message: string }>
+    Array<{ fromSelf: boolean; message: string; timestamp: string }>
   >([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
@@ -38,6 +38,7 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
         {
           fromSelf: messageData.senderId === currentUserId,
           message: messageData.message,
+          timestamp: messageData.timestamp,
         },
       ]);
     };
@@ -75,7 +76,6 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
     };
 
     const response = await postMessage(messageData);
-   
 
     // Emit the message to the server (ensure this happens once)
     socket.emit("sendMessage", messageData);
@@ -119,6 +119,15 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
                 }`}
               >
                 <p>{msg.message}</p>
+                <span
+                  className={`text-[9px] mt-1 block  ${
+                    msg.fromSelf
+                      ? "text-white  text-right"
+                      : "text-gray-500  text-left"
+                  }`}
+                >
+                  {msg.timestamp}
+                </span>
               </div>
             </div>
           ))
@@ -142,7 +151,7 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
           </button>
           {showEmojiPicker && (
             <div className="absolute bottom-10 left-10 ">
-              <Picker  onEmojiClick={handleEmojiClick} />
+              <Picker onEmojiClick={handleEmojiClick} />
             </div>
           )}
         </div>

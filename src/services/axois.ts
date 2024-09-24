@@ -14,6 +14,7 @@ Api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    console.log(token)
     return config;
   },
   (error) => {
@@ -41,22 +42,22 @@ Api.interceptors.response.use(
         // Refresh the access token
         console.log("hai api call for reffresh ");
 
-        const res = await axios.get(
-          BASE_URL+"/user/refresh-token",
-          { withCredentials: true }
-        );
+        const res = await Api.get("/user/refresh-token");
         let newAccessToken = res.data.accessToken;
         console.log(newAccessToken);
         localStorage.setItem("accessToken", newAccessToken);
 
         originalRequest.headers.Authorization = `Bearer${newAccessToken}`;
+
+        console.log(originalRequest, 'hhkh');
+        
         // Retry the original request with the new access token
         return Api(originalRequest);
       } catch (refreshError) {
         console.error("Failed to refresh token:", refreshError);
-        // localStorage.removeItem("token");
-        // localStorage.removeItem('userInfo')
-        // window.location.href = "/";
+        localStorage.removeItem("token");
+        localStorage.removeItem('userInfo')
+        window.location.href = "/login";
         return Promise.reject(refreshError);
       }
     }

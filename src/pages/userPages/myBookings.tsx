@@ -107,6 +107,7 @@ function myBookings() {
                     <p className="text-sm text-gray-600">
                       {room.roomId.location}
                     </p>
+                    
                   </div>
                   <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">
                     {room.roomId.roomType}

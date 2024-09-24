@@ -126,9 +126,7 @@ export const addRoom = async (formData: FormData) => {
 };
 
 export const editRoomApi = async (formData: FormData) => {
-  try {
-    console.log(addRoom);
-    
+  try { 
     const response = await Api.patch(userRoutes.editRoom, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',

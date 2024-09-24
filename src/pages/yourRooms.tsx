@@ -3,6 +3,7 @@ import { RootState } from "../redux/store";
 import { useSelector } from "react-redux";
 import { fetchRooms } from "../api/user";
 import { Button } from "@nextui-org/react";
+import { Chip } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 
 interface Coordinates {
@@ -26,6 +27,7 @@ interface Room {
   description: string;
   coordinates: Coordinates;
   images: string[];
+  additionalOptions: string[];
   isApproved: boolean;
   isEdited: boolean;
 }
@@ -34,13 +36,12 @@ function yourRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
 
-
   useEffect(() => {
     const getRooms = async () => {
       try {
         const rooms = await fetchRooms(userId);
         console.log(rooms.data);
-        
+
         setRooms(rooms.data);
       } catch (error) {
         console.error("Error fetching rooms:", error);
@@ -60,7 +61,7 @@ function yourRooms() {
           {rooms.map((room) => (
             <div
               key={room._id}
-              className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]"
+              className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[340px]"
             >
               <div className="sm:w-1/3">
                 <img
@@ -69,9 +70,21 @@ function yourRooms() {
                   className="w-full h-full object-cover"
                 />
               </div>
-              <div className="sm:w-2/3 p-4 flex flex-col justify-between overflow-y-auto">
+              <div className="sm:w-2/3 p-2 flex flex-col justify-between overflow-y-auto">
                 <div>
                   <h2 className="text-xl font-semibold mb-2">{room.name}</h2>
+                  <div className="flex gap-4 mb-2">
+                    {room.additionalOptions.map((feature: any) => (
+                      <Chip
+                        color="warning"
+                        size="sm"
+                        radius="sm"
+                        variant="bordered"
+                      >
+                        {feature}
+                      </Chip>
+                    ))}
+                  </div>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <p className="text-sm text-gray-600">
                       <span className="font-medium p-2">Mobile:</span>{" "}
@@ -113,21 +126,22 @@ function yourRooms() {
                 </div>
                 <div className="flex justify-between items-center mt-4">
                   <div className="w-full flex justify-end  ">
-                    <Link to={`/editRoom/${room._id}`}>
-                      <Button
-                        size="md"
-                        className="ml-auto mr-1 bg-custom-yellow"
-                      >
-                        Edit
-                      </Button>
-                    </Link>
+                    <Button
+                      as={Link}
+                      to={`/editRoom/${room._id}`}
+                      size="md"
+                      className="ml-auto mr-1 bg-custom-yellow"
+                    >
+                      Edit
+                    </Button>
                   </div>
 
-                  {room.isApproved === false || room.isEdited === true && (
-                    <Button color="primary" isLoading>
-                    Not Approved
-                  </Button>
-                  )}
+                  {room.isApproved === false ||
+                    (room.isEdited === true && (
+                      <Button color="primary" isLoading>
+                        Not Approved
+                      </Button>
+                    ))}
                 </div>
               </div>
             </div>

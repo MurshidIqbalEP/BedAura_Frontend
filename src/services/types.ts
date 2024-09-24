@@ -30,6 +30,7 @@ export interface Room {
     description: string;
     coordinates: Coordinates;
     images: string[];
+    additionalOptions:string[];
     isAproved: boolean;
   }
 
@@ -45,6 +46,7 @@ export interface Room {
     description: string;
     gender: string;
     images: string[];
+    additionalOptions:string[];
     isApproved: boolean;
     isEdited: boolean;
     isListed: boolean;

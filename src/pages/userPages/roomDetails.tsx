@@ -5,7 +5,7 @@ import { Room } from "../../services/types";
 import { Image, Rate, Drawer } from "antd";
 import ReactMapGL, { Marker, ViewportProps } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Import the CSS
-import { Button } from "@nextui-org/react";
+import { Button, Chip } from "@nextui-org/react";
 import { MdOutlineMessage } from "react-icons/md";
 import { CiBookmarkCheck } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
@@ -68,7 +68,19 @@ function RoomDetails() {
 
   const [reviews, setReviews] = useState<IReview[]>([]);
   const [open, setOpen] = useState(false);
+  const [checkInTime, setCheckInTime] = useState("");
+  const [checkOutTime, setCheckOutTime] = useState("");
 
+  const [validationMessage, setValidationMessage] = useState("");
+  const [isSlotAvailable, setIsSlotAvailable] = useState(true);
+
+  const handleCheckInTime = (time: any) => {
+    setCheckInTime(time);
+  };
+
+  const handleCheckOutTime = (time: any) => {
+    setCheckOutTime(time);
+  };
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -137,6 +149,32 @@ function RoomDetails() {
     }
   };
 
+  // Function to validate the dates
+  const validateDates = () => {
+    const now = new Date();
+    const checkInDate = new Date(checkInTime);
+    const checkOutDate = new Date(checkOutTime);
+
+    if (!checkInTime || !checkOutTime) {
+      setValidationMessage("Both check-in and check-out dates are required.");
+      return false;
+    }
+
+    if (checkInDate < now) {
+      setValidationMessage("Check-in date cannot be in the past.");
+      return false;
+    }
+
+    if (checkOutDate <= checkInDate) {
+      setValidationMessage("Check-out date must be after check-in date.");
+      return false;
+    }
+
+    setValidationMessage(""); // Reset validation message
+    onOpenChange();
+    return true;
+  };
+
   return (
     <div className="w-full h-full flex  flex-col justify-center  bg-gray-200 items-center">
       {/* Parent container with column layout */}
@@ -165,47 +203,56 @@ function RoomDetails() {
 
         {/* Room details section */}
         {room && (
-          <div className="w-full   mt-4">
-            <div className="grid grid-cols-2 gap-2 mb-3">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Mobile:</span> {room.mobile}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Slots:</span> {room.slots}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Maintenance:</span> ₹
-                {room.maintenanceCharge}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Deposit:</span> ₹
-                {room.securityDeposit}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Type:</span> {room.roomType}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Gender:</span> {room.gender}
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Notice:</span>{" "}
-                {room.noticePeriod} days
-              </p>
-              <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Location:</span>{" "}
-                {room.location}
-              </p>
-            </div>
-            <p className="text-sm text-gray-600 mb-3">
-              <span className="font-medium p-2">Description:</span>{" "}
-              {room.description}
+          <div className="w-full mt-4">
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Mobile:</span> {room.mobile}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Slots:</span> {room.slots}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Maintenance:</span> ₹
+              {room.maintenanceCharge}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Deposit:</span> ₹
+              {room.securityDeposit}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Type:</span> {room.roomType}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Gender:</span> {room.gender}
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Notice:</span> {room.noticePeriod} days
+            </p>
+            <p className="text-sm text-gray-600">
+              <span className="font-medium p-2">Location:</span> {room.location}
             </p>
           </div>
+        
+          <p className="text-sm text-gray-600 mb-3">
+            <span className="font-medium p-2">Description:</span> {room.description}
+          </p>
+        
+          <div className="flex flex-wrap gap-2">
+            {room.additionalOptions.map((feature: any) => (
+              <span
+                key={feature}
+                className="border border-yellow-400 text-yellow-600 px-3 py-1 rounded-sm text-sm"
+              >
+                {feature}
+              </span>
+            ))}
+          </div>
+        </div>        
         )}
 
         {/* Map section */}
         <div className="w-full h-[250px] mt-4 rounded-2xl overflow-hidden">
-        <style>{bounceAnimation}</style>
+          <style>{bounceAnimation}</style>
           <ReactMapGL
             {...viewPort}
             mapboxAccessToken={token}
@@ -219,12 +266,14 @@ function RoomDetails() {
               longitude={viewPort.longitude}
               anchor="bottom"
             >
-              <div  style={{
-              color: "red",
-              fontSize: "2rem",
-              animation: "bounce 2s infinite",
-            }}>
-             <FaMapMarkerAlt />
+              <div
+                style={{
+                  color: "red",
+                  fontSize: "2rem",
+                  animation: "bounce 2s infinite",
+                }}
+              >
+                <FaMapMarkerAlt />
               </div>
             </Marker>
           </ReactMapGL>
@@ -283,6 +332,7 @@ function RoomDetails() {
                     </p>
                   </div>
                 </div>
+
                 <div className="my-4">
                   <label className="block mb-2 text-sm font-medium text-gray-600">
                     Enter number of slots to book:
@@ -294,6 +344,38 @@ function RoomDetails() {
                     className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-indigo-500"
                   />
                 </div>
+
+                {/* Check-in time input */}
+                <div className="my-4">
+                  <label className="block mb-2 text-sm font-medium text-gray-600">
+                    Check-in Date:
+                  </label>
+                  <input
+                    type="date"
+                    value={checkInTime || ""}
+                    onChange={(e) => handleCheckInTime(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+
+                {/* Check-out time input */}
+                <div className="my-4">
+                  <label className="block mb-2 text-sm font-medium text-gray-600">
+                    Check-out Date:
+                  </label>
+                  <input
+                    type="date"
+                    value={checkOutTime || ""}
+                    onChange={(e) => handleCheckOutTime(e.target.value)}
+                    className="w-full px-3 py-2 text-gray-700 border rounded-lg focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+                {/* Validation Message */}
+                {validationMessage && (
+                  <p className="text-sm  p-2 rounded-md bg-red-500  text-white">
+                    {validationMessage}
+                  </p>
+                )}
                 <div>
                   <p className="text-sm text-gray-600 font-medium mb-2">
                     Total Amount
@@ -301,11 +383,12 @@ function RoomDetails() {
                   <p className="text-lg text-gray-700">₹ {amount}</p>
                 </div>
               </ModalBody>
+
               <ModalFooter>
                 {amount && (
                   <Button
                     onPress={() => {
-                      onOpenChange();
+                      validateDates();
                     }}
                     size="sm"
                     className="bg-transparent"
