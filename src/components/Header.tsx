@@ -7,6 +7,7 @@ import { RootState } from "../redux/store";
 import defaultProfile from "../assets/img/Default_pfp.svg.png";
 import { Button } from "@nextui-org/react";
 import { logOut } from "../api/user";
+import { useSocket } from "../context/socketContext";
 
 
 
@@ -15,13 +16,14 @@ export default function Header() {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  const socket = useSocket()
   const handleLogout = async() => {
     let clearCookie = await logOut()
     console.log(clearCookie);
     
     dispatch(userLogout());
     localStorage.removeItem('token')
+    socket!.disconnect()
     navigate("/login");
   };
 

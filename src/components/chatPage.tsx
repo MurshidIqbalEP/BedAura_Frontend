@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Avatar } from "@nextui-org/react";
 import { useNavigate } from "react-router-dom"; // Import useNavigate
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import Picker from "emoji-picker-react";
 import { IoMdSend } from "react-icons/io";
 import { BsEmojiSmileFill } from "react-icons/bs";
@@ -10,9 +10,12 @@ import defaultProfile from "../assets/img/Default_pfp.svg.png";
 import { FaVideo } from "react-icons/fa";
 import chatLoadingAnimatio from "../assets/chatLoadingAnimation.json";
 import Lottie from "react-lottie";
-import { Button, notification, Space } from "antd";
 
-const socket = io("http://localhost:3000");
+
+import { toast } from "react-toastify";
+import {useSocket} from "../context/socketContext"; 
+
+
 
 const defaultOptions = {
   loop: true,
@@ -35,6 +38,7 @@ interface ChatProps {
   currentUserId: string;
   chattingWithUserId: string;
 }
+
 
 const ChatApp: React.FC<{ currentUserId: string }> = ({ currentUserId }) => {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -130,14 +134,22 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
   chattingWithUserId,
   contactName,
 }) => {
+
+  const socket = useSocket()
   const [message, setMessage] = useState("");
   const [chat, setChat] = useState<
     Array<{ fromSelf: boolean; message: string; timestamp: string }>
   >([]);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const [status,setStatus] = useState(false)
   const navigate = useNavigate(); // Use navigate hook
 
   useEffect(() => {
+    if (!socket) {
+      console.error("Socket is not initialized.");
+      return ; // Or handle it accordingly
+    }
+
     socket.emit("joinRoom", {
       senderId: currentUserId,
       receiverId: chattingWithUserId,
@@ -163,58 +175,34 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
         {
           fromSelf: messageData.senderId === currentUserId,
           message: messageData.message,
-          timestamp:messageData.timestamp
+          timestamp:messageData.timestamp|| new Date().toLocaleTimeString(), 
         },
       ]);
+      // toast.info("message recieved")
+      // notificationSound.play()
     });
 
-    socket.on("receiveVideoCall", ({ senderId, roomId }) => {
-      console.log("call comming", roomId);
+    socket.emit('checkStatus',{
+      chattingWithUserId
+    })
 
-      if (senderId !== currentUserId) {
-        const key = `open${Date.now()}`;
-        const handleJoin = () => {
-          navigate(`/videocallRoom/${roomId}`); 
-          notification.destroy();
-        };
+    socket.on("onlineStatus",(status)=>{
+      setStatus(status)
+    })
+    
 
-        const btn = (
-          <Space>
-            <Button
-              type="dashed"
-              size="middle"
-              onClick={()=>notification.destroy()}
-            >
-              Close
-            </Button>
-            <Button
-              type="primary"
-              size="middle"
-              onClick={handleJoin}
-            >
-              Join
-            </Button>
-          </Space>
-        );
-
-        notification.open({
-          message: "Incoming Video Call!",
-          description: `You have a video call .`,
-          btn,
-          key,
-          duration: 0,
-          onClose: () => {
-            console.log("Notification closed");
-          },
-        });
-      }
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-      socket.off("receiveVideoCall");
-    };
+    // return () => {
+    //   socket.off("receiveMessage");
+    //   socket.off("receiveVideoCall");
+    // };
   }, [currentUserId, chattingWithUserId]);
+
+  // const updateUserOnlineStatus = (userId: string, online: boolean) => {
+  //   // Update the contacts or chat list to show online/offline status
+  //   setContacts((prevContacts) => prevContacts.map(contact => 
+  //     contact.id === userId ? { ...contact, online } : contact
+  //   ));
+  // };
 
   const sendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,10 +213,21 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
       receiverId: chattingWithUserId,
       message,
     };
+     
+     // Immediately update the chat for the sender
+     setChat((prevChat) => [
+      ...prevChat,
+      {
+        fromSelf: true,
+        message: message,
+        timestamp: new Date().toLocaleTimeString(),
+      },
+    ]);
 
     await postMessage(messageData);
-    socket.emit("sendMessage", messageData);
+    socket!.emit("sendMessage", messageData);
     setMessage("");
+
   };
 
   const handleEmojiClick = (emojiObject: any) => {
@@ -237,7 +236,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
   };
 
   const handleVideoCall = () => {
-    socket.emit("videoCall", {
+    socket!.emit("videoCall", {
       senderId: currentUserId,
       receiverId: chattingWithUserId,
       roomId: currentUserId,
@@ -256,9 +255,10 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
             radius="full"
             size="sm"
             src={defaultProfile}
-            className="mr-2"
+            className={`border-2 mr-2 ${status ? "border-green-500" : "border-red-700"}`}
           />
           <h3 className="font-semibold">{contactName}</h3>
+          <h2>{status?"online":"offline"}</h2>
         </div>
         <button
           className="bg-gray-500 text-white px-4 py-1 rounded hover:bg-gray-600"

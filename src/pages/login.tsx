@@ -12,11 +12,11 @@ import { login, Gsign_up } from "../api/user";
 import { RootState } from "../redux/store"; 
 import axios from "axios";
 
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, SetErr] = useState({ email: "", password: "" });
-
   const navigate = useNavigate();
   const location = useLocation();
   const previousPage = location.state?.from || "/";

@@ -203,51 +203,52 @@ function RoomDetails() {
 
         {/* Room details section */}
         {room && (
-          <div className="w-full mt-4">
-          <div className="grid grid-cols-2 gap-2 mb-3">
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Mobile:</span> {room.mobile}
+          <div className="w-full   mt-4">
+            <div className="grid grid-cols-2 gap-2 mb-3">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Mobile:</span> {room.mobile}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Slots:</span> {room.slots}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Maintenance:</span> ₹
+                {room.maintenanceCharge}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Deposit:</span> ₹
+                {room.securityDeposit}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Type:</span> {room.roomType}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Gender:</span> {room.gender}
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Notice:</span>{" "}
+                {room.noticePeriod} days
+              </p>
+              <p className="text-sm text-gray-600">
+                <span className="font-medium p-2">Location:</span>{" "}
+                {room.location}
+              </p>
+            </div>
+            <p className="text-sm text-gray-600 mb-3">
+              <span className="font-medium p-2">Description:</span>{" "}
+              {room.description}
             </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Slots:</span> {room.slots}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Maintenance:</span> ₹
-              {room.maintenanceCharge}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Deposit:</span> ₹
-              {room.securityDeposit}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Type:</span> {room.roomType}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Gender:</span> {room.gender}
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Notice:</span> {room.noticePeriod} days
-            </p>
-            <p className="text-sm text-gray-600">
-              <span className="font-medium p-2">Location:</span> {room.location}
-            </p>
+            {room.additionalOptions.map((feature:any)=>(
+                             <Chip
+                             color="warning"
+                             size="sm"
+                             radius="sm"
+                             variant="bordered"
+                           >
+                           {feature}
+                           </Chip>
+                        ))}
           </div>
-        
-          <p className="text-sm text-gray-600 mb-3">
-            <span className="font-medium p-2">Description:</span> {room.description}
-          </p>
-        
-          <div className="flex flex-wrap gap-2">
-            {room.additionalOptions.map((feature: any) => (
-              <span
-                key={feature}
-                className="border border-yellow-400 text-yellow-600 px-3 py-1 rounded-sm text-sm"
-              >
-                {feature}
-              </span>
-            ))}
-          </div>
-        </div>        
         )}
 
         {/* Map section */}

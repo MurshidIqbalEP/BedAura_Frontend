@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
-import io from "socket.io-client";
+// import io from "socket.io-client";
 import { Avatar } from "@nextui-org/react";
 import Picker from "emoji-picker-react";
 import { IoMdSend } from "react-icons/io";
 import { BsEmojiSmileFill } from "react-icons/bs";
 import defaultProfile from "../assets/img/Default_pfp.svg.png";
 import { fetchOwnerDetails, fetchPrevMsgs, postMessage } from "../api/user";
+import { useSocket } from "../context/socketContext";
 
 interface ChatProps {
   currentUserId: string;
   chattingWithUserId: string;
 }
 
-const socket = io("http://localhost:3000");
+
 
 const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
+  const socket = useSocket()
   const [message, setMessage] = useState("");
   const [owner, setOwner] = useState({
     name: "",
@@ -26,6 +28,8 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   useEffect(() => {
+    if (!socket) return;
+
     // Join the chat room
     socket.emit("joinRoom", {
       senderId: currentUserId,
@@ -59,10 +63,10 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
     FetchOwnerDetails();
     fetchPrevMsg();
 
-    // Cleanup to prevent multiple event listeners
-    return () => {
-      socket.off("receiveMessage", handleReceiveMessage);
-    };
+    // // Cleanup to prevent multiple event listeners
+    // return () => {
+    //   socket.off("receiveMessage", handleReceiveMessage);
+    // };
   }, [currentUserId, chattingWithUserId]);
 
   const sendMessage = async (e: React.FormEvent) => {
@@ -78,7 +82,7 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
     const response = await postMessage(messageData);
 
     // Emit the message to the server (ensure this happens once)
-    socket.emit("sendMessage", messageData);
+    socket!.emit("sendMessage", messageData);
     setMessage("");
   };
 
