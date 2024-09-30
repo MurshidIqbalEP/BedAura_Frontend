@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { bookRoom, checkBookingValid } from "../api/user";
+import { bookRoom, bookRoomWallet, checkBookingValid } from "../api/user";
 import StripeCheckout from "react-stripe-checkout";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -16,7 +16,7 @@ const MultiStepForm = ({ closeModal, room }: any) => {
     checkOutDate: "",
     amount: 0,
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [formErr, setFormErr] = useState({
     numberOfSlotsErr: "",
@@ -26,8 +26,6 @@ const MultiStepForm = ({ closeModal, room }: any) => {
   });
 
   const nextStep = async () => {
-  
-    
     let valid = true;
     let newErrors = { ...formErr };
 
@@ -61,29 +59,27 @@ const MultiStepForm = ({ closeModal, room }: any) => {
       valid = false;
     }
 
-
     setFormErr(newErrors);
     if (!valid) return;
-    
-    
-    let checkDateValid  = await checkBookingValid(
+
+    let checkDateValid = await checkBookingValid(
       room._id,
       checkInDate,
       checkOutDate
     );
 
-    
-    if (checkDateValid.result) {
+    if (checkDateValid?.data?.result) {
       setFormData((prevState) => ({
         ...prevState,
-        amount:  room.deposit,
+        amount: room.deposit,
       }));
 
       setStep(step + 1);
-    }else{
-        toast.message("A booking already exists for this date. Please choose another date to continue.")
-        
-    } 
+    } else {
+      toast.message(
+        "A booking already exists for this date. Please choose another date to continue."
+      );
+    }
   };
 
   const prevStep = () => setStep(step - 1);
@@ -113,10 +109,24 @@ const MultiStepForm = ({ closeModal, room }: any) => {
       formData
     );
     if (booked) {
-        navigate("/myBookings");
+      navigate("/myBookings");
       toast.success("Room Booked");
     }
   };
+
+  const walletPayment = async ()=>{
+    
+    let Payment = await bookRoomWallet(
+        room?._id as string,
+        userInfo._id,
+        formData
+    ) 
+    if(Payment){
+        navigate("/myBookings");
+      toast.success("Room Booked");
+    }
+    
+  }
 
   return (
     <div className="flex flex-col items-center justify-center p-1 ">
@@ -135,6 +145,7 @@ const MultiStepForm = ({ closeModal, room }: any) => {
             prevStep={prevStep}
             room={room}
             closeModal={closeModal}
+            walletPayment={walletPayment}
             onToken={onToken}
             values={formData}
           />
@@ -189,7 +200,6 @@ const Step1 = ({ nextStep, handleChange, values, room, Errs }: any) => (
 
     {/* Check-in Date */}
 
-    
     <div>
       <label
         htmlFor="checkInDate"
@@ -240,8 +250,7 @@ const Step1 = ({ nextStep, handleChange, values, room, Errs }: any) => (
   </div>
 );
 
-const Step2 = ({ prevStep, onToken, values, room, closeModal }: any) => {
-
+const Step2 = ({ prevStep, onToken, values, room, closeModal,walletPayment }: any) => {
   return (
     <div className="flex flex-col gap-4 p-6 bg-white shadow-md rounded-lg max-w-md mx-auto">
       <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
@@ -251,8 +260,7 @@ const Step2 = ({ prevStep, onToken, values, room, closeModal }: any) => {
       <div className="bg-gray-300 p-4 rounded-lg shadow-sm mb-4">
         <h3 className="text-lg font-semibold text-gray-700">Booking Summary</h3>
         <p className="text-lg font-bold text-gray-800">
-          Amount: ₹
-          {(room.securityDeposit).toLocaleString()}
+          Amount: ₹{room.securityDeposit.toLocaleString()}
         </p>
         {/* <p className="text-lg text-gray-600">Slots: {values.numberOfSlots}</p> */}
         <p className="text-lg text-gray-600">Check-In: {values.checkInDate}</p>
@@ -261,16 +269,23 @@ const Step2 = ({ prevStep, onToken, values, room, closeModal }: any) => {
         </p>
       </div>
 
-      <div className="flex justify-around mt-4">
-        <button
+      <div className="flex justify-between mt-4">
+        <Button
+          size="sm"
           onClick={prevStep}
           className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg transition duration-200"
         >
           Back
-        </button>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg transition duration-200">
-          Pay with Wallet
-        </button>
+        </Button>
+        <Button
+  onClick={() => {
+    walletPayment()
+  }}
+  size="sm"
+  className="bg-blue-500 hover:bg-blue-450 text-white font-bold text-sm py-2 px-4 rounded-lg transition duration-200"
+>
+  Pay with Wallet
+</Button>
 
         {/* Stripe Checkout component */}
         <Button
@@ -282,7 +297,7 @@ const Step2 = ({ prevStep, onToken, values, room, closeModal }: any) => {
         >
           <StripeCheckout
             token={onToken} // Call handleToken instead of onToken
-            amount={ room.securityDeposit * 100}
+            amount={room.securityDeposit * 100}
             currency="INR"
             stripeKey={import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY}
           />

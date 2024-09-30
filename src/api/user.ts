@@ -338,6 +338,19 @@ export const checkBookingValid = async (roomId:any,checkIn:Date,checkOut:Date)=>
   }
 }
 
+export const bookRoomWallet = async (roomId:string,userId:string,formData:any)=>{
+  try {
+    
+    const response = await Api.post(userRoutes.bookRoomWallet,{roomId,userId,formData});
+
+    return response;
+
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 
 
 
