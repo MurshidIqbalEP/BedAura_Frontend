@@ -4,12 +4,14 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { fetchWallet } from "../../api/user";
 import { IWallet } from "../../services/types";
-import { Empty } from 'antd';
+import { Empty, Pagination } from 'antd';
 
 // Wallet section
 const Wallet = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   const [wallet, setWallet] = useState<IWallet | null>(null);
+  const [currentPage, setCurrentPage] = useState(1); // Current page state
+  const transactionsPerPage = 5; // Number of transactions per page
 
   useEffect(() => {
     const FetchWallet = async () => {
@@ -20,6 +22,15 @@ const Wallet = () => {
     FetchWallet();
   }, [userInfo]);
 
+  // Calculate the transactions to display for the current page
+  const indexOfLastTransaction = currentPage * transactionsPerPage;
+  const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
+  const currentTransactions = wallet?.transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
 
   const columns = [
     { key: "date", label: "Date" },
@@ -40,30 +51,49 @@ const Wallet = () => {
           <div>
             <h4 className="text-md font-medium mb-2">Transaction History:</h4>
             {wallet?.transactions.length ? (
-              <Table aria-label="Transaction History">
-                <TableHeader>
-                  {columns.map((column) => (
-                    <TableColumn key={column.key}>{column.label}</TableColumn>
-                  ))}
-                </TableHeader>
-                <TableBody>
-                  {wallet.transactions.map((transaction, index) => (
-                    <TableRow key={index}>
-                      <TableCell>{new Date(transaction?.date).toLocaleDateString()}</TableCell>
-                      <TableCell
-                        className={`${
-                          transaction.amount < 0 ? "text-red-500" : "text-green-500"
-                        }`}
-                      >
-                        {transaction.amount < 0 ? "-" : "+"}₹{Math.abs(transaction.amount)}
-                      </TableCell>
-                      <TableCell>{transaction.description}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <>
+                <Table aria-label="Transaction History">
+                  <TableHeader>
+                    {columns.map((column) => (
+                      <TableColumn key={column.key}>{column.label}</TableColumn>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+  {currentTransactions && currentTransactions.length > 0 ? (
+    currentTransactions.map((transaction, index) => (
+      <TableRow key={index}>
+        <TableCell>{new Date(transaction?.date).toLocaleDateString()}</TableCell>
+        <TableCell
+          className={`${
+            transaction.transactionType === "credit" ? "text-green-500" : "text-red-500"
+          } p-1`}
+        >
+          {transaction.transactionType === "credit" ? "+" : "-"}₹{Math.abs(transaction.amount)}
+        </TableCell>
+        <TableCell>{transaction.description}</TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell colSpan={3} className="text-center">
+        No transactions found.
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
+
+                </Table>
+
+                {/* Pagination controls */}
+                <Pagination
+                  current={currentPage}
+                  pageSize={transactionsPerPage}
+                  total={wallet.transactions.length}
+                  onChange={handlePageChange}
+                  className="mt-4"
+                />
+              </>
             ) : (
-            
               <>
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
                 <p className="text-gray-500 text-center">No transactions available.</p>

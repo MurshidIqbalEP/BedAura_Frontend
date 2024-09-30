@@ -625,7 +625,7 @@ function AddSpace() {
               onChange={(e) => {
                 setSlots(e.target.value), handleFieldFill("slots");
               }}
-              placeholder="Available Slots"
+              placeholder="Available Bed Spaces"
               required
               className="w-full"
             />

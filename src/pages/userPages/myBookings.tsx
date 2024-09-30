@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
-import { fetchBooking, postReview } from "../../api/user";
+import { cancelBooking, fetchBooking, postReview } from "../../api/user";
 import { RoomData } from "../../services/types";
 import { Button } from "@nextui-org/react";
 import { TbStarsFilled } from "react-icons/tb";
@@ -18,6 +18,7 @@ import { RiStarSFill } from "react-icons/ri";
 import TextArea from "antd/es/input/TextArea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
+import { MdFreeCancellation } from "react-icons/md";
 
 function myBookings() {
   const [rooms, setRooms] = useState<RoomData[]>([]);
@@ -82,11 +83,22 @@ function myBookings() {
     }
   };
 
+   const handleCancellBooking = async(room:RoomData)=>{
+      console.log(room);
+      
+      const response = await cancelBooking(room)
+      toast.message(response?.data)
+      navigate("/profile")
+   }
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
       {rooms.length === 0 ? (
-        <p className="text-gray-500">You don't have any rooms yet.</p>
+        <div className="h-screen">
+            <p className="text-gray-500">You don't have any rooms yet.</p>
+        </div>
+        
       ) : (
         <div className="space-y-6">
           {rooms.map((room) => (
@@ -116,9 +128,9 @@ function myBookings() {
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
                     <p className="text-sm font-medium text-gray-500">
-                      Slots Booked
+                      Bed Spaces
                     </p>
-                    <p className="mt-1 text-lg font-semibold">{room.slots}</p>
+                    <p className="mt-1 text-lg font-semibold">{room.roomId.slots}</p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">
@@ -166,7 +178,7 @@ function myBookings() {
                     ₹{room.amount}
                   </p>
                 </div>
-                <div className="w-full mt-1 flex justify-end items-end">
+                <div className="w-full mt-1 flex justify-end gap-1 items-end">
                   <Button
                     size="sm"
                     className="bg-lime-300"
@@ -177,6 +189,18 @@ function myBookings() {
                     }}
                   >
                     Rate Room
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    className="bg-red-300"
+                    endContent={<MdFreeCancellation />}
+                    onClick={() => {
+                      handleCancellBooking(room)
+                      
+                    }}
+                  >
+                    Cancel Booking 
                   </Button>
                 </div>
               </div>

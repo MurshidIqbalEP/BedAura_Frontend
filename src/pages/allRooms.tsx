@@ -154,7 +154,7 @@ function AllRooms() {
                           {room.mobile}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Slots:</span>{" "}
+                          <span className="font-medium p-2"> Bed Spaces:</span>{" "}
                           {room.slots}
                         </p>
                         <p className="text-sm text-gray-600">

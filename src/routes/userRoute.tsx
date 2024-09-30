@@ -17,6 +17,7 @@ import Profile from "../pages/userPages/profile.tsx";
 import RoomDetails from "../pages/userPages/roomDetails.tsx";
 import MyBookings from "../pages/userPages/myBookings.tsx";
 import Videocall from "../components/videocall.tsx";
+import MultiStepForm from "../components/multiStepForm.tsx";
 
 export default function userRoute() {
   return (
@@ -34,7 +35,8 @@ export default function userRoute() {
           <Route path="/room-details/:id" element={<RoomDetails />} />
           <Route path="/myBookings" element={<MyBookings />} />
           <Route path="/videocallRoom/:roomId" element={<Videocall />} />
-         
+
+          <Route path="/muti" element={<MultiStepForm />} />
          
         </Route>
         

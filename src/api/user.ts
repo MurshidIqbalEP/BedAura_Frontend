@@ -202,9 +202,9 @@ export const fetchNearestRooms = async (lat:number,lon:number,limit:number,curre
   }
 }
 
-export const bookRoom = async (token:object,roomId:string,userId:string,slots:number)=>{
+export const bookRoom = async (token:object,roomId:string,userId:string,formData:any)=>{
   try {
-    const response = await Api.post(userRoutes.bookRoom,{token,roomId,userId,slots})
+    const response = await Api.post(userRoutes.bookRoom,{token,roomId,userId,formData})
     return response;
   } catch (error) {
     const err: Error = error as Error;
@@ -312,5 +312,32 @@ export const fetchOwnerDetails = async (chattingWithUserId:string)=>{
     return errorHandle(err);
   }
 }
+
+export const cancelBooking = async (room:any)=>{
+  try {
+    const response = await Api.post(userRoutes.cancelBooking,{room})
+    return response;
+
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+export const checkBookingValid = async (roomId:any,checkIn:Date,checkOut:Date)=>{
+  try {
+    console.log(roomId,checkIn,checkOut);
+    
+    const response = await Api.get(`${userRoutes.checkBookingValid}?roomId=${roomId}&checkIn=${checkIn}&checkOut=${checkOut}`);
+
+    return response;
+
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+
 
 

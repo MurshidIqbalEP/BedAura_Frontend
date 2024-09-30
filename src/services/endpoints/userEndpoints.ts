@@ -26,8 +26,9 @@ const userRoutes={
     postMessage:"/user/addMessage",
     fetchPrevMsgs:"/user/fetchMessages",
     fetchContacts:"/user/fetchContacts",
-    fetchOwnerDetails:"/user/fetchOwnerDetails"
-
+    fetchOwnerDetails:"/user/fetchOwnerDetails",
+    cancelBooking:"/user/cancelBooking",
+    checkBookingValid:"/user/checkBookingValid"
     
 }
 
