@@ -30,7 +30,8 @@ const userRoutes={
     cancelBooking:"/user/cancelBooking",
     checkBookingValid:"/user/checkBookingValid",
     bookRoomWallet:"/user/walletRoomBooking",
-    
+    fetchUserPieChartData:"/user/fetchUserPieChartData",
+    fetchUsersRoomBookings:"/user/fetchUsersRoomBookings"
     
 }
 

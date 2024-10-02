@@ -23,6 +23,7 @@ import defaultProfile from "../../assets/img/Default_pfp.svg.png";
 import ChangePassword from "../userPages/changePassword";
 import Wallet from "../userPages/wallet";
 import ChatPage from "../../components/chatPage";
+import Dashbord from "../../components/dashbord"
 
 const Profile = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
@@ -31,7 +32,7 @@ const Profile = () => {
   const [user, setUser] = useState(userInfo);
 
   const [currentTab, setCurrentTab] = useState<
-    "about" | "changePassword" | "wallet" | "chat"
+    "about" | "changePassword" | "wallet" | "chat" | "dashbord"
   >("about"); // Tab state
   const [valErr, setValerr] = useState({
     nameErr: "",
@@ -99,6 +100,14 @@ const Profile = () => {
             onPress={() => setCurrentTab("about")}
           >
             About
+          </Button>
+          <Button
+            className={`w-full ${
+              currentTab === "dashbord" ? "bg-blue-500 text-white" : ""
+            }`}
+            onPress={() => setCurrentTab("dashbord")}
+          >
+            Dashbord
           </Button>
           <Button
             className={`w-full ${
@@ -224,8 +233,10 @@ const Profile = () => {
           <ChangePassword />
         ) : currentTab === "chat"?(
            <ChatPage currentUserId={user._id} />
-        ) :(
+        ) :currentTab === "wallet"?(
           <Wallet />
+        ):(
+          <Dashbord />
         )}
       </main>
     </div>

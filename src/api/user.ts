@@ -355,6 +355,32 @@ export const bookRoomWallet = async (roomId:string,userId:string,formData:any)=>
   }
 }
 
+export const fetchUserPieChartData = async (userId:string)=>{
+  try {
+    
+    const response = await Api.get(`${userRoutes.fetchUserPieChartData}?userId=${userId}`);
+
+    return response;
+
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
+export const fetchUsersRoomBookings = async (userId:string)=>{
+  try {
+    
+    const response = await Api.get(`${userRoutes.fetchUsersRoomBookings}?userId=${userId}`);
+
+    return response;
+
+  } catch (error) {
+    const err: Error = error as Error;
+    return errorHandle(err);
+  }
+}
+
 
 
 
