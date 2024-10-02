@@ -29,7 +29,8 @@ const userRoutes={
     fetchOwnerDetails:"/user/fetchOwnerDetails",
     cancelBooking:"/user/cancelBooking",
     checkBookingValid:"/user/checkBookingValid",
-    bookRoomWallet:"/user/walletRoomBooking"
+    bookRoomWallet:"/user/walletRoomBooking",
+    
     
 }
 

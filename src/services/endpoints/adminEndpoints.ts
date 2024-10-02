@@ -13,7 +13,11 @@ const adminRoutes={
     listRoom:'/admin/listRoom',
     fetchOptions:'/admin/fetchOptions',
     addOption:'/admin/addOption',
-    removeOption:'/admin/removeOption'
+    removeOption:'/admin/removeOption',
+    fetchBookingPerMounth:'/admin/fetchBookingPerMounth',
+    fetchPieChartData:'/admin/fetchPieChartData',
+    fetchBookingDataByCity:'/admin/fetchBookingDataByCity'
+
   
     
 }

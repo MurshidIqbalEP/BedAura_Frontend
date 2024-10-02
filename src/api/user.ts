@@ -155,9 +155,13 @@ export const fetchRooms = async (id:string) => {
   }
 };
 
-export const fetchAllRooms = async (page: number, limit: number)=>{
+export const fetchAllRooms = async (page: number, limit: number,searchTerm:any,filters:any,sortBy:any  )=>{
   try {
-    const response = await Api.get(`${userRoutes.fetchAllRooms}?page=${page}&limit=${limit}`);
+    console.log(page,limit,searchTerm,filters,sortBy);
+    const filterString = JSON.stringify(filters);
+    const response = await Api.get(
+      `${userRoutes.fetchAllRooms}?page=${page}&limit=${limit}&search=${encodeURIComponent(searchTerm)}&filters=${encodeURIComponent(filterString)}&sort=${encodeURIComponent(sortBy)}`
+    );
 
     return response.data;
   } catch (error) {
@@ -350,6 +354,8 @@ export const bookRoomWallet = async (roomId:string,userId:string,formData:any)=>
     return errorHandle(err);
   }
 }
+
+
 
 
 

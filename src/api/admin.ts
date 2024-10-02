@@ -146,3 +146,38 @@ export const getAllUsers = async () : Promise<any> => {
     }
   }
 
+  export const fetchBookingPerMounth = async ()=>{
+    try {
+      
+      const response = await Api.get(adminEndpoints.fetchBookingPerMounth);
+  
+      return response;
+  
+    } catch (error) {
+      const err: Error = error as Error;
+      return errorHandle(err);
+    }
+  }
+
+  export const fetchPieChartData = async ()=>{
+    try {
+      const response = await Api.get(adminEndpoints.fetchPieChartData);
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      return errorHandle(err);
+    }
+  }
+
+  export const fetchBookingDataByCity = async ()=>{
+    try {
+      const response = await Api.get(adminEndpoints.fetchBookingDataByCity);
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      return errorHandle(err);
+    }
+  }
+
+
+

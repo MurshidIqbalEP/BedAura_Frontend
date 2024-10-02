@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaUsers } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
-import { MdUpcoming ,MdEditDocument} from "react-icons/md";    
+import { MdUpcoming ,MdEditDocument,MdDashboard} from "react-icons/md";    
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { IoOptions } from "react-icons/io5";
 import { adminLogout } from "../redux/Slices/adminSlice";
@@ -25,7 +25,7 @@ function sideBar() {
   }
 
   return (
-    <div className="mt-20">
+    <div className="mt-20 ">
       <button
         data-drawer-target="default-sidebar"
         data-drawer-toggle="default-sidebar"
@@ -58,6 +58,19 @@ function sideBar() {
           style={{ marginTop: "58px" }}
         >
           <ul className="space-y-2 font-medium">
+          <li className=" border-gray-300 border-b-1">
+              <NavLink
+                to="/admin/dashboard"
+                className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                style={({ isActive }) => (isActive ? activeStyle : undefined)}
+              >
+               <MdDashboard />
+
+                <span className="flex-1 ms-3 whitespace-nowrap">
+                  Dashboard
+                </span>
+              </NavLink>
+            </li>
             
             <li className=" border-gray-300 border-b-1">
               <NavLink

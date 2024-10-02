@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import AllRoomsBanner from "../components/allRoomsBanner";
 import { fetchAllRooms, fetchNearestRooms } from "../api/user";
-import { Button } from "antd";
+import { Button, Input, Select } from "antd";
 import { Pagination } from "@nextui-org/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
@@ -39,7 +39,7 @@ interface Room {
   description: string;
   coordinates: Coordinates;
   images: string[];
-  additionalOptions:string[];
+  additionalOptions: string[];
   isAproved: boolean;
 }
 
@@ -52,14 +52,34 @@ function AllRooms() {
   const navigate = useNavigate();
   const limit = 1;
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [filters, setFilters] = useState({
+    roomType: [],
+  });
+
+  const roomTypes = [
+    { value: "Room", label: "Room" },
+    { value: "BedSpace", label: "BedSpace" },
+    // You can add more room types if needed
+  ];
+
   useEffect(() => {
+    // setIsLoading(true);
     const getRooms = async () => {
       try {
-        const response = await fetchAllRooms(currentPage, limit);
-        console.log(response.rooms);
-        
+        const response = await fetchAllRooms(
+          currentPage,
+          limit,
+          searchTerm,
+          filters,
+          sortBy
+        );
+        console.log(response);
+
         setRooms(response.rooms);
         setTotalPages(response.totalPages);
+        // setIsLoading(false);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -70,9 +90,39 @@ function AllRooms() {
     } else {
       getRooms();
     }
-  }, [currentPage]);
+  }, [currentPage, searchTerm, filters, sortBy]);
+
+  const handleSearch = (roomName: string) => {
+    setSearchTerm(roomName);
+  };
+
+  const handleSortChange = (value: any) => {
+    setSortBy(value);
+  };
+
+  const handleCheckboxChange = (value: any) => {
+    setFilters((prevFilters) => {
+      // Check if the room type is already selected
+      const currentIndex = prevFilters.roomType.indexOf(value);
+      const newRoomType = [...prevFilters.roomType];
+
+      // Add or remove the room type based on its current state
+      if (currentIndex === -1) {
+        newRoomType.push(value); // Add if not selected
+      } else {
+        newRoomType.splice(currentIndex, 1); // Remove if already selected
+      }
+
+      return {
+        ...prevFilters,
+        roomType: newRoomType,
+      };
+    });
+  };
 
   const handlePageChange = (page: number) => {
+    console.log(page);
+
     setCurrentPage(page);
   };
 
@@ -106,8 +156,16 @@ function AllRooms() {
 
   return (
     <div>
-      <AllRoomsBanner handleFindNearestRooms={handleFindNearestRooms} />
-
+      <AllRoomsBanner
+        handleFindNearestRooms={handleFindNearestRooms}
+        handleSearch={handleSearch}
+        sortBy={sortBy}
+        handleSortChange={handleSortChange}
+        roomTypes={roomTypes}
+        filters={filters}
+        handleCheckboxChange={handleCheckboxChange}
+      />
+      
       {isLoading ? (
         <div className="flex justify-center h-[300px]">
           <Lottie options={defaultOptions} height={200} width={200} />
@@ -136,17 +194,16 @@ function AllRooms() {
                         {room.name}
                       </h2>
                       <div className="flex gap-4 mb-2">
-                        {room.additionalOptions.map((feature:any)=>(
-                             <Chip
-                             color="warning"
-                             size="sm"
-                             radius="sm"
-                             variant="bordered"
-                           >
-                           {feature}
-                           </Chip>
+                        {room.additionalOptions.map((feature: any) => (
+                          <Chip
+                            color="warning"
+                            size="sm"
+                            radius="sm"
+                            variant="bordered"
+                          >
+                            {feature}
+                          </Chip>
                         ))}
-                        
                       </div>
                       <div className="grid grid-cols-2 gap-2 mb-3">
                         <p className="text-sm text-gray-600">
