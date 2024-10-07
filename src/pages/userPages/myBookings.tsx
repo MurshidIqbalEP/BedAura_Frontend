@@ -19,6 +19,18 @@ import TextArea from "antd/es/input/TextArea";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { MdFreeCancellation } from "react-icons/md";
+import Lottie from "react-lottie";
+import noDataAnimation from "../../assets/noDataAnimation - 1728317098368.json"
+
+const defaultOptionsForNoData = {
+  loop: true,
+  autoplay: true,
+  animationData: noDataAnimation,
+  rendererSettings: {
+    preserveAspectRatio: "xMidYMid slice",
+  },
+};
+
 
 function myBookings() {
   const [rooms, setRooms] = useState<RoomData[]>([]);
@@ -95,9 +107,17 @@ function myBookings() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
       {rooms.length === 0 ? (
-        <div className="h-screen">
-            <p className="text-gray-500">You don't have any rooms yet.</p>
-        </div>
+      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
+      <Lottie 
+        options={defaultOptionsForNoData} 
+        height={250} 
+        width={250} 
+        
+      />
+      <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
+        You don’t have any rooms yet.
+      </p>
+    </div>
         
       ) : (
         <div className="space-y-6">
