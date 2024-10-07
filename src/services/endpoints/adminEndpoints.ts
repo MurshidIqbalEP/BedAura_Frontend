@@ -16,7 +16,8 @@ const adminRoutes={
     removeOption:'/admin/removeOption',
     fetchBookingPerMounth:'/admin/fetchBookingPerMounth',
     fetchPieChartData:'/admin/fetchPieChartData',
-    fetchBookingDataByCity:'/admin/fetchBookingDataByCity'
+    fetchBookingDataByCity:'/admin/fetchBookingDataByCity',
+    rejectRoom:'/admin/rejectRoom'
 
   
     

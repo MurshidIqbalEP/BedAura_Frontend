@@ -5,6 +5,7 @@ import { fetchRooms } from "../api/user";
 import { Button } from "@nextui-org/react";
 import { Chip } from "@nextui-org/react";
 import { Link } from "react-router-dom";
+import { Tooltip } from "antd";
 
 interface Coordinates {
   lat: number;
@@ -30,6 +31,7 @@ interface Room {
   additionalOptions: string[];
   isApproved: boolean;
   isEdited: boolean;
+  rejectionReason: string;
 }
 
 function yourRooms() {
@@ -135,13 +137,31 @@ function yourRooms() {
                       Edit
                     </Button>
                   </div>
-
-                  {room.isApproved === false ||
-                    (room.isEdited === true && (
-                      <Button color="primary" isLoading>
-                        Not Approved
-                      </Button>
-                    ))}
+                  {room?.rejectionReason && (
+                    <Tooltip
+                      title={
+                        <div className="p-4 rounded-md shadow-xl">
+                          <p className="font-bold  mb-1">
+                            Rejection Reason
+                          </p>
+                          <p className="text-sm ">
+                            {room?.rejectionReason}
+                          </p>
+                          <div className="mt-3 border-t border-gray-300 pt-2">
+                          <p  className="text-xs text-gray-500">For more details, contact support.</p>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <Button color="danger">Rejected</Button>
+                    </Tooltip>
+                  )}
+                  {!room?.rejectionReason &&
+                  (room?.isApproved === false || room?.isEdited === true) ? (
+                    <Button color="primary" isLoading>
+                      Not Approved
+                    </Button>
+                  ) : null}
                 </div>
               </div>
             </div>

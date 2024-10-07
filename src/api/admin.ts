@@ -179,5 +179,16 @@ export const getAllUsers = async () : Promise<any> => {
     }
   }
 
+  export const rejectRoom = async (room : any,reason:string)=>{
+    try {
+      const response = await Api.patch(adminEndpoints.rejectRoom,{roomId:room._id,reason});
+      return response;
+    } catch (error) {
+      const err: Error = error as Error;
+      return errorHandle(err);
+    }
+
+  }
+
 
 

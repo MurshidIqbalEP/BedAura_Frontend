@@ -150,7 +150,7 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
       return ; // Or handle it accordingly
     }
 
-    socket.emit("joinRoom", {
+    socket?.emit("joinRoom", {
       senderId: currentUserId,
       receiverId: chattingWithUserId,
     }); 
@@ -161,6 +161,8 @@ const Chat: React.FC<ChatProps & { contactName: string }> = ({
           currentUserId,
           chattingWithUserId
         );
+        console.log(prevMessages);
+        
         setChat(prevMessages?.data.data);
       } catch (error) {
         console.error("Failed to fetch previous messages:", error);

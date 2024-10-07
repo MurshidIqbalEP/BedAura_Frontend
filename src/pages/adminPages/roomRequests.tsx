@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Space, Table, Popconfirm, Input, Modal } from "antd";
 import { TiTick } from "react-icons/ti";
+import { IoMdClose } from "react-icons/io";
 import { Button } from "@nextui-org/react";
 import {
   FaCalendar,
@@ -12,7 +13,13 @@ import {
   FaUser,
 } from "react-icons/fa";
 import type { TableColumnsType, TableProps } from "antd";
-import { ApproveEdit, ApproveRoom, fetchEditRequests, fetchNewRoomRequests } from "../../api/admin";
+import {
+  ApproveEdit,
+  ApproveRoom,
+  fetchEditRequests,
+  fetchNewRoomRequests,
+  rejectRoom,
+} from "../../api/admin";
 import { toast } from "react-toastify";
 
 interface DataType {
@@ -46,6 +53,10 @@ const App: React.FC = () => {
   const [searchText, setSearchText] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState<DataType | null>(null);
+  const [rejectModalVisible, setRejectModalVisible] = useState(false); 
+  const [rejectReason, setRejectReason] = useState(""); 
+  const [rejectReasonErr, setRejectReasonErr] = useState(false); 
+  const [selectedRecord, setSelectedRecord] = useState<DataType | null>(null);
 
   useEffect(() => {
     const FetchEditRequests = async () => {
@@ -91,13 +102,31 @@ const App: React.FC = () => {
     setSelectedUser(null);
   };
 
-  const handleApprove = async(record:any)=>{
-
-   let response = await ApproveRoom(record._id)
-   toast.success(response.data)
-   const updatedData = await fetchEditRequests();
+  const handleApprove = async (record: any) => {
+    let response = await ApproveRoom(record._id);
+    toast.success(response.data);
+    const updatedData = await fetchEditRequests();
     setData(updatedData.data.data);
-   
+  };
+
+  const showRejectModal = async (record: DataType) => {
+    setSelectedRecord(record);
+    setRejectModalVisible(true);
+  };
+
+  const handleReject = async ()=>{
+    if(rejectReason.trim() == ""){
+      setRejectReasonErr(true)
+    }
+
+    const reject = await rejectRoom(selectedRecord,rejectReason);
+    toast.success(reject?.data.message)
+    const response = await fetchNewRoomRequests();
+    setData(response.data);
+    setRejectReason("");
+    setRejectReasonErr(false);
+    setRejectModalVisible(false);
+
   }
 
   const columns: TableColumnsType<DataType> = [
@@ -123,18 +152,38 @@ const App: React.FC = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Space size="middle">
+        <Space size="small">
           <FaEye size={20} onClick={() => showModal(record)} />
-          <Button
-            isIconOnly
-            size="sm"
-            radius="md"
-            color="success"
-            aria-label="Like"
-            onClick={()=>handleApprove(record)}
+
+          <Popconfirm
+            title="Are you sure you want to approve this room?"
+            onConfirm={() => handleApprove(record)}
           >
-            <TiTick />
-          </Button>
+            <Button
+              isIconOnly
+              size="sm"
+              radius="md"
+              color="success"
+              aria-label="Like"
+            >
+              <TiTick />
+            </Button>
+          </Popconfirm>
+
+          <Popconfirm
+            title="Are you sure you want to reject this room?"
+            onConfirm={() => showRejectModal(record)}
+          >
+            <Button
+              isIconOnly
+              size="sm"
+              radius="md"
+              color="danger"
+              aria-label="Like"
+            >
+              <IoMdClose />
+            </Button>
+          </Popconfirm>
         </Space>
       ),
       align: "center",
@@ -173,7 +222,6 @@ const App: React.FC = () => {
       />
 
       <Modal
-       
         visible={isModalVisible}
         onOk={handleModalOk}
         onCancel={handleModalCancel}
@@ -297,6 +345,24 @@ const App: React.FC = () => {
             </div>
           </div>
         )}
+      </Modal>
+
+      {/* Reject Room Modal */}
+      <Modal
+        title="Reject Room"
+        visible={rejectModalVisible}
+        onOk={handleReject}
+        onCancel={() => setRejectModalVisible(false)}
+      >
+        <Input.TextArea
+          rows={4}
+          placeholder="Enter reason for rejection"
+          value={rejectReason}
+          onChange={(e) => setRejectReason(e.target.value)}
+        />
+        {rejectReasonErr && (
+          <p className="text-red-500">Enter rejection reason</p>
+        ) }
       </Modal>
     </>
   );

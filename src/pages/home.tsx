@@ -2,8 +2,7 @@ import { Button } from "@nextui-org/react";
 import LandingPageImage from "../assets/img/landing page img.png";
 import secondLandingPageImg from "../assets/img/second landingPage img.png";
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
-import axios from "axios";
+
 
 export default function Home() {
   
@@ -12,11 +11,14 @@ export default function Home() {
       {/* First Hero Section */}
       <section className="flex flex-col lg:flex-row min-h-[80vh]">
         <div className="w-full lg:w-2/5 flex flex-col justify-center p-6 lg:p-12 space-y-4">
-          <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-800 leading-tight">
-            BOOK A SPACE
-            <br />
-            TO REMEMBER
+          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+            Find the Perfect <br />
+            <span className="bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-500">
+              Space
+            </span>{" "}
+            for You
           </h1>
+
 
           <p className="text-sm lg:text-base text-gray-600 max-w-md">
             Discover a world of comfort, luxury, and unparalleled hospitality at
@@ -30,7 +32,7 @@ export default function Home() {
             to={"/allrooms"}
             type="button"
             radius="full"
-            className="self-start px-6 py-2 bg-gradient-to-r from-pink-500 to-yellow-500 text-white font-semibold shadow-lg hover:opacity-90 transition-all duration-300 ease-in-out"
+            className="self-start px-6 py-2 bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-semibold shadow-lg hover:opacity-90 transition-all duration-300 ease-in-out"
           >
             Book Your Space
           </Button>
@@ -48,10 +50,12 @@ export default function Home() {
       {/* Second Hero Section */}
       <section className="flex flex-col lg:flex-row-reverse min-h-[80vh] mt-8">
         <div className="w-full lg:w-2/5 flex flex-col justify-center p-6 lg:p-12 space-y-4">
-          <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-800 leading-tight">
+          <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
             LIST YOUR
             <br />
-            FREE SPACE
+            FREE <span className="bg-clip-text text-transparent bg-gradient-to-r from-green-500 to-blue-500">
+              Space
+            </span>{" "}
           </h1>
 
           <p className="text-sm lg:text-base text-gray-600 max-w-md">

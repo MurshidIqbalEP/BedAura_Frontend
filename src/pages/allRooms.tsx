@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import AllRoomsBanner from "../components/allRoomsBanner";
 import { fetchAllRooms, fetchNearestRooms } from "../api/user";
-import { Button, Input, Select } from "antd";
 import { Pagination } from "@nextui-org/react";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import Lottie from "react-lottie";
 import loadingAnimation from "../assets/roomLoadingAnimation.json";
-import { Chip } from "@nextui-org/react";
+
 
 const defaultOptions = {
   loop: true,
@@ -50,7 +49,7 @@ function AllRooms() {
   const [isNear, setIsNear] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const limit = 1;
+  const limit = 3;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("");
@@ -65,7 +64,8 @@ function AllRooms() {
   ];
 
   useEffect(() => {
-    // setIsLoading(true);
+    setIsLoading(true);
+
     const getRooms = async () => {
       try {
         const response = await fetchAllRooms(
@@ -75,11 +75,10 @@ function AllRooms() {
           filters,
           sortBy
         );
-        console.log(response);
 
         setRooms(response.rooms);
         setTotalPages(response.totalPages);
-        // setIsLoading(false);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -121,8 +120,6 @@ function AllRooms() {
   };
 
   const handlePageChange = (page: number) => {
-    console.log(page);
-
     setCurrentPage(page);
   };
 
@@ -132,7 +129,6 @@ function AllRooms() {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const { latitude, longitude } = position.coords;
 
-        console.log(latitude, "latitude", longitude, "longitude");
         setIsNear(true);
         const response = await fetchNearestRooms(
           latitude,
@@ -140,6 +136,8 @@ function AllRooms() {
           limit,
           currentPage
         );
+        console.log(response.rooms);
+        console.log(response.totalPages);
 
         setRooms(response.rooms); // Update rooms to show nearest ones
         setTotalPages(response.totalPages);
@@ -165,93 +163,123 @@ function AllRooms() {
         filters={filters}
         handleCheckboxChange={handleCheckboxChange}
       />
-      
+
       {isLoading ? (
-        <div className="flex justify-center h-[300px]">
-          <Lottie options={defaultOptions} height={200} width={200} />
+        <div className="flex justify-center items-center h-screen">
+          <Lottie options={defaultOptions} height={350} width={350} />
         </div>
       ) : (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {rooms.length === 0 ? (
+          {rooms?.length === 0 ? (
             <p className="text-gray-500">You don't have any rooms yet.</p>
           ) : (
             <div className="space-y-6">
-              {rooms.map((room) => (
+              {/* Iterate through each room */}
+              {rooms?.map((room) => (
                 <div
                   key={room._id}
-                  className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-72"
+                  className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[330px]"
                 >
-                  <div className="sm:w-1/3 h-72 overflow-hidden">
+                  {/* Image section */}
+                  <div className="sm:w-1/3 h-[330px] overflow-hidden">
                     <img
                       src={room.images[0]}
                       alt={room.name}
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <div className="sm:w-2/3 overflow-hidden px-4 flex flex-col justify-between ">
-                    <div>
-                      <h2 className="text-lg font-semibold mb-2">
+
+                  {/* Room information section */}
+                  <div className="sm:w-2/3 px-4 h-[330px]  py-2 flex flex-col justify-between space-y-4 ">
+                    <div className="space-y-4">
+                      {/* Room Name */}
+                      <h2 className="text-xl font-bold text-gray-800">
                         {room.name}
                       </h2>
-                      <div className="flex gap-4 mb-2">
-                        {room.additionalOptions.map((feature: any) => (
-                          <Chip
-                            color="warning"
-                            size="sm"
-                            radius="sm"
-                            variant="bordered"
-                          >
-                            {feature}
-                          </Chip>
-                        ))}
+
+                      {/* Additional Options */}
+                      <div className="flex flex-wrap gap-2">
+                        {room?.additionalOptions?.map(
+                          (feature: string, index: number) => (
+                            <span
+                              key={index}
+                              className="px-2 py-1 text-xs font-semibold text-yellow-700 bg-yellow-100 rounded-full border border-yellow-300"
+                            >
+                              {feature}
+                            </span>
+                          )
+                        )}
                       </div>
-                      <div className="grid grid-cols-2 gap-2 mb-3">
+
+                      {/* Room Details in Grid Layout */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Mobile:</span>{" "}
-                          {room.mobile}
+                          <span className="font-medium text-gray-800">
+                            Mobile:
+                          </span>{" "}
+                          {room?.mobile}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2"> Bed Spaces:</span>{" "}
-                          {room.slots}
+                          <span className="font-medium text-gray-800">
+                            Bed Spaces:
+                          </span>{" "}
+                          {room?.slots}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Maintenance:</span>{" "}
-                          ₹{room.maintenanceCharge}
+                          <span className="font-medium text-gray-800">
+                            Maintenance:
+                          </span>{" "}
+                          ₹{room?.maintenanceCharge}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Deposit:</span> ₹
-                          {room.securityDeposit}
+                          <span className="font-medium text-gray-800">
+                            Deposit:
+                          </span>{" "}
+                          ₹{room?.securityDeposit}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Type:</span>{" "}
-                          {room.roomType}
+                          <span className="font-medium text-gray-800">
+                            Type:
+                          </span>{" "}
+                          {room?.roomType}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Gender:</span>{" "}
-                          {room.gender}
+                          <span className="font-medium text-gray-800">
+                            Gender:
+                          </span>{" "}
+                          {room?.gender}
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Notice:</span>{" "}
-                          {room.noticePeriod} days
+                          <span className="font-medium text-gray-800">
+                            Notice:
+                          </span>{" "}
+                          {room?.noticePeriod} days
                         </p>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium p-2">Location:</span>{" "}
-                          {room.location}
+                          <span className="font-medium text-gray-800">
+                            Location:
+                          </span>{" "}
+                          {room?.location}
                         </p>
                       </div>
-                      <p className="text-sm text-gray-600 mb-3">
-                        <span className="font-medium p-2">Description:</span>{" "}
-                        {room.description}
+
+                      {/* Room Description */}
+                      <p className="text-sm text-gray-600">
+                        <span className="font-medium text-gray-800">
+                          Description:
+                        </span>{" "}
+                        {room?.description}
                       </p>
                     </div>
 
-                    <div className="w-full flex justify-end">
-                      <Button
-                        className="bg-blue-700 text-white"
-                        onClick={() => handleDetails(room._id)}
+                    {/* Details Button */}
+                    <div className="w-full flex  justify-end ">
+                      <button
+                        className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-75 transition duration-300 ease-in-out"
+                        onClick={() => handleDetails(room?._id)}
                       >
                         Details
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -259,12 +287,13 @@ function AllRooms() {
             </div>
           )}
 
+          {/* Pagination Section */}
           <div className="flex justify-center mt-8">
             <Pagination
               showShadow
               color="warning"
               total={totalPages}
-              initialPage={1}
+              initialPage={currentPage}
               onChange={handlePageChange}
             />
           </div>
