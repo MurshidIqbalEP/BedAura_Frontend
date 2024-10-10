@@ -21,6 +21,13 @@ import { useNavigate } from "react-router-dom";
 import { MdFreeCancellation } from "react-icons/md";
 import Lottie from "react-lottie";
 import noDataAnimation from "../../assets/noDataAnimation - 1728317098368.json"
+import { motion } from "framer-motion"; // Importing motion
+
+ // Animation variants
+ const containerVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeInOut" } },
+};
 
 const defaultOptionsForNoData = {
   loop: true,
@@ -115,14 +122,19 @@ function myBookings() {
         
       />
       <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
-        You don’t have any rooms yet.
+        You don’t have any Booking yet.
       </p>
     </div>
         
       ) : (
-        <div className="space-y-6">
+        <motion.div className="space-y-6"
+        initial="hidden"
+          animate="visible"
+          variants={containerVariants}>
           {rooms.map((room) => (
-            <div className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]">
+            <motion.div className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]" variants={containerVariants} // Use the same variants for individual rooms
+            initial="hidden"
+            animate="visible">
               <div className="sm:w-1/3">
                 <img
                   src={room.roomId.images[0]}
@@ -224,9 +236,9 @@ function myBookings() {
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
       <Modal
         backdrop="opaque"

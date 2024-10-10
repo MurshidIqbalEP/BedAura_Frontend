@@ -8,14 +8,14 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import { FormEvent, useEffect, useRef, useState } from "react";
-import { editRoomApi, fetchRoom } from "../api/user";
+import { editRoomApi, fetchRoom } from "../../api/user";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { MdDeleteOutline } from "react-icons/md";
-import { fetchOptions } from "../api/admin";
-import uploadToCloudinary from "../services/cloudinary";
+import { fetchOptions } from "../../api/admin";
+import uploadToCloudinary from "../../services/cloudinary";
 import Lottie from "react-lottie";
-import loadingAnimation from "../assets/loading.json";
+import loadingAnimation from "../../assets/loading.json";
 
 interface Coordinates {
   lat: number;

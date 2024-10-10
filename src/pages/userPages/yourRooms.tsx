@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
-import { RootState } from "../redux/store";
+import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
-import { fetchRooms } from "../api/user";
-import { Button } from "@nextui-org/react";
-import { Chip } from "@nextui-org/react";
+import { fetchRooms } from "../../api/user";
+import { Button, Chip } from "@nextui-org/react";
 import { Link } from "react-router-dom";
 import { Tooltip } from "antd";
 import Lottie from "react-lottie";
-import noDataAnimation from "../assets/noDataAnimation - 1728317098368.json"
+import noDataAnimation from "../../assets/noDataAnimation - 1728317098368.json";
+import { motion } from "framer-motion"; // Importing motion
 
 interface Coordinates {
   lat: number;
@@ -45,7 +45,7 @@ interface Room {
   rejectionReason: string;
 }
 
-function yourRooms() {
+function YourRooms() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const userId = useSelector((state: RootState) => state.auth.userInfo._id);
 
@@ -64,27 +64,40 @@ function yourRooms() {
     getRooms();
   }, [userId]);
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeInOut" } },
+  };
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6">Your Rooms</h1>
       {rooms.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-        <Lottie 
-          options={defaultOptionsForNoData} 
-          height={250} 
-          width={250} 
-          
-        />
-        <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
-          You don’t have any rooms yet.
-        </p>
-      </div>
+          <Lottie 
+            options={defaultOptionsForNoData} 
+            height={250} 
+            width={250} 
+          />
+          <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
+            You don’t have any rooms yet.
+          </p>
+        </div>
       ) : (
-        <div className="space-y-6">
+        <motion.div
+          className="space-y-6"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
           {rooms.map((room) => (
-            <div
+            <motion.div
               key={room._id}
               className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[340px]"
+              variants={containerVariants} // Use the same variants for individual rooms
+              initial="hidden"
+              animate="visible"
             >
               <div className="sm:w-1/3">
                 <img
@@ -97,8 +110,9 @@ function yourRooms() {
                 <div>
                   <h2 className="text-xl font-semibold mb-2">{room.name}</h2>
                   <div className="flex gap-4 mb-2">
-                    {room.additionalOptions.map((feature: any) => (
+                    {room.additionalOptions.map((feature: any, index: number) => (
                       <Chip
+                        key={index} // Add a unique key for each chip
                         color="warning"
                         size="sm"
                         radius="sm"
@@ -148,7 +162,7 @@ function yourRooms() {
                   </p>
                 </div>
                 <div className="flex justify-between items-center mt-4">
-                  <div className="w-full flex justify-end  ">
+                  <div className="w-full flex justify-end">
                     <Button
                       as={Link}
                       to={`/editRoom/${room._id}`}
@@ -162,14 +176,10 @@ function yourRooms() {
                     <Tooltip
                       title={
                         <div className="p-4 rounded-md shadow-xl">
-                          <p className="font-bold  mb-1">
-                            Rejection Reason
-                          </p>
-                          <p className="text-sm ">
-                            {room?.rejectionReason}
-                          </p>
+                          <p className="font-bold mb-1">Rejection Reason</p>
+                          <p className="text-sm">{room?.rejectionReason}</p>
                           <div className="mt-3 border-t border-gray-300 pt-2">
-                          <p  className="text-xs text-gray-500">For more details, contact support.</p>
+                            <p className="text-xs text-gray-500">For more details, contact support.</p>
                           </div>
                         </div>
                       }
@@ -177,20 +187,19 @@ function yourRooms() {
                       <Button color="danger">Rejected</Button>
                     </Tooltip>
                   )}
-                  {!room?.rejectionReason &&
-                  (room?.isApproved === false || room?.isEdited === true) ? (
+                  {!room?.rejectionReason && (room?.isApproved === false || room?.isEdited === true) ? (
                     <Button color="primary" isLoading>
                       Not Approved
                     </Button>
                   ) : null}
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       )}
     </div>
   );
 }
 
-export default yourRooms;
+export default YourRooms;

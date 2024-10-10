@@ -1,9 +1,9 @@
-import Img from "../assets/img/loging-bg.png";
-import Logo from "../assets/img/white.png";
+import Img from "../../assets/img/loging-bg.png";
+import Logo from "../../assets/img/white.png";
 import { Input } from "@nextui-org/react";
 import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { forgetPass } from "../api/user";
+import { forgetPass } from "../../api/user";
 import { toast } from "react-toastify";
 
 export default function Login() {

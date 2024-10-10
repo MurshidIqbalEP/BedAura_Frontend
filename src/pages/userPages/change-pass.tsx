@@ -3,7 +3,7 @@ import Logo from "../assets/img/white.png";
 import { Input } from "@nextui-org/react";
 import { useState, FormEvent } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { changePass } from "../api/user";
+import { changePass } from "../../api/user";
 import { toast } from "react-toastify";
 
 type LocationState = {
