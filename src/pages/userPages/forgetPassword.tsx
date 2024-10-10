@@ -33,7 +33,6 @@ export default function Login() {
       let response = await forgetPass(email);
 
       toast.success(response.message);
-      console.log("Navigating to /forgetOtp with email:", email);
       navigate("/forgetOtp", { state: { email } });
     } catch (error) {
       toast.error("Password reset failed. Please try again.");

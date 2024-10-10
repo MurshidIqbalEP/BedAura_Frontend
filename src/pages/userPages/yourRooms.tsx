@@ -53,7 +53,6 @@ function YourRooms() {
     const getRooms = async () => {
       try {
         const rooms = await fetchRooms(userId);
-        console.log(rooms.data);
 
         setRooms(rooms.data);
       } catch (error) {
@@ -67,7 +66,11 @@ function YourRooms() {
   // Animation variants
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeInOut" } },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.3, ease: "easeInOut" },
+    },
   };
 
   return (
@@ -75,11 +78,7 @@ function YourRooms() {
       <h1 className="text-3xl font-bold mb-6">Your Rooms</h1>
       {rooms.length === 0 ? (
         <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-          <Lottie 
-            options={defaultOptionsForNoData} 
-            height={250} 
-            width={250} 
-          />
+          <Lottie options={defaultOptionsForNoData} height={250} width={250} />
           <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
             You don’t have any rooms yet.
           </p>
@@ -110,17 +109,19 @@ function YourRooms() {
                 <div>
                   <h2 className="text-xl font-semibold mb-2">{room.name}</h2>
                   <div className="flex gap-4 mb-2">
-                    {room.additionalOptions.map((feature: any, index: number) => (
-                      <Chip
-                        key={index} // Add a unique key for each chip
-                        color="warning"
-                        size="sm"
-                        radius="sm"
-                        variant="bordered"
-                      >
-                        {feature}
-                      </Chip>
-                    ))}
+                    {room.additionalOptions.map(
+                      (feature: any, index: number) => (
+                        <Chip
+                          key={index} // Add a unique key for each chip
+                          color="warning"
+                          size="sm"
+                          radius="sm"
+                          variant="bordered"
+                        >
+                          {feature}
+                        </Chip>
+                      )
+                    )}
                   </div>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <p className="text-sm text-gray-600">
@@ -179,7 +180,9 @@ function YourRooms() {
                           <p className="font-bold mb-1">Rejection Reason</p>
                           <p className="text-sm">{room?.rejectionReason}</p>
                           <div className="mt-3 border-t border-gray-300 pt-2">
-                            <p className="text-xs text-gray-500">For more details, contact support.</p>
+                            <p className="text-xs text-gray-500">
+                              For more details, contact support.
+                            </p>
                           </div>
                         </div>
                       }
@@ -187,7 +190,8 @@ function YourRooms() {
                       <Button color="danger">Rejected</Button>
                     </Tooltip>
                   )}
-                  {!room?.rejectionReason && (room?.isApproved === false || room?.isEdited === true) ? (
+                  {!room?.rejectionReason &&
+                  (room?.isApproved === false || room?.isEdited === true) ? (
                     <Button color="primary" isLoading>
                       Not Approved
                     </Button>

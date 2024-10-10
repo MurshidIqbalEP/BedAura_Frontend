@@ -14,7 +14,7 @@ import {
 } from "react-icons/fa";
 import type { TableColumnsType, TableProps } from "antd";
 import {
-  ApproveEdit,
+  
   ApproveRoom,
   fetchEditRequests,
   fetchNewRoomRequests,
@@ -46,7 +46,6 @@ type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 
 const App: React.FC = () => {
-  const SERVER_URL = "http://localhost:3000";
   const [data, setData] = useState<DataType[]>([]);
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});

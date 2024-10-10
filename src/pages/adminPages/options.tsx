@@ -20,7 +20,7 @@ interface Options {
   genders: string[];
   roomType: string[];
   noticePeriod: string[];
-  AdditionalOptions:string[];
+  AdditionalOptions: string[];
 }
 
 const OptionsManager: React.FC = () => {
@@ -29,14 +29,14 @@ const OptionsManager: React.FC = () => {
     genders: [],
     roomType: [],
     noticePeriod: [],
-    AdditionalOptions:[]
+    AdditionalOptions: [],
   });
 
   const [newdeposit, setNewdeposit] = useState("");
   const [newGender, setNewGender] = useState("");
   const [newRoomtype, setNewRoomtype] = useState("");
   const [newNoticeperiod, setNewNoticeperiod] = useState("");
-  const [newAdditionaOptions,setAdditionalOptions] = useState("")
+  const [newAdditionaOptions, setAdditionalOptions] = useState("");
 
   useEffect(() => {
     const fetchOptionsData = async () => {
@@ -52,7 +52,6 @@ const OptionsManager: React.FC = () => {
   }, []);
 
   const handleAdd = async (category: keyof Options, newValue: string) => {
-    
     if (!newValue.trim()) {
       toast.error("Please enter a valid option");
       return;
@@ -76,7 +75,7 @@ const OptionsManager: React.FC = () => {
         setNewNoticeperiod("");
       } else if (category === "AdditionalOptions") {
         setAdditionalOptions("");
-      } 
+      }
     }
   };
 
@@ -84,8 +83,6 @@ const OptionsManager: React.FC = () => {
     category: keyof Options,
     valueToRemove: string
   ) => {
-   
-    
     let response = await removeOption(category, valueToRemove);
 
     if (response) {
@@ -298,7 +295,7 @@ const OptionsManager: React.FC = () => {
 
       <Card className="max-w-[200px] min-w-[170px]">
         <CardHeader className="flex gap-3">
-        <CiCircleMore />
+          <CiCircleMore />
           <div className="flex flex-col">
             <p className="text-md">Additional Options</p>
           </div>
@@ -318,7 +315,9 @@ const OptionsManager: React.FC = () => {
                   description="This action cannot be undone."
                   okText="Yes"
                   cancelText="No"
-                  onConfirm={() => handleRemoveOption("AdditionalOptions", option)}
+                  onConfirm={() =>
+                    handleRemoveOption("AdditionalOptions", option)
+                  }
                 >
                   <IoMdTrash className="hover:cursor-pointer" />
                 </Popconfirm>
@@ -338,13 +337,13 @@ const OptionsManager: React.FC = () => {
             />
             <IoMdAddCircle
               className="hover:cursor-pointer"
-              onClick={() => handleAdd("AdditionalOptions", newAdditionaOptions)}
+              onClick={() =>
+                handleAdd("AdditionalOptions", newAdditionaOptions)
+              }
             />
           </div>
         </CardFooter>
       </Card>
-
-
     </div>
   );
 };

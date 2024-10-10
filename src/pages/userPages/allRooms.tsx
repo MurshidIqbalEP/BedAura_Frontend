@@ -63,7 +63,7 @@ function AllRooms() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("");
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<{ roomType: string[] }>({
     roomType: [],
   });
 
@@ -137,29 +137,32 @@ function AllRooms() {
   const handleFindNearestRooms = async () => {
     setIsLoading(true);
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(async (position) => {
-        const { latitude, longitude } = position.coords;
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
 
-        setIsNear(true);
-        try {
-          const response = await fetchNearestRooms(
-            latitude,
-            longitude,
-            limit,
-            currentPage
-          );
-          setRooms(response.rooms);
-          setTotalPages(response.totalPages);
-        } catch (error) {
-          console.error("Error fetching nearest rooms:", error);
-          toast.error("Failed to fetch nearest rooms.");
-        } finally {
+          setIsNear(true);
+          try {
+            const response = await fetchNearestRooms(
+              latitude,
+              longitude,
+              limit,
+              currentPage
+            );
+            setRooms(response.rooms);
+            setTotalPages(response.totalPages);
+          } catch (error) {
+            console.error("Error fetching nearest rooms:", error);
+            toast.error("Failed to fetch nearest rooms.");
+          } finally {
+            setIsLoading(false);
+          }
+        },
+        () => {
+          toast.error("Unable to get your location.");
           setIsLoading(false);
         }
-      }, () => {
-        toast.error("Unable to get your location.");
-        setIsLoading(false);
-      });
+      );
     } else {
       toast.error("Geolocation is not supported by your browser.");
       setIsLoading(false);
@@ -175,9 +178,9 @@ function AllRooms() {
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
+        staggerChildren: 0.1,
+      },
+    },
   };
 
   const roomCardVariants = {
@@ -188,9 +191,9 @@ function AllRooms() {
       transition: {
         type: "spring",
         damping: 12,
-        stiffness: 100
-      }
-    }
+        stiffness: 100,
+      },
+    },
   };
 
   return (
@@ -211,7 +214,7 @@ function AllRooms() {
 
       <AnimatePresence>
         {isLoading ? (
-          <motion.div 
+          <motion.div
             className="flex justify-center items-center h-screen"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -221,7 +224,7 @@ function AllRooms() {
             <Lottie options={defaultOptions} height={350} width={350} />
           </motion.div>
         ) : (
-          <motion.div 
+          <motion.div
             className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -229,19 +232,19 @@ function AllRooms() {
             key="content"
           >
             {rooms.length === 0 ? (
-              <motion.div 
+              <motion.div
                 className="flex flex-col items-center justify-center min-h-[400px] space-y-6"
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
                 transition={{ duration: 0.5 }}
               >
-                <Lottie 
-                  options={defaultOptionsForNoData} 
-                  height={250} 
-                  width={250} 
+                <Lottie
+                  options={defaultOptionsForNoData}
+                  height={250}
+                  width={250}
                 />
-                <motion.p 
+                <motion.p
                   className="text-gray-500 text-xl font-semibold text-center"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -251,7 +254,7 @@ function AllRooms() {
                 </motion.p>
               </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 className="space-y-6"
                 variants={containerVariants}
                 initial="hidden"
@@ -287,32 +290,59 @@ function AllRooms() {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Mobile:</span> {room.mobile}
+                            <span className="font-medium text-gray-800">
+                              Mobile:
+                            </span>{" "}
+                            {room.mobile}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Bed Spaces:</span> {room.slots}
+                            <span className="font-medium text-gray-800">
+                              Bed Spaces:
+                            </span>{" "}
+                            {room.slots}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Maintenance:</span> ₹{room.maintenanceCharge}
+                            <span className="font-medium text-gray-800">
+                              Maintenance:
+                            </span>{" "}
+                            ₹{room.maintenanceCharge}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Deposit:</span> ₹{room.securityDeposit}
+                            <span className="font-medium text-gray-800">
+                              Deposit:
+                            </span>{" "}
+                            ₹{room.securityDeposit}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Type:</span> {room.roomType}
+                            <span className="font-medium text-gray-800">
+                              Type:
+                            </span>{" "}
+                            {room.roomType}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Gender:</span> {room.gender}
+                            <span className="font-medium text-gray-800">
+                              Gender:
+                            </span>{" "}
+                            {room.gender}
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Notice:</span> {room.noticePeriod} days
+                            <span className="font-medium text-gray-800">
+                              Notice:
+                            </span>{" "}
+                            {room.noticePeriod} days
                           </p>
                           <p className="text-sm text-gray-600">
-                            <span className="font-medium text-gray-800">Location:</span> {room.location}
+                            <span className="font-medium text-gray-800">
+                              Location:
+                            </span>{" "}
+                            {room.location}
                           </p>
                         </div>
                         <p className="text-sm text-gray-600">
-                          <span className="font-medium text-gray-800">Description:</span> {room.description}
+                          <span className="font-medium text-gray-800">
+                            Description:
+                          </span>{" "}
+                          {room.description}
                         </p>
                       </div>
                       <div className="w-full flex justify-end">
@@ -329,7 +359,7 @@ function AllRooms() {
               </motion.div>
             )}
 
-            <motion.div 
+            <motion.div
               className="flex justify-center mt-8"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}

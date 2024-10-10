@@ -1,16 +1,11 @@
-import {
-  Modal,
-  ModalContent,
-} from "@nextui-org/react";
+import { Modal, ModalContent } from "@nextui-org/react";
 
 import MultiStepForm from "./multiStepForm";
 
 function BookingModal({ isOpen, onOpenChange, room }: any) {
- 
-  const closeModal =()=>{
-    onOpenChange(false)
-  }
-
+  const closeModal = () => {
+    onOpenChange(false);
+  };
 
   return (
     <Modal
@@ -19,11 +14,9 @@ function BookingModal({ isOpen, onOpenChange, room }: any) {
       isDismissable={false}
       isKeyboardDismissDisabled={true}
     >
-      
-        <ModalContent>
-          <MultiStepForm  closeModal={closeModal} room={room} />
-        </ModalContent>
-      
+      <ModalContent>
+        <MultiStepForm closeModal={closeModal} room={room} />
+      </ModalContent>
     </Modal>
   );
 }

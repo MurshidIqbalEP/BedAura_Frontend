@@ -28,7 +28,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   const navigate = useNavigate();
   useEffect(() => {
     if (userInfo) {
-      console.log('socket connecting+++++++++++++++++++++++++++++++++++++++++++++');
       
       const socketConnection = io("http://localhost:3000"); // Connect to your server
       setSocket(socketConnection); // Set the socket instance
@@ -36,7 +35,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       socketConnection.emit("registerUser", userInfo._id);
 
       socketConnection.on("receiveMessage", (messageData) => {
-        console.log(messageData);
 
         if (messageData.senderId !== userInfo._id) {
           toast.info(`message recieved from ${messageData.sender}`);
@@ -47,7 +45,6 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
       socketConnection.on(
         "receiveVideoCall",
         ({ sender, senderId, roomId }) => {
-          console.log("call comming", roomId);
           // !== currentUserId
           if (senderId !== userInfo._id) {
             const key = `open${Date.now()}`;

@@ -17,23 +17,21 @@ const errorHandle = (error: Error | AxiosError) => {
     if (axiosError.response) {
       const errorResponse = axiosError.response.data as IErrorResponse;
 
-      
-
       switch (axiosError.response.status) {
         case 400:
-             
-             toast.error( errorResponse.message )
-             
-             break;
+          toast.error(errorResponse.message);
+
+          break;
         case 403:
           toast.error(
-            errorResponse.message || "A client error occurred. Please try again."
+            errorResponse.message ||
+              "A client error occurred. Please try again."
           );
 
-          setTimeout(()=>{
+          setTimeout(() => {
             window.location.href = "/blocked";
-          },2000)
-          
+          }, 2000);
+
           hasShownToast = true;
           break;
         case 404:
@@ -49,7 +47,8 @@ const errorHandle = (error: Error | AxiosError) => {
         default:
           // Handle unexpected errors
           toast.error(
-            errorResponse.message || "An unexpected error occurred. Please try again."
+            errorResponse.message ||
+              "An unexpected error occurred. Please try again."
           );
           hasShownToast = true;
       }

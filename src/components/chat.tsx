@@ -13,10 +13,8 @@ interface ChatProps {
   chattingWithUserId: string;
 }
 
-
-
 const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
-  const socket = useSocket()
+  const socket = useSocket();
   const [message, setMessage] = useState("");
   const [owner, setOwner] = useState({
     name: "",

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   AreaChart,
   Area,
@@ -7,33 +7,33 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
-import { fetchBookingPerMounth } from '../api/admin';
-
-
+} from "recharts";
+import { fetchBookingPerMounth } from "../api/admin";
 
 const areaChart = () => {
-    const [areaData, setAreaData] = useState([]);
+  const [areaData, setAreaData] = useState([]);
 
-    useEffect(() => {
-        const fetchData = async () => {
-          try {
-            const response = await fetchBookingPerMounth();
-            
-            const formattedData = response?.data.data.map((item: any) => ({
-              month: new Date(0, item.month - 1).toLocaleString('default', { month: 'short' }), // Convert month number to short month name
-              rooms: item.rooms,
-              bookings: item.bookings,
-            }));
-            
-            setAreaData(formattedData);
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          }
-        };
-    
-        fetchData();
-      }, []);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetchBookingPerMounth();
+
+        const formattedData = response?.data.data.map((item: any) => ({
+          month: new Date(0, item.month - 1).toLocaleString("default", {
+            month: "short",
+          }), // Convert month number to short month name
+          rooms: item.rooms,
+          bookings: item.bookings,
+        }));
+
+        setAreaData(formattedData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
     <ResponsiveContainer width="100%" height={256}>
       <AreaChart
@@ -49,8 +49,20 @@ const areaChart = () => {
         <XAxis dataKey="month" />
         <YAxis />
         <Tooltip />
-        <Area type="monotone" dataKey="rooms" stackId="1" stroke="#8884d8" fill="#8884d8" />
-        <Area type="monotone" dataKey="bookings" stackId="1" stroke="#82ca9d" fill="#82ca9d" />
+        <Area
+          type="monotone"
+          dataKey="rooms"
+          stackId="1"
+          stroke="#8884d8"
+          fill="#8884d8"
+        />
+        <Area
+          type="monotone"
+          dataKey="bookings"
+          stackId="1"
+          stroke="#82ca9d"
+          fill="#82ca9d"
+        />
       </AreaChart>
     </ResponsiveContainer>
   );

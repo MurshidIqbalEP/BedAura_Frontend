@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from "react";
+import  { useState, useEffect } from "react";
 import { PieChart, Pie, Sector, ResponsiveContainer } from "recharts";
-import { fetchPieChartData } from "../api/admin";
 import { fetchUserPieChartData } from "../api/user";
 import { useSelector } from "react-redux";
 import { RootState } from "../redux/store";
@@ -19,7 +18,7 @@ const renderActiveShape = (props: any) => {
     fill,
     payload,
     percent,
-    value,
+    
   } = props;
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);

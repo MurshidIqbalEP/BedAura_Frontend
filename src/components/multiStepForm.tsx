@@ -99,9 +99,6 @@ const MultiStepForm = ({ closeModal, room }: any) => {
   };
 
   const onToken = async (token: any) => {
-    // console.log(token);
-    // console.log(room?._id,userInfo._id,bookingSlots);
-
     let booked = await bookRoom(
       token,
       room?._id as string,
@@ -114,19 +111,17 @@ const MultiStepForm = ({ closeModal, room }: any) => {
     }
   };
 
-  const walletPayment = async ()=>{
-    
+  const walletPayment = async () => {
     let Payment = await bookRoomWallet(
-        room?._id as string,
-        userInfo._id,
-        formData
-    ) 
-    if(Payment){
-        navigate("/myBookings");
+      room?._id as string,
+      userInfo._id,
+      formData
+    );
+    if (Payment) {
+      navigate("/myBookings");
       toast.success("Room Booked");
     }
-    
-  }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center p-1 ">
@@ -176,29 +171,6 @@ const Step1 = ({ nextStep, handleChange, values, room, Errs }: any) => (
         </p>
       </div>
     </div>
-
-    {/* Number of Slots to Book */}
-    {/* <div>
-      <label
-        htmlFor="numberOfSlots"
-        className="block text-sm font-semibold text-gray-600 mb-2"
-      >
-        Enter number of slots to book:
-      </label>
-      <input
-        type="number"
-        value={values.numberOfSlots}
-        onChange={handleChange}
-        name="numberOfSlots"
-        className="w-full px-4 py-2 border rounded-lg text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition duration-200 ease-in-out"
-        placeholder="Enter slots"
-      />
-      {Errs.numberOfSlotsErr && (
-        <p className="text-sm text-red-500">{Errs.numberOfSlotsErr}</p>
-      )}
-    </div> */}
-
-    {/* Check-in Date */}
 
     <div>
       <label
@@ -250,7 +222,14 @@ const Step1 = ({ nextStep, handleChange, values, room, Errs }: any) => (
   </div>
 );
 
-const Step2 = ({ prevStep, onToken, values, room, closeModal,walletPayment }: any) => {
+const Step2 = ({
+  prevStep,
+  onToken,
+  values,
+  room,
+  closeModal,
+  walletPayment,
+}: any) => {
   return (
     <div className="flex flex-col gap-4 p-6 bg-white shadow-md rounded-lg max-w-md mx-auto">
       <h2 className="text-2xl font-semibold text-center mb-4 text-gray-800">
@@ -278,14 +257,14 @@ const Step2 = ({ prevStep, onToken, values, room, closeModal,walletPayment }: an
           Back
         </Button>
         <Button
-  onClick={() => {
-    walletPayment()
-  }}
-  size="sm"
-  className="bg-blue-500 hover:bg-blue-450 text-white font-bold text-sm py-2 px-4 rounded-lg transition duration-200"
->
-  Pay with Wallet
-</Button>
+          onClick={() => {
+            walletPayment();
+          }}
+          size="sm"
+          className="bg-blue-500 hover:bg-blue-450 text-white font-bold text-sm py-2 px-4 rounded-lg transition duration-200"
+        >
+          Pay with Wallet
+        </Button>
 
         {/* Stripe Checkout component */}
         <Button

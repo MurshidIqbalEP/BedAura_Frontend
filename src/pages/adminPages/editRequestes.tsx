@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Space, Table, Popconfirm, Input, Modal } from "antd";
+import { Space, Table, Input, Modal } from "antd";
 import { TiTick } from "react-icons/ti";
 import { Button } from "@nextui-org/react";
 import {
@@ -39,7 +39,6 @@ type GetSingle<T> = T extends (infer U)[] ? U : never;
 type Sorts = GetSingle<Parameters<OnChange>[2]>;
 
 const App: React.FC = () => {
-  const SERVER_URL = "http://localhost:3000";
   const [data, setData] = useState<DataType[]>([]);
   const [filteredInfo, setFilteredInfo] = useState<Filters>({});
   const [sortedInfo, setSortedInfo] = useState<Sorts>({});
@@ -51,7 +50,6 @@ const App: React.FC = () => {
     const FetchEditRequests = async () => {
       try {
         const response = await fetchEditRequests();
-        console.log(response);
         setData(response.data.data);
       } catch (error) {
         toast.error("Failed to fetch users");

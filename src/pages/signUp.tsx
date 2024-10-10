@@ -128,15 +128,19 @@ export default function SignUp() {
           `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`
         );
 
-        console.log(res);
-
         const name = res.data.name;
         const email = res.data.email;
         const password = "qwerty123";
         const isGoogle = true;
-        const image = res.data.picture
+        const image = res.data.picture;
 
-        const response2 = await Gsign_up(name, email, password, isGoogle,image);
+        const response2 = await Gsign_up(
+          name,
+          email,
+          password,
+          isGoogle,
+          image
+        );
 
         if (response2) {
           localStorage.setItem("token", response2.data.token);

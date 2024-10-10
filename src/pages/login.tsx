@@ -9,9 +9,8 @@ import { setCredentials } from "../redux/Slices/authSlice";
 import { setAdminCredentials } from "../redux/Slices/adminSlice";
 import { useGoogleLogin } from "@react-oauth/google";
 import { login, Gsign_up } from "../api/user";
-import { RootState } from "../redux/store"; 
+import { RootState } from "../redux/store";
 import axios from "axios";
-
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -20,8 +19,7 @@ export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const previousPage = location.state?.from || "/";
-  console.log(previousPage);
-  
+
   const dispatch = useDispatch();
 
   const { adminInfo } = useSelector((state: RootState) => state.adminAuth);
@@ -71,7 +69,6 @@ export default function Login() {
           dispatch(setAdminCredentials(response.data.message));
           navigate("/admin/dashboard");
         } else {
-          console.log(response);
           localStorage.setItem("token", response.data.token);
           dispatch(setCredentials(response.data.message));
           navigate(previousPage);
@@ -87,8 +84,6 @@ export default function Login() {
           `https://www.googleapis.com/oauth2/v3/userinfo?access_token=${response.access_token}`
         );
 
-        console.log(res);
-
         const name = res.data.name;
         const email = res.data.email;
         const password = "qwerty123";
@@ -102,7 +97,6 @@ export default function Login() {
           isGoogle,
           image
         );
-        console.log(response2);
 
         if (response2) {
           if (response2.data.data.isAdmin) {

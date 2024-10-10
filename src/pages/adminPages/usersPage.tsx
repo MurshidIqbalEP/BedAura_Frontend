@@ -128,7 +128,13 @@ const App: React.FC = () => {
 
   return (
     <>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 9 }}>
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginBottom: 9,
+        }}
+      >
         <h1 className="text-lg font-bold ml-2 ">Users :</h1>
         <Space>
           <Input

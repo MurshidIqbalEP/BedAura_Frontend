@@ -1,10 +1,17 @@
-import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from "@nextui-org/react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableColumn,
+  TableHeader,
+  TableRow,
+} from "@nextui-org/react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { fetchWallet } from "../../api/user";
 import { IWallet } from "../../services/types";
-import { Empty, Pagination } from 'antd';
+import { Empty, Pagination } from "antd";
 
 // Wallet section
 const Wallet = () => {
@@ -16,7 +23,6 @@ const Wallet = () => {
   useEffect(() => {
     const FetchWallet = async () => {
       const walletResponse = await fetchWallet(userInfo._id);
-      console.log(walletResponse?.data.data);
       setWallet(walletResponse?.data.data || null);
     };
     FetchWallet();
@@ -25,7 +31,10 @@ const Wallet = () => {
   // Calculate the transactions to display for the current page
   const indexOfLastTransaction = currentPage * transactionsPerPage;
   const indexOfFirstTransaction = indexOfLastTransaction - transactionsPerPage;
-  const currentTransactions = wallet?.transactions.slice(indexOfFirstTransaction, indexOfLastTransaction);
+  const currentTransactions = wallet?.transactions.slice(
+    indexOfFirstTransaction,
+    indexOfLastTransaction
+  );
 
   // Handle page change
   const handlePageChange = (page: number) => {
@@ -35,7 +44,7 @@ const Wallet = () => {
   const columns = [
     { key: "date", label: "Date" },
     { key: "amount", label: "Amount" },
-    { key: "description", label: "Description" }
+    { key: "description", label: "Description" },
   ];
 
   return (
@@ -45,7 +54,9 @@ const Wallet = () => {
         <div className="space-y-3">
           <div className="flex justify-between">
             <h3 className="text-lg font-medium">Balance:</h3>
-            <p className="text-lg font-bold ">₹{wallet ? wallet.balance : 'Loading...'}</p>
+            <p className="text-lg font-bold ">
+              ₹{wallet ? wallet.balance : "Loading..."}
+            </p>
           </div>
 
           <div>
@@ -59,29 +70,37 @@ const Wallet = () => {
                     ))}
                   </TableHeader>
                   <TableBody>
-  {currentTransactions && currentTransactions.length > 0 ? (
-    currentTransactions.map((transaction, index) => (
-      <TableRow key={index}>
-        <TableCell>{new Date(transaction?.date).toLocaleDateString()}</TableCell>
-        <TableCell
-          className={`${
-            transaction.transactionType === "credit" ? "text-green-500" : "text-red-500"
-          } p-1`}
-        >
-          {transaction.transactionType === "credit" ? "+" : "-"}₹{Math.abs(transaction.amount)}
-        </TableCell>
-        <TableCell>{transaction.description}</TableCell>
-      </TableRow>
-    ))
-  ) : (
-    <TableRow>
-      <TableCell colSpan={3} className="text-center">
-        No transactions found.
-      </TableCell>
-    </TableRow>
-  )}
-</TableBody>
-
+                    {currentTransactions && currentTransactions.length > 0 ? (
+                      currentTransactions.map((transaction, index) => (
+                        <TableRow key={index}>
+                          <TableCell>
+                            {transaction?.date
+                              ? new Date(transaction.date).toLocaleDateString()
+                              : "N/A"}
+                          </TableCell>
+                          <TableCell
+                            className={`${
+                              transaction.transactionType === "credit"
+                                ? "text-green-500"
+                                : "text-red-500"
+                            } p-1`}
+                          >
+                            {transaction.transactionType === "credit"
+                              ? "+"
+                              : "-"}
+                            ₹{Math.abs(transaction.amount)}
+                          </TableCell>
+                          <TableCell>{transaction.description}</TableCell>
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={3} className="text-center">
+                          No transactions found.
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
                 </Table>
 
                 {/* Pagination controls */}
@@ -96,7 +115,9 @@ const Wallet = () => {
             ) : (
               <>
                 <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} />
-                <p className="text-gray-500 text-center">No transactions available.</p>
+                <p className="text-gray-500 text-center">
+                  No transactions available.
+                </p>
               </>
             )}
           </div>

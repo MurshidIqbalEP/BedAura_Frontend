@@ -1,22 +1,7 @@
-import { useState } from "react";
 import Logo from "../assets/img/white.png";
-import { useSelector, useDispatch } from "react-redux";
-import { userLogout } from "../redux/Slices/authSlice";
-import { Link, useNavigate } from "react-router-dom";
-import { RootState } from "../redux/store";
+import { Link } from "react-router-dom";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    dispatch(userLogout());
-    localStorage.removeItem('token')
-    navigate("/login");
-  };
-
   return (
     <header className="bg-white shadow-sm  ">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,16 +9,8 @@ export default function Header() {
           <Link to="/admin" className="flex-shrink-0">
             <img src={Logo} alt="Logo" className="h-8 w-auto" />
           </Link>
-
-          
-
-         
-
-          
         </div>
       </div>
-
-     
     </header>
   );
 }

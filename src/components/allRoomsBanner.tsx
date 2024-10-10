@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import BannerImage from "../assets/img/allRoomsBG.png";
 
 interface AllRoomsBannerProps {

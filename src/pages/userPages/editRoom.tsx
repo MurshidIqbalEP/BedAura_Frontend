@@ -49,7 +49,6 @@ const fetchSuggestions = async (query: string) => {
     const response = await axios.get(url);
 
     if (response.data && response.data.features) {
-      console.log("Mapbox response data:", response.data.features);
       return response.data.features;
     } else {
       console.error("No features found in response:", response.data);
@@ -123,7 +122,6 @@ function editRoom() {
       try {
         const room = await fetchRoom(id as string);
         setRoom(room.data);
-        console.log(room.data.additionalOptions);
 
         setCheckedOptions(room.data.additionalOptions);
       } catch (error) {
@@ -164,7 +162,6 @@ function editRoom() {
     const uploadedURLs = await Promise.all(
       selectedFiles.map((file) => uploadToCloudinary(file))
     );
-    console.log(uploadedURLs);
     setLoading(false);
 
     setRoom((prevRoom: any) => ({
@@ -274,7 +271,10 @@ function editRoom() {
       formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
       formData.append("roomId", room?._id as string);
       formData.append("userId", room?.userId as string);
-      formData.append("additionalOptions", JSON.stringify(checkedOptions ?? []));
+      formData.append(
+        "additionalOptions",
+        JSON.stringify(checkedOptions ?? [])
+      );
 
       room?.images.forEach((url) => {
         formData.append("images", url);
@@ -291,8 +291,6 @@ function editRoom() {
 
   const dltImage = (img: string) => {
     let newImages: any = room?.images.filter((image) => image !== img);
-
-    console.log(newImages);
 
     setRoom((prevRoom) => {
       if (!prevRoom) return prevRoom;
@@ -313,12 +311,6 @@ function editRoom() {
       setCheckedOptions([...checkedOptions, option]);
     }
   };
-
-  console.log(
-    checkedOptions,
-    options,
-    "==========================================="
-  );
 
   return (
     <div>
@@ -473,7 +465,7 @@ function editRoom() {
           </div>
 
           <div className="flex flex-wrap gap-4 justify-center">
-          <h2>Additional Options :</h2>
+            <h2>Additional Options :</h2>
             {options.AdditionalOptions.map((AdditionalOP) => (
               <Checkbox
                 key={AdditionalOP}

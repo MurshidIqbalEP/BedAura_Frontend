@@ -23,7 +23,7 @@ import defaultProfile from "../../assets/img/Default_pfp.svg.png";
 import ChangePassword from "../userPages/changePassword";
 import Wallet from "../userPages/wallet";
 import ChatPage from "../../components/chatPage";
-import Dashbord from "../../components/dashbord"
+import Dashbord from "../../components/dashbord";
 
 const Profile = () => {
   const userInfo = useSelector((state: RootState) => state.auth.userInfo);
@@ -67,7 +67,6 @@ const Profile = () => {
     setValerr(validationError);
     if (valid) {
       let response = await editUser(user);
-      console.log(response);
 
       if (response) {
         dispatch(setCredentials(response));
@@ -231,11 +230,11 @@ const Profile = () => {
           </div>
         ) : currentTab === "changePassword" ? (
           <ChangePassword />
-        ) : currentTab === "chat"?(
-           <ChatPage currentUserId={user._id} />
-        ) :currentTab === "wallet"?(
+        ) : currentTab === "chat" ? (
+          <ChatPage currentUserId={user._id} />
+        ) : currentTab === "wallet" ? (
           <Wallet />
-        ):(
+        ) : (
           <Dashbord />
         )}
       </main>

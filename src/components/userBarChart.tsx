@@ -1,35 +1,35 @@
-import  { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
-import {  BarChart,
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import {
+  BarChart,
   Bar,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  ResponsiveContainer, } from 'recharts';
-import { RootState } from '../redux/store';
-import { fetchUsersRoomBookings } from '../api/user';
+  ResponsiveContainer,
+} from "recharts";
+import { RootState } from "../redux/store";
+import { fetchUsersRoomBookings } from "../api/user";
 
-
-const UsersRoomBookingChart = ( ) => {
-    const userInfo = useSelector((state: RootState) => state.auth.userInfo);
+const UsersRoomBookingChart = () => {
+  const userInfo = useSelector((state: RootState) => state.auth.userInfo);
   const [data, setData] = useState([]);
 
   useEffect(() => {
     // Fetch the booking data from your backend
     const fetchBookingData = async () => {
       try {
-        const response = await fetchUsersRoomBookings(userInfo._id)
-        
-        const formattedData = response?.data.data.map((item:any) => ({
+        const response = await fetchUsersRoomBookings(userInfo._id);
+
+        const formattedData = response?.data.data.map((item: any) => ({
           roomName: item.roomName,
           totalBookings: item.totalBookings,
         }));
-        console.log(formattedData);
-        
+
         setData(formattedData);
       } catch (error) {
-        console.error('Error fetching booking data:', error);
+        console.error("Error fetching booking data:", error);
       }
     };
 

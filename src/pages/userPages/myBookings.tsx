@@ -20,13 +20,17 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { MdFreeCancellation } from "react-icons/md";
 import Lottie from "react-lottie";
-import noDataAnimation from "../../assets/noDataAnimation - 1728317098368.json"
+import noDataAnimation from "../../assets/noDataAnimation - 1728317098368.json";
 import { motion } from "framer-motion"; // Importing motion
 
- // Animation variants
- const containerVariants = {
+// Animation variants
+const containerVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeInOut" } },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.3, ease: "easeInOut" },
+  },
 };
 
 const defaultOptionsForNoData = {
@@ -37,7 +41,6 @@ const defaultOptionsForNoData = {
     preserveAspectRatio: "xMidYMid slice",
   },
 };
-
 
 function myBookings() {
   const [rooms, setRooms] = useState<RoomData[]>([]);
@@ -54,13 +57,12 @@ function myBookings() {
     reviewErr: "",
   });
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getBooking = async () => {
       try {
         const rooms = await fetchBooking(userId);
-        console.log(rooms?.data);
 
         setRooms(rooms?.data);
       } catch (error) {
@@ -96,45 +98,42 @@ function myBookings() {
         selectedStars,
         review
       );
-      navigate(-1)
-      toast.success(response?.data)
-      
+      navigate(-1);
+      toast.success(response?.data);
     }
   };
 
-   const handleCancellBooking = async(room:RoomData)=>{
-      console.log(room);
-      
-      const response = await cancelBooking(room)
-      toast.message(response?.data)
-      navigate("/profile")
-   }
+  const handleCancellBooking = async (room: RoomData) => {
+
+    const response = await cancelBooking(room);
+    toast.message(response?.data);
+    navigate("/profile");
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-3xl font-bold mb-6">My Bookings</h1>
       {rooms.length === 0 ? (
-      <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
-      <Lottie 
-        options={defaultOptionsForNoData} 
-        height={250} 
-        width={250} 
-        
-      />
-      <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
-        You don’t have any Booking yet.
-      </p>
-    </div>
-        
+        <div className="flex flex-col items-center justify-center min-h-[400px] space-y-6">
+          <Lottie options={defaultOptionsForNoData} height={250} width={250} />
+          <p className="text-gray-500 text-xl font-semibold animate-fade-in text-center">
+            You don’t have any Booking yet.
+          </p>
+        </div>
       ) : (
-        <motion.div className="space-y-6"
-        initial="hidden"
+        <motion.div
+          className="space-y-6"
+          initial="hidden"
           animate="visible"
-          variants={containerVariants}>
+          variants={containerVariants}
+        >
           {rooms.map((room) => (
-            <motion.div className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]" variants={containerVariants} // Use the same variants for individual rooms
-            initial="hidden"
-            animate="visible">
+            <motion.div
+              className="bg-blue-100 rounded-lg shadow-md overflow-hidden flex flex-col sm:flex-row h-[300px]"
+              variants={containerVariants} // Use the same variants for individual rooms
+              initial="hidden"
+              animate="visible"
+            >
               <div className="sm:w-1/3">
                 <img
                   src={room.roomId.images[0]}
@@ -151,7 +150,6 @@ function myBookings() {
                     <p className="text-sm text-gray-600">
                       {room.roomId.location}
                     </p>
-                    
                   </div>
                   <span className="px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-sm font-medium">
                     {room.roomId.roomType}
@@ -162,7 +160,9 @@ function myBookings() {
                     <p className="text-sm font-medium text-gray-500">
                       Bed Spaces
                     </p>
-                    <p className="mt-1 text-lg font-semibold">{room.roomId.slots}</p>
+                    <p className="mt-1 text-lg font-semibold">
+                      {room.roomId.slots}
+                    </p>
                   </div>
                   <div>
                     <p className="text-sm font-medium text-gray-500">
@@ -228,11 +228,10 @@ function myBookings() {
                     className="bg-red-300"
                     endContent={<MdFreeCancellation />}
                     onClick={() => {
-                      handleCancellBooking(room)
-                      
+                      handleCancellBooking(room);
                     }}
                   >
-                    Cancel Booking 
+                    Cancel Booking
                   </Button>
                 </div>
               </div>

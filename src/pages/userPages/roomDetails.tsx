@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { fetchReviews, fetchRoom } from "../../api/user";
 import { Room } from "../../services/types";
 import { Image, Rate, Drawer } from "antd";
-import ReactMapGL, { Marker, ViewportProps } from "react-map-gl";
+import ReactMapGL, { Marker } from "react-map-gl";
 import "mapbox-gl/dist/mapbox-gl.css"; // Import the CSS
 import { Button, Chip } from "@nextui-org/react";
 import { MdOutlineMessage } from "react-icons/md";
@@ -25,6 +25,14 @@ import Chat from "../../components/chat";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import BookingModal from "../../components/BookingModal";
 
+type Viewport = {
+  latitude: number;
+  longitude: number;
+  zoom: number;
+  width: string;
+  height: string;
+};
+
 // Keyframes for bounce animation
 const bounceAnimation = `
   @keyframes bounce {
@@ -43,7 +51,7 @@ const bounceAnimation = `
 function RoomDetails() {
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<Room | null>(null);
-  const [viewPort, setViewPort] = useState<ViewportProps>({
+  const [viewPort, setViewPort] = useState<Viewport>({
     latitude: 0,
     longitude: 0,
     zoom: 13,
@@ -81,14 +89,13 @@ function RoomDetails() {
 
     const fetchReview = async () => {
       const reviews = await fetchReviews(id as string);
-      console.log(reviews?.data.reviews);
       setReviews(reviews?.data.reviews);
     };
 
     fetchRoomData();
     fetchReview();
   }, [id]);
-  
+
   const showDrawer = () => {
     setOpen(true);
   };
@@ -131,7 +138,8 @@ function RoomDetails() {
                 <span className="font-medium p-2">Mobile:</span> {room.mobile}
               </p>
               <p className="text-sm text-gray-600">
-                <span className="font-medium p-2">Bed Spaces:</span> {room.slots}
+                <span className="font-medium p-2">Bed Spaces:</span>{" "}
+                {room.slots}
               </p>
               <p className="text-sm text-gray-600">
                 <span className="font-medium p-2">Maintenance:</span> ₹
@@ -175,9 +183,6 @@ function RoomDetails() {
             {...viewPort}
             mapboxAccessToken={token}
             mapStyle="mapbox://styles/murshidiqbal/cm0kk182d006q01o335mghxkh"
-            onViewportChange={(newViewPort: ViewportProps) =>
-              setViewPort(newViewPort)
-            } // ensure viewport change is handled
           >
             <Marker
               latitude={viewPort.latitude}
@@ -264,7 +269,7 @@ function RoomDetails() {
           </div>
         )}
       </div>
-      <BookingModal isOpen={isOpen} onOpenChange={onOpenChange} room={room}/>
+      <BookingModal isOpen={isOpen} onOpenChange={onOpenChange} room={room} />
     </div>
   );
 }

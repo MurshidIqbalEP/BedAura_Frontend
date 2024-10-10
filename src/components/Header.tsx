@@ -37,8 +37,9 @@ export default function Header() {
 
           <div className="hidden md:flex items-center space-x-6">
             <NavLink to="/allRooms"> Rooms</NavLink>
-            <NavLink to="/yourRooms">My Rooms</NavLink>
-            <NavLink to="/myBookings">Bookings</NavLink>
+            <NavLink to="/addSpace"> AddRoom</NavLink>
+            <NavLink to="/yourRooms">MyRooms</NavLink>
+            <NavLink to="/myBookings">MyBookings</NavLink>
           </div>
 
           <div className="hidden md:flex items-center space-x-3">

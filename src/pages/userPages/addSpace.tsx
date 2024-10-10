@@ -48,7 +48,7 @@ interface Options {
   genders: string[];
   roomType: string[];
   noticePeriod: string[];
-  AdditionalOptions:string[]
+  AdditionalOptions: string[];
 }
 
 const CLOUDINARY_URL = "https://api.cloudinary.com/v1_1/drsh8bkaf/upload";
@@ -75,7 +75,7 @@ function AddSpace() {
     genders: [],
     roomType: [],
     noticePeriod: [],
-    AdditionalOptions:[]
+    AdditionalOptions: [],
   });
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const [selectedLocation, setSelectedLocation] = useState<{
@@ -86,7 +86,7 @@ function AddSpace() {
   const wrapperRef = useRef(null);
   const [isLoading, setLoading] = useState(false);
   const [filledFields, setFilledFields] = useState(0);
-  const totalFields = 11; 
+  const totalFields = 11;
   const progress = Math.round((filledFields / totalFields) * 100);
   type ProgressFields = {
     name: boolean;
@@ -132,7 +132,6 @@ function AddSpace() {
 
   const [checkedOptions, setCheckedOptions] = useState<string[]>([]);
 
-
   useEffect(() => {
     if (location) {
       fetchSuggestions(location)
@@ -163,7 +162,7 @@ function AddSpace() {
 
     if (savedFormData) {
       const formData = JSON.parse(savedFormData);
-      
+
       setName(formData.name);
       setMobile(formData.mobile);
       setMaintenanceCharge(formData.maintenanceCharge);
@@ -175,7 +174,7 @@ function AddSpace() {
       setLocation(formData.location);
       setDescription(formData.description);
       setUploadedImageURLs(formData.images);
-      setCheckedOptions(formData.checkedOptions)
+      setCheckedOptions(formData.checkedOptions);
       setImgCount(0);
     }
 
@@ -241,9 +240,8 @@ function AddSpace() {
     }
   };
 
-  const handleCheckboxChange = (option:string) => {
-    
-    if (checkedOptions.includes(option)) { 
+  const handleCheckboxChange = (option: string) => {
+    if (checkedOptions.includes(option)) {
       setCheckedOptions(checkedOptions.filter((item) => item !== option));
     } else {
       setCheckedOptions([...checkedOptions, option]);
@@ -252,7 +250,7 @@ function AddSpace() {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    
+
     let valid = true;
     const newErrors = {
       name: "",
@@ -369,7 +367,7 @@ function AddSpace() {
           description,
           coordinates: selectedLocation ?? {},
           images: uploadedURLs,
-          checkedOptions:checkedOptions
+          checkedOptions: checkedOptions,
         };
 
         localStorage.setItem("addRoomFormData", JSON.stringify(formDataObject));
@@ -384,8 +382,7 @@ function AddSpace() {
           setUploadedImageURLs(uploadedURLs);
           setLoading(false);
         }
-        console.log(checkedOptions);
-        
+
         const formData = new FormData();
         formData.append("name", name);
         formData.append("userId", userId._id);
@@ -399,7 +396,10 @@ function AddSpace() {
         formData.append("location", location);
         formData.append("description", description);
         formData.append("coordinates", JSON.stringify(selectedLocation ?? {}));
-        formData.append("additionalOptions", JSON.stringify(checkedOptions ?? []));
+        formData.append(
+          "additionalOptions",
+          JSON.stringify(checkedOptions ?? [])
+        );
 
         finalUploadedURLs.forEach((url) => {
           formData.append("images", url);
@@ -674,18 +674,17 @@ function AddSpace() {
         </div>
 
         <div className="flex flex-wrap gap-4 justify-center">
-    <h2>Additional Options :</h2>
-    {options.AdditionalOptions.map((AdditionalOP) => (
-       
-      <Checkbox
-        key={AdditionalOP}
-        isSelected={checkedOptions.includes(AdditionalOP)}
-        onChange={() => handleCheckboxChange(AdditionalOP)} // Handle check/uncheck
-      >
-        {AdditionalOP}
-      </Checkbox>
-    ))}
-  </div>
+          <h2>Additional Options :</h2>
+          {options.AdditionalOptions.map((AdditionalOP) => (
+            <Checkbox
+              key={AdditionalOP}
+              isSelected={checkedOptions.includes(AdditionalOP)}
+              onChange={() => handleCheckboxChange(AdditionalOP)} // Handle check/uncheck
+            >
+              {AdditionalOP}
+            </Checkbox>
+          ))}
+        </div>
 
         {/* Description Field */}
         <div>
@@ -736,7 +735,10 @@ function AddSpace() {
                       title="Are you sure you want to delete this image?"
                       onConfirm={() => dltImage(img)}
                     >
-                      <button type="button" className="absolute top-0 right-0 p-1 rounded-md bg-black">
+                      <button
+                        type="button"
+                        className="absolute top-0 right-0 p-1 rounded-md bg-black"
+                      >
                         <MdDeleteOutline className="text-white" />
                       </button>
                     </Popconfirm>

@@ -1,13 +1,11 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaUsers } from "react-icons/fa";
 import { FaBed } from "react-icons/fa";
-import { MdUpcoming ,MdEditDocument,MdDashboard} from "react-icons/md";    
+import { MdUpcoming, MdEditDocument, MdDashboard } from "react-icons/md";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { IoOptions } from "react-icons/io5";
 import { adminLogout } from "../redux/Slices/adminSlice";
-import { useSelector, useDispatch } from "react-redux";
-
-
+import { useDispatch } from "react-redux";
 
 function sideBar() {
   const dispatch = useDispatch();
@@ -18,11 +16,11 @@ function sideBar() {
     color: "white ",
   };
 
-  const handleLogOut = ()=>{
+  const handleLogOut = () => {
     dispatch(adminLogout());
-    localStorage.removeItem('token')
+    localStorage.removeItem("token");
     navigate("/login");
-  }
+  };
 
   return (
     <div className="mt-20 ">
@@ -58,20 +56,18 @@ function sideBar() {
           style={{ marginTop: "58px" }}
         >
           <ul className="space-y-2 font-medium">
-          <li className=" border-gray-300 border-b-1">
+            <li className=" border-gray-300 border-b-1">
               <NavLink
                 to="/admin/dashboard"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
               >
-               <MdDashboard />
+                <MdDashboard />
 
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Dashboard
-                </span>
+                <span className="flex-1 ms-3 whitespace-nowrap">Dashboard</span>
               </NavLink>
             </li>
-            
+
             <li className=" border-gray-300 border-b-1">
               <NavLink
                 to="/admin/users"
@@ -86,17 +82,14 @@ function sideBar() {
               </NavLink>
             </li>
 
-            <li  className=" border-gray-300 border-b-1">
+            <li className=" border-gray-300 border-b-1">
               <NavLink
                 to="/admin/rooms"
                 className="flex items-center p-2 text-gray-900 rounded-lg dark:text-[#5F7093] hover:bg-gray-100 dark:hover:bg-gray-700 group"
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
               >
-                
-                 <FaBed />
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Rooms
-                </span>
+                <FaBed />
+                <span className="flex-1 ms-3 whitespace-nowrap">Rooms</span>
               </NavLink>
             </li>
 
@@ -110,7 +103,6 @@ function sideBar() {
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Room Requests
                 </span>
-                
               </NavLink>
             </li>
 
@@ -124,7 +116,6 @@ function sideBar() {
                 <span className="flex-1 ms-3 whitespace-nowrap">
                   Edit Requests
                 </span>
-                
               </NavLink>
             </li>
 
@@ -135,15 +126,10 @@ function sideBar() {
                 style={({ isActive }) => (isActive ? activeStyle : undefined)}
               >
                 <IoOptions />
-                <span className="flex-1 ms-3 whitespace-nowrap">
-                  Options
-                </span>
-                
+                <span className="flex-1 ms-3 whitespace-nowrap">Options</span>
               </NavLink>
             </li>
 
-            
-            
             <li className=" border-gray-300 border-b-1 ">
               <NavLink
                 to="/admin/coupons"
@@ -152,7 +138,12 @@ function sideBar() {
               >
                 <RiLogoutBoxFill />
 
-                <span className="flex-1 ms-3 whitespace-nowrap" onClick={handleLogOut}>LogOut</span>
+                <span
+                  className="flex-1 ms-3 whitespace-nowrap"
+                  onClick={handleLogOut}
+                >
+                  LogOut
+                </span>
               </NavLink>
             </li>
           </ul>

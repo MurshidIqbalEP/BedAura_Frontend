@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 import {
   BarChart,
   Bar,
@@ -7,29 +7,28 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from 'recharts';
-import { fetchBookingDataByCity } from '../api/admin';
-
+} from "recharts";
+import { fetchBookingDataByCity } from "../api/admin";
 
 const customBarChart = () => {
-    const [data, setData] = useState([]);
+  const [data, setData] = useState([]);
 
-    useEffect(() => {
-      const fetchBookingData = async () => {
-        try {
-          const response = await fetchBookingDataByCity()
-          const formattedData = response?.data.data.map((item:any) => ({
-            city: item.city.split(" ").slice(0, 3).join(' '), 
-            bookings: item.totalBookings,
-          }));
-          setData(formattedData);
-        } catch (error) {
-          console.error('Error fetching booking data:', error);
-        }
-      };
-  
-      fetchBookingData();
-    }, []);
+  useEffect(() => {
+    const fetchBookingData = async () => {
+      try {
+        const response = await fetchBookingDataByCity();
+        const formattedData = response?.data.data.map((item: any) => ({
+          city: item.city.split(" ").slice(0, 3).join(" "),
+          bookings: item.totalBookings,
+        }));
+        setData(formattedData);
+      } catch (error) {
+        console.error("Error fetching booking data:", error);
+      }
+    };
+
+    fetchBookingData();
+  }, []);
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data}>

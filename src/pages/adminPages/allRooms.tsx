@@ -52,7 +52,6 @@ const App: React.FC = () => {
     const FetchEditRequests = async () => {
       try {
         const response = await fetchAllRooms();
-        console.log(response);
         setData(response.data.data);
       } catch (error) {
         toast.error("Failed to fetch users");
