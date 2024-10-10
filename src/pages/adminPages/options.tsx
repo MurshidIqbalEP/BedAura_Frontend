@@ -11,7 +11,7 @@ import {
 import { AiFillBank } from "react-icons/ai";
 import { MdPeopleAlt, MdBedroomParent } from "react-icons/md";
 import { IoMdAddCircle, IoMdTrash } from "react-icons/io";
-import { Popconfirm, Button } from "antd";
+import { Popconfirm } from "antd";
 import { FaClock } from "react-icons/fa";
 import { CiCircleMore } from "react-icons/ci";
 

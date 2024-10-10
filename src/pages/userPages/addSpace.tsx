@@ -101,6 +101,7 @@ function AddSpace() {
     description: boolean;
     image: boolean;
   };
+  // @ts-ignore
   const [progressFilled, setProgressFilled] = useState<ProgressFields>({
     name: false,
     mobile: false,

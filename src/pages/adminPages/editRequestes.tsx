@@ -58,7 +58,7 @@ const App: React.FC = () => {
 
     FetchEditRequests();
   }, []);
-
+// @ts-ignore
   const handleChange: OnChange = (pagination, filters, sorter) => {
     setFilteredInfo(filters);
     setSortedInfo(sorter as Sorts);

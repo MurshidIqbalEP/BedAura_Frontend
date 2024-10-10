@@ -29,14 +29,14 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className=" mx-auto px-4 sm:px-4 lg:px-4">
         <div className="flex justify-between items-center py-3">
           <Link to="/" className="flex-shrink-0">
             <img src={Logo} alt="Logo" className="h-8 w-auto" />
           </Link>
 
-          <div className="hidden md:flex items-center space-x-6">
-            <NavLink to="/allRooms"> Rooms</NavLink>
+          <div className="hidden md:flex items-center  space-x-6">
+            <NavLink to="/allRooms" className="hover:text-red-500 transition-colors duration-300" > Rooms</NavLink>
             <NavLink to="/addSpace"> AddRoom</NavLink>
             <NavLink to="/yourRooms">MyRooms</NavLink>
             <NavLink to="/myBookings">MyBookings</NavLink>
@@ -55,6 +55,8 @@ export default function Header() {
                 </Button>
 
                 {/* Profile Icon */}
+                <div className="flex items-center gap-1 ">
+                <p className="font-thin">{userInfo.name}</p>
                 <Link to="/profile">
                   <img
                     src={userInfo.profilePicture || defaultProfile} // fallback if profile picture is not available
@@ -62,6 +64,9 @@ export default function Header() {
                     className="w-8 h-8 rounded-full"
                   />
                 </Link>
+                </div>
+                
+               
               </>
             ) : (
               <>
@@ -107,23 +112,49 @@ export default function Header() {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink to="/allRooms"> Rooms</NavLink>
+          <NavLink to="/addSpace"> Add Rooms</NavLink>
             <NavLink to="/rourRooms">My Rooms</NavLink>
             <NavLink to="/myBookings">Bookings</NavLink>
           </div>
           <div className="pt-2 pb-3 border-t border-gray-200">
             <div className="flex items-center px-5 space-x-2">
-              <Link
-                to="/login"
-                className="block px-3 py-1 rounded text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-              >
-                Sign In
-              </Link>
-              <Link
-                to="/register"
-                className="block px-3 py-1 rounded text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-50"
-              >
-                Sign Up
-              </Link>
+            {userInfo ? (
+              <>
+                <Button
+                  radius="full"
+                  onClick={handleLogout}
+                  size="sm"
+                  className="bg-gradient-to-r from-gray-600 to-red-600 text-white shadow-md "
+                >
+                  LogOut
+                </Button>
+
+                {/* Profile Icon */}
+                <div className="flex items-center gap-1 ">
+                <p className="font-thin">{userInfo.name}</p>
+                <Link to="/profile">
+                  <img
+                    src={userInfo.profilePicture || defaultProfile} // fallback if profile picture is not available
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full"
+                  />
+                </Link>
+                </div>
+              </>
+            ) : (
+              <>
+                <Link to="/login">
+                  <button className="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-1.5 px-3 rounded transition duration-300 ease-in-out">
+                    Sign In
+                  </button>
+                </Link>
+                <Link to="/register">
+                  <button className="bg-gray-200 hover:bg-gray-300 text-gray-800 text-sm font-semibold py-1.5 px-3 rounded transition duration-300 ease-in-out">
+                    Sign Up
+                  </button>
+                </Link>
+              </>
+            )}
             </div>
           </div>
         </div>

@@ -28,7 +28,7 @@ export default function Home() {
     <div className="bg-gray-100">
       {/* First Hero Section */}
       <motion.section
-        className="flex flex-col lg:flex-row min-h-[80vh]"
+        className="flex flex-col lg:flex-row min-h-[60vh]"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -77,7 +77,7 @@ export default function Home() {
 
       {/* Second Hero Section */}
       <motion.section
-        className="flex flex-col lg:flex-row-reverse min-h-[80vh] mt-8"
+        className="flex flex-col lg:flex-row-reverse min-h-[60vh] mt-8"
         initial="hidden"
         animate="visible"
         variants={containerVariants}
@@ -106,7 +106,7 @@ export default function Home() {
             to={"/addSpace"}
             type="button"
             radius="full"
-            className="self-start px-6 py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white font-semibold shadow-lg hover:opacity-90 transition-all duration-300 ease-in-out"
+            className="self-start px-6  py-2 bg-gradient-to-r from-green-500 to-blue-500 text-white font-semibold shadow-lg hover:opacity-90 transition-all duration-300 ease-in-out"
           >
             Post Your Space
           </Button>

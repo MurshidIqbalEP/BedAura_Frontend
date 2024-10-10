@@ -34,7 +34,7 @@ const App: React.FC = () => {
 
     fetchUsers();
   }, []);
-
+  // @ts-ignore
   const handleChange: OnChange = (pagination, filters, sorter) => {
     setFilteredInfo(filters);
     setSortedInfo(sorter as Sorts);

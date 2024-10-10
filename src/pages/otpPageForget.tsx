@@ -15,6 +15,7 @@ export default function OTPVerification() {
   const { email } = (location.state as LocationState) || {};
   const [showResendLink, setShowResendLink] = useState(false);
   const [counter, setCounter] = useState(120); // 2 minutes in seconds
+  // @ts-ignore
   const [resetCount, setResetCount] = useState(false);
 
   useEffect(() => {

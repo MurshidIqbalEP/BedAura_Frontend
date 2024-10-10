@@ -1,5 +1,4 @@
 import axios from "axios";
-import errorHandle from "../api/error";
 
 const BASE_URL = "http://127.0.0.1:3000/api";
 

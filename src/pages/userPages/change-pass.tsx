@@ -1,5 +1,5 @@
-import Img from "../assets/img/loging-bg.png";
-import Logo from "../assets/img/white.png";
+import Img from "../../assets/img/loging-bg.png";
+import Logo from "../../assets/img/white.png";
 import { Input } from "@nextui-org/react";
 import { useState, FormEvent } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";

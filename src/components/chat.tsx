@@ -76,7 +76,7 @@ const Chat: React.FC<ChatProps> = ({ currentUserId, chattingWithUserId }) => {
       receiverId: chattingWithUserId,
       message,
     };
-
+    // @ts-ignore
     const response = await postMessage(messageData);
 
     // Emit the message to the server (ensure this happens once)
