@@ -113,7 +113,7 @@ export default function Header() {
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
           <NavLink to="/allRooms"> Rooms</NavLink>
           <NavLink to="/addSpace"> Add Rooms</NavLink>
-            <NavLink to="/rourRooms">My Rooms</NavLink>
+            <NavLink to="/yourRooms">My Rooms</NavLink>
             <NavLink to="/myBookings">Bookings</NavLink>
           </div>
           <div className="pt-2 pb-3 border-t border-gray-200">

@@ -29,7 +29,7 @@ export const SocketProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (userInfo) {
       
-      const socketConnection = io("http://localhost:3000"); // Connect to your server
+      const socketConnection = io(import.meta.env.VITE_BACKEND_URL); // Connect to your server
       setSocket(socketConnection); // Set the socket instance
 
       socketConnection.emit("registerUser", userInfo._id);

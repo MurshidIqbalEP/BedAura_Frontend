@@ -169,7 +169,7 @@ function RoomDetails() {
               {room.description}
             </p>
             {room.additionalOptions.map((feature: any) => (
-              <Chip color="warning" size="sm" radius="sm" variant="bordered">
+              <Chip color="warning" size="sm" radius="sm" variant="bordered" className="m-1">
                 {feature}
               </Chip>
             ))}

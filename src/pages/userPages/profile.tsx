@@ -13,13 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { FaPhoneAlt, FaUser } from "react-icons/fa";
 import { IoMail } from "react-icons/io5";
-
 import { setCredentials } from "../../redux/Slices/authSlice";
 import { useState } from "react";
 import { editUser } from "../../api/user";
 import { toast } from "sonner";
 import defaultProfile from "../../assets/img/Default_pfp.svg.png";
-
 import ChangePassword from "../userPages/changePassword";
 import Wallet from "../userPages/wallet";
 import ChatPage from "../../components/chatPage";
@@ -30,7 +28,8 @@ const Profile = () => {
 
   const dispatch = useDispatch();
   const [user, setUser] = useState(userInfo);
-
+  console.log(user);
+  
   const [currentTab, setCurrentTab] = useState<
     "about" | "changePassword" | "wallet" | "chat" | "dashbord"
   >("about"); // Tab state
@@ -48,7 +47,8 @@ const Profile = () => {
   const handleSave = async (onClose: () => void) => {
     const validationError = { nameErr: "", emailErr: "", phoneErr: "" };
     let valid = true;
-    const { name, email, number } = user;
+    console.log(user)
+    const { name, email, phone } = user;
 
     if (name.trim() === "") {
       validationError.nameErr = "Name required";
@@ -59,7 +59,7 @@ const Profile = () => {
       validationError.emailErr = "Invalid email format.";
       valid = false;
     }
-    if (number.length < 10) {
+    if (phone.length < 10) {
       validationError.phoneErr = "10 Digit is Required";
       valid = false;
     }
@@ -93,7 +93,7 @@ const Profile = () => {
         </div>
         <nav className="mt-8 space-y-4 ">
           <Button
-            className={`w-full ${
+            className={`w-full sm:text-sm ${
               currentTab === "about" ? "bg-blue-500 text-white" : ""
             }`}
             onPress={() => setCurrentTab("about")}
@@ -101,7 +101,7 @@ const Profile = () => {
             About
           </Button>
           <Button
-            className={`w-full ${
+            className={`w-full sm:text-sm ${
               currentTab === "dashbord" ? "bg-blue-500 text-white" : ""
             }`}
             onPress={() => setCurrentTab("dashbord")}
@@ -109,7 +109,7 @@ const Profile = () => {
             Dashbord
           </Button>
           <Button
-            className={`w-full ${
+            className={`w-full sm:text-sm ${
               currentTab === "changePassword" ? "bg-blue-500 text-white" : ""
             }`}
             onPress={() => setCurrentTab("changePassword")}
@@ -117,7 +117,7 @@ const Profile = () => {
             Change Password
           </Button>
           <Button
-            className={`w-full ${
+            className={`w-full sm:text-sm ${
               currentTab === "wallet" ? "bg-blue-500 text-white" : ""
             }`}
             onPress={() => setCurrentTab("wallet")}
@@ -125,7 +125,7 @@ const Profile = () => {
             Wallet
           </Button>
           <Button
-            className={`w-full ${
+            className={`w-full sm:text-sm ${
               currentTab === "chat" ? "bg-blue-500 text-white" : ""
             }`}
             onPress={() => setCurrentTab("chat")}
@@ -152,7 +152,6 @@ const Profile = () => {
                 </div>
                 <div className="flex items-center">
                   <FaPhoneAlt size={18} className="text-blue-500 mr-2" />
-
                   <p className="text-sm text-gray-600">{user.phone}</p>
                 </div>
                 <Button onPress={onOpen} color="primary">

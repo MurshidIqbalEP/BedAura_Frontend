@@ -14,15 +14,14 @@ import {
 } from "react-icons/fa";
 import type { TableColumnsType, TableProps } from "antd";
 import {
-  
   ApproveRoom,
-  fetchEditRequests,
   fetchNewRoomRequests,
   rejectRoom,
 } from "../../api/admin";
 import { toast } from "react-toastify";
 
 interface DataType {
+  _id:string;
   name: string;
   mobile: string;
   userId: string;
@@ -104,8 +103,7 @@ const App: React.FC = () => {
   const handleApprove = async (record: any) => {
     let response = await ApproveRoom(record._id);
     toast.success(response.data);
-    const updatedData = await fetchEditRequests();
-    setData(updatedData.data.data);
+    setData((prevData) => prevData.filter(item => item._id !== record._id));
   };
 
   const showRejectModal = async (record: DataType) => {

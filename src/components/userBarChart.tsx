@@ -21,7 +21,7 @@ const UsersRoomBookingChart = () => {
     const fetchBookingData = async () => {
       try {
         const response = await fetchUsersRoomBookings(userInfo._id);
-
+        console.log(response?.data.data)
         const formattedData = response?.data.data.map((item: any) => ({
           roomName: item.roomName,
           totalBookings: item.totalBookings,
