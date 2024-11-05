@@ -165,7 +165,8 @@ export const fetchAllRooms = async (
         sortBy
       )}`
     );
-
+    console.log(response.data);
+    
     return response.data;
   } catch (error) {
     const err: Error = error as Error;
