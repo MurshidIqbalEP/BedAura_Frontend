@@ -26,6 +26,8 @@ const areaChart = () => {
           bookings: item.bookings,
         }));
 
+        console.log(formattedData)
+
         setAreaData(formattedData);
       } catch (error) {
         console.error("Error fetching data:", error);

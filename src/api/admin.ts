@@ -79,6 +79,7 @@ export const fetchNewRoomRequests = async (): Promise<any> => {
 export const fetchAllRooms = async (): Promise<any> => {
   try {
     let response = await Api.get(adminEndpoints.fetchAllRoom);
+    
     return response;
   } catch (error) {
     const err: Error = error as Error;
